@@ -10,7 +10,6 @@ import {
 
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -19,21 +18,28 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { router } from '@inertiajs/react';
-import { MoreHorizontal } from 'lucide-react';
+import { Form, router, useForm } from '@inertiajs/react';
+import { Loader2, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 
-interface users {
-    usr_id: number;
+interface datas {
+    id: number;
     name: string;
     email: string;
 }
 
 interface DropdownTableProps {
-    user: users;
+    data: datas;
     page: string;
 }
 
-export default function DropdownTable({ user, page }: DropdownTableProps) {
+export default function DropdownTable({ data, page }: DropdownTableProps) {
+    const { processing } = useForm();
+    const [open, setOpen] = useState(false);
+
+    const handleDelete = () => {
+        setOpen(false);
+    };
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -46,7 +52,7 @@ export default function DropdownTable({ user, page }: DropdownTableProps) {
                 <DropdownMenuLabel>Opsi</DropdownMenuLabel>
                 <DropdownMenuItem
                     onClick={() =>
-                        navigator.clipboard.writeText(user.usr_id.toString())
+                        navigator.clipboard.writeText(data.id.toString())
                     }
                 >
                     Salin ID
@@ -54,37 +60,63 @@ export default function DropdownTable({ user, page }: DropdownTableProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() =>
-                        router.visit(`/manage/${page}/${user.usr_id}/detail`)
+                        router.visit(`/manage/${page}/${data.id}/detail`)
                     }
                 >
                     Detail
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() =>
-                        router.visit(`/manage/${page}/${user.usr_id}/edit`)
+                        router.visit(`/manage/${page}/${data.id}/edit`)
                     }
                 >
                     Ubah
                 </DropdownMenuItem>
-                <AlertDialog>
-                    <AlertDialogTrigger className="relative flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive-foreground data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive-foreground dark:data-[variant=destructive]:focus:bg-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:*:[svg]:!text-destructive-foreground">
+                <AlertDialog open={open} onOpenChange={setOpen}>
+                    <AlertDialogTrigger className="relative flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive-foreground data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive-foreground">
                         Hapus
                     </AlertDialogTrigger>
+
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>
-                                Yakin ingin menghapus data ini
+                                Yakin ingin menghapus akun ini?
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                Jika anda menghapus data ini maka aplikasi akan
-                                otomatis memindahkan data ke halaman riwayat.
+                                Jika Anda menghapus akun ini, data pengguna akan
+                                dipindahkan ke halaman riwayat dan tidak dapat
+                                digunakan kembali.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
+
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Batal</AlertDialogCancel>
-                            <AlertDialogAction className="bg-red-600 hover:bg-red-700">
-                                Hapus
-                            </AlertDialogAction>
+                            <AlertDialogCancel disabled={processing}>
+                                Batal
+                            </AlertDialogCancel>
+                            <Form
+                                onSubmit={handleDelete}
+                                action={`/${page}/${data.id}/delete`}
+                                method="delete"
+                                resetOnSuccess
+                                options={{
+                                    preserveScroll: true,
+                                }}
+                            >
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="bg-red-600 text-white hover:bg-red-700"
+                                >
+                                    {processing ? (
+                                        <span className="flex items-center gap-2">
+                                            <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                            Menghapus...
+                                        </span>
+                                    ) : (
+                                        'Hapus'
+                                    )}
+                                </Button>
+                            </Form>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

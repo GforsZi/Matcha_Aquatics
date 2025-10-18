@@ -13,7 +13,17 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, SquareUser } from 'lucide-react';
+import {
+    BookOpen,
+    FileChartColumnIncreasing,
+    Folder,
+    LayoutGrid,
+    PackagePlus,
+    PackageSearch,
+    ShoppingCart,
+    SquareUser,
+    Truck,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -23,9 +33,34 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Kelola pengguna',
+        title: 'Kelola Pengguna',
         href: '/manage/user',
         icon: SquareUser,
+    },
+    {
+        title: 'Kelola Produk',
+        href: '/manage/product',
+        icon: PackagePlus,
+    },
+    {
+        title: 'Kelola Category',
+        href: '/manage/category',
+        icon: PackageSearch,
+    },
+    {
+        title: 'Kelola Transaksi',
+        href: '/manage/transaction',
+        icon: ShoppingCart,
+    },
+    {
+        title: 'Kelola Pengiriman',
+        href: '/manage/shipment',
+        icon: Truck,
+    },
+    {
+        title: 'Kelola Laporan',
+        href: '/manage/report',
+        icon: FileChartColumnIncreasing,
     },
 ];
 

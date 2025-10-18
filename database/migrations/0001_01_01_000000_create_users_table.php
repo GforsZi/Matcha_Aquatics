@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('usr_id');
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('user_verified_at')->nullable();
             $table->string('password');
             $table->string('usr_google_id')->nullable();
             $table->string('usr_foto_profile')->nullable();
@@ -31,8 +31,8 @@ return new class extends Migration
             $table->foreign('usr_updated_by')->references('usr_id')->on('users')->onDelete('cascade');
             $table->foreign('usr_deleted_by')->references('usr_id')->on('users')->onDelete('cascade');
 
-            $table->renameColumn('updated_at', 'usr_updated_at');
             $table->renameColumn('created_at', 'usr_created_at');
+            $table->renameColumn('updated_at', 'usr_updated_at');
             $table->renameColumn('deleted_at', 'usr_deleted_at');
         });
 

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Traits\Blameable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,6 +17,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes, Blameable, HasRoles;
+
     protected $guarded = ['id', 'timestamps'];
     protected $primaryKey = 'usr_id';
     protected $blameablePrefix = 'usr_';
@@ -51,5 +53,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function created_by(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'usr_created_by', 'usr_id');
+    }
+    public function updated_by(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'usr_updated_by', 'usr_id');
+    }
+    public function deleted_by(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'usr_deleted_by', 'usr_id');
     }
 }

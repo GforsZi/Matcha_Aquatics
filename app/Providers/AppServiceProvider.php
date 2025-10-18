@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(Request $request): void
     {
     Inertia::share([
         // Data auth global
@@ -35,6 +36,15 @@ class AppServiceProvider extends ServiceProvider
             ];
         },
         'assetBaseUrl' => asset(''),
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error'   => fn () => $request->session()->get('error'),
+            ],
+
+            // Error validasi otomatis dari Laravel
+            'errors' => fn () => $request->session()->get('errors')
+                ? $request->session()->get('errors')->getBag('default')->getMessages()
+                : (object) [],
     ]);
 
     }

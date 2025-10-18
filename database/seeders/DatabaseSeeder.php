@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'matcha aquatics',
                 'password' => Hash::make('11111111'),
-                'email_verified_at' => now(),
+                'user_verified_at' => now(),
             ]
         );
 
