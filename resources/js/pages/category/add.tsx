@@ -10,7 +10,7 @@ import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Tambah Pengguna (Penjual)',
+        title: 'Tambah Kategori',
         href: '/manage/user/add',
     },
 ];
@@ -31,60 +31,25 @@ export default function add() {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Tambah Pengguna" />
+            <Head title="Tambah Kategori" />
             <div className="m-4">
                 <Toaster position="top-center" richColors closeButton />
 
                 <Form
-                    action={'/user/add'}
+                    action={'/category/add'}
                     method={'POST'}
                     onSubmit={handleSubmit}
                     className="space-y-4"
                 >
                     <div>
                         <Label htmlFor="name" className="my-1">
-                            Nama Lengkap
+                            Nama Kategori
                         </Label>
                         <Input
                             id="name"
                             type="text"
-                            name="name"
-                            placeholder="nama pengguna"
-                        />
-                    </div>
-
-                    <div>
-                        <Label htmlFor="email" className="my-1">
-                            Email
-                        </Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            name="email"
-                            placeholder="nama@contoh.com"
-                        />
-                    </div>
-
-                    <div>
-                        <Label htmlFor="password" className="my-1">
-                            Password
-                        </Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            name="password"
-                            placeholder="Minimal 8 karakter"
-                        />
-                    </div>
-
-                    <div>
-                        <Label htmlFor="password_confirmation" className="my-1">
-                            Konfirmasi Password
-                        </Label>
-                        <Input
-                            id="password_confirmation"
-                            type="password"
-                            name="password_confirmation"
+                            name="cat_name"
+                            placeholder="nama kategori"
                         />
                     </div>
 

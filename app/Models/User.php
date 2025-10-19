@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Traits\Blameable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,6 +55,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function login(): HasMany {
+        return $this->hasMany(User::class, 'usr_lg_user_id', 'usr_id');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'trx_user_id', 'usr_id');
+    }
+
 
     public function created_by(): BelongsTo
     {

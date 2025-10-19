@@ -1,32 +1,30 @@
 import { DataTable } from '@/components/data-table';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-
 import DropdownTable from '@/components/dropdown-table';
 import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
 import { formatDate } from '@/utils/date';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { IconPlus } from '@tabler/icons-react';
+import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Kelola Pengguna',
-        href: '/manage/user',
+        title: 'Kelola Kategori',
+        href: '/manage/category',
     },
 ];
 
-interface user {
+interface category {
     id: number;
-    name: string;
-    email: string;
-    usr_created_at: Date;
+    cat_name: string;
+    cat_created_at: Date;
 }
 
-export const columns: ColumnDef<user>[] = [
+export const columns: ColumnDef<category>[] = [
     {
         accessorKey: 'id',
         header: ({ column }) => {
@@ -47,15 +45,15 @@ export const columns: ColumnDef<user>[] = [
         ),
     },
     {
-        accessorKey: 'email',
-        header: () => <div className="text-left">Email</div>,
+        accessorKey: 'cat_name',
+        header: () => <div className="text-left">Nama</div>,
     },
     {
-        accessorKey: 'name',
-        header: 'Nama',
+        accessorKey: 'cat_slug',
+        header: () => <div className="text-left">Slug</div>,
     },
     {
-        accessorKey: 'usr_created_at',
+        accessorKey: 'cat_created_at',
         header: ({ column }) => {
             return (
                 <Button
@@ -70,27 +68,27 @@ export const columns: ColumnDef<user>[] = [
             );
         },
         cell: ({ row }) => (
-            <div className="lowercase">{row.getValue('usr_created_at')}</div>
+            <div className="lowercase">{row.getValue('cat_created_at')}</div>
         ),
     },
     {
         id: 'actions',
         cell: ({ row }) => {
-            const user = row.original;
+            const category = row.original;
 
             return (
                 <>
-                    <DropdownTable data={user} page={'user'} />
+                    <DropdownTable data={category} page={'category'} />
                 </>
             );
         },
     },
 ];
 
-export default function user() {
-    const { users } = usePage<{
-        users: {
-            data: user[];
+export default function index() {
+    const { categories } = usePage<{
+        categories: {
+            data: category[];
             links: { url: string | null; label: string; active: boolean }[];
         };
     }>().props;
@@ -104,22 +102,22 @@ export default function user() {
             toast.error(flash.error);
         }
     }, [flash?.success, flash?.error]);
-    const manipulateData = (data: user[]) => {
+    const manipulateData = (data: category[]) => {
         return data.map((item) => {
             const manipulatedItem: any = { ...item };
-            if (item.usr_created_at) {
-                manipulatedItem.usr_created_at = formatDate(
-                    item.usr_created_at,
+            if (item.cat_created_at) {
+                manipulatedItem.cat_created_at = formatDate(
+                    item.cat_created_at,
                 );
             }
 
             return manipulatedItem;
         });
     };
-    const formattedData = manipulateData(users.data);
+    const formattedData = manipulateData(categories.data);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Kelola pengguna" />
+            <Head title="Kelola Kategori" />
             <div className="mx-5 mt-5">
                 <div className="mb-5 flex items-center justify-end px-4 lg:px-6">
                     <Button
@@ -127,18 +125,18 @@ export default function user() {
                         asChild
                         className="bg-emerald-600 hover:bg-emerald-700"
                     >
-                        <Link href={'/manage/user/add'}>
+                        <Link href={'/manage/category/add'}>
                             <IconPlus />
-                            <span>Tambah Akun</span>
+                            <span>Tambah Kategori</span>
                         </Link>
                     </Button>
                 </div>
                 <Toaster position="top-center" richColors closeButton />
                 <DataTable
-                    search={{ header: 'email pengguna', value: 'email' }}
+                    search={{ header: 'nama kategori', value: 'cat_name' }}
                     columns={columns}
                     data={formattedData}
-                    link={users.links}
+                    link={categories.links}
                 />
             </div>
         </AppLayout>

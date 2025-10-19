@@ -40,6 +40,7 @@ class GoogleController extends Controller
                 $user = User::create([
                     'name'      => $googleUser->getName(),
                     'email'     => $googleUser->getEmail(),
+                    'user_verified_at' => now(),
                     'usr_google_id' => $googleUser->getId(),
                     'usr_foto_profile'    => $googleUser->getAvatar(),
                     'password'  => Hash::make(Str::random(16))
@@ -51,17 +52,14 @@ class GoogleController extends Controller
             // Login user dan redirect ke dashboard atau halaman utama
             Auth::login($user, true);
             if ($user->hasRole('seller')) {
-                # code...
-                return redirect()->intended('/dashboard');
+                return redirect()->intended('/dashboard')->with('success', 'Login berhasil.');
             } else {
-                # code...
-                return redirect()->intended('/home');
+                return redirect()->intended('/home')->with('success', 'Login berhasil.');
             }
 
         } catch (Exception $e) {
             // Tangani error (misal: redirect ke login dengan pesan error)
-            return redirect()->route('login')
-                             ->with('error', 'Login Google gagal: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Login Google gagal: ' . $e->getMessage());
         }
     }
 }

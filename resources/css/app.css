@@ -162,3 +162,35 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* ========== Custom Global Scrollbar (Interaktif) ========== */
+
+/* Lebar default scrollbar (sangat tipis) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Track (latar belakang scrollbar) */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Thumb (batang scrollbar) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #10b981, #059669);
+    border-radius: 9999px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover pada thumb — ubah warna jadi lebih terang */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #34d399, #10b981);
+}
+
+/* Firefox (Modern support) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #10b981 transparent;
+}

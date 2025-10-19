@@ -21,11 +21,10 @@ import {
 import { Form, router, useForm } from '@inertiajs/react';
 import { Loader2, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface datas {
     id: number;
-    name: string;
-    email: string;
 }
 
 interface DropdownTableProps {
@@ -51,9 +50,12 @@ export default function DropdownTable({ data, page }: DropdownTableProps) {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Opsi</DropdownMenuLabel>
                 <DropdownMenuItem
-                    onClick={() =>
-                        navigator.clipboard.writeText(data.id.toString())
-                    }
+                    onClick={() => {
+                        navigator.clipboard.writeText(data.id.toString());
+                        toast.success(
+                            `Berhasil menyalin ${data.id.toString()}.`,
+                        );
+                    }}
                 >
                     Salin ID
                 </DropdownMenuItem>
@@ -80,30 +82,30 @@ export default function DropdownTable({ data, page }: DropdownTableProps) {
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>
-                                Yakin ingin menghapus akun ini?
+                                Yakin ingin menghapus data ini?
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                Jika Anda menghapus akun ini, data pengguna akan
+                                Jika Anda menghapus data ini, data akan
                                 dipindahkan ke halaman riwayat dan tidak dapat
                                 digunakan kembali.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
 
-                        <AlertDialogFooter>
-                            <AlertDialogCancel disabled={processing}>
-                                Batal
-                            </AlertDialogCancel>
-                            <Form
-                                onSubmit={handleDelete}
-                                action={`/${page}/${data.id}/delete`}
-                                method="delete"
-                                resetOnSuccess
-                                options={{
-                                    preserveScroll: true,
-                                }}
-                            >
+                        <Form
+                            action={`/${page}/${data.id}/delete`}
+                            method="delete"
+                            resetOnSuccess
+                            options={{
+                                preserveScroll: true,
+                            }}
+                        >
+                            <AlertDialogFooter>
+                                <AlertDialogCancel disabled={processing}>
+                                    Batal
+                                </AlertDialogCancel>
                                 <Button
                                     type="submit"
+                                    onClick={handleDelete}
                                     disabled={processing}
                                     className="bg-red-600 text-white hover:bg-red-700"
                                 >
@@ -116,8 +118,8 @@ export default function DropdownTable({ data, page }: DropdownTableProps) {
                                         'Hapus'
                                     )}
                                 </Button>
-                            </Form>
-                        </AlertDialogFooter>
+                            </AlertDialogFooter>
+                        </Form>
                     </AlertDialogContent>
                 </AlertDialog>
             </DropdownMenuContent>
