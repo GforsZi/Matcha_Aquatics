@@ -59,7 +59,7 @@ export default function edit() {
                 <Toaster position="top-center" richColors closeButton />
 
                 <Form
-                    action={`/user/${user.usr_id}/edit`}
+                    action={`/system/user/${user.usr_id}/edit`}
                     method={'PUT'}
                     onSubmit={handleSubmit}
                     className="space-y-4"

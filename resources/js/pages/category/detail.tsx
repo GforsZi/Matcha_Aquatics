@@ -1,7 +1,6 @@
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -50,11 +49,10 @@ export default function index() {
             <Head title="Detail Kategori" />
             <div className="mx-5 mt-5">
                 <Table className="border p-4 shadow-md">
-                    <TableCaption>Detail data Kategori.</TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Value</TableHead>
+                            <TableHead>Keterangan</TableHead>
+                            <TableHead>Isi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

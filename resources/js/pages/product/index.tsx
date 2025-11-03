@@ -77,7 +77,7 @@ export const columns: ColumnDef<product>[] = [
 
             return (
                 <div className="text-left font-medium text-green-700">
-                    {formatted}
+                    {formatted + ',-'}
                 </div>
             );
         },
@@ -110,10 +110,6 @@ export const columns: ColumnDef<product>[] = [
                 <div className={`font-medium capitalize ${color}`}>{label}</div>
             );
         },
-    },
-    {
-        accessorKey: 'categories.cat_name',
-        header: () => <div className="text-left">Kategori</div>,
     },
     {
         accessorKey: 'prd_created_at',

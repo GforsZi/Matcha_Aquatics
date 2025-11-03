@@ -1,7 +1,6 @@
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -54,13 +53,10 @@ export default function detail() {
                     </div>
                     <div className="mb-4 w-full md:w-2/3">
                         <Table className="border p-4 shadow-md">
-                            <TableCaption>
-                                Detail data akun pengguna.
-                            </TableCaption>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Title</TableHead>
-                                    <TableHead>Value</TableHead>
+                                    <TableHead>Keterangan</TableHead>
+                                    <TableHead>Isi</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -69,7 +65,7 @@ export default function detail() {
                                     <TableCell>{user.usr_id}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
+                                    <TableCell>Nama</TableCell>
                                     <TableCell>{user.name}</TableCell>
                                 </TableRow>
                                 <TableRow>

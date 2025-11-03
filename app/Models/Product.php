@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Traits\Blameable;
+use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use SoftDeletes, Blameable;
+    use SoftDeletes, Blameable, Sluggable;
 
     protected $guarded = ['id', 'timestamps'];
     protected $primaryKey = 'prd_id';
@@ -20,12 +22,22 @@ class Product extends Model
     const UPDATED_AT = 'prd_updated_at';
     const DELETED_AT = 'prd_deleted_at';
 
-    public function categories(): HasMany {
-        return $this->hasMany(Category::class, 'product_categories', 'prd_cat_product_id', 'prd_cat_category_id');
-
+    public function sluggable(): array
+    {
+        return [
+            'prd_slug' => [
+                'source' => 'prd_name'
+            ]
+        ];
     }
 
-    public function transactions(): HasMany {
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'product_category', 'prd_cat_product_id', 'prd_cat_category_id');
+    }
+
+    public function transactions(): HasMany
+    {
         return $this->hasMany(Transaction::class, 'transaction_items', 'trxi_product_id', 'trxi_transaction_id');
     }
 

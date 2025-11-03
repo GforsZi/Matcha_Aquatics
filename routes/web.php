@@ -14,7 +14,6 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
-
     })->name('dashboard');
 
     Route::get('/manage/user', [ManageAccountController::class, 'index']);
@@ -36,23 +35,23 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
     Route::get('/home', function () {
         return Inertia::render('dashboard');
-
     });
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
-    Route::post('/user/add', [ManageAccountController::class, 'add_system']);
-    Route::put('/user/{id}/edit', [ManageAccountController::class, 'edit_system']);
-    Route::delete('/user/{id}/delete', [ManageAccountController::class, 'delete_system']);
+    Route::post('/system/user/add', [ManageAccountController::class, 'add_system']);
+    Route::put('/system/user/{id}/edit', [ManageAccountController::class, 'edit_system']);
+    Route::delete('/system/user/{id}/delete', [ManageAccountController::class, 'delete_system']);
 
-    Route::post('/product/add', [ManageProductController::class, 'add_system']);
-    Route::put('/product/{id}/edit', [ManageProductController::class, 'edit_system']);
-    Route::delete('/product/{id}/delete', [ManageProductController::class, 'delete_system']);
+    Route::post('/system/product/add', [ManageProductController::class, 'add_system']);
+    Route::put('/system/product/{id}/edit', [ManageProductController::class, 'edit_system']);
+    Route::delete('/system/product/{id}/delete', [ManageProductController::class, 'delete_system']);
 
-    Route::post('/category/add', [ManageCategoryController::class, 'add_system']);
-    Route::put('/category/{id}/edit', [ManageCategoryController::class, 'edit_system']);
-    Route::delete('/category/{id}/delete', [ManageCategoryController::class, 'delete_system']);
+    Route::get('/system/categories/search', [ManageCategoryController::class, 'search_system']);
+    Route::post('/system/category/add', [ManageCategoryController::class, 'add_system']);
+    Route::put('/system/category/{id}/edit', [ManageCategoryController::class, 'edit_system']);
+    Route::delete('/system/category/{id}/delete', [ManageCategoryController::class, 'delete_system']);
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

@@ -44,7 +44,7 @@ export default function edit() {
                 <Toaster position="top-center" richColors closeButton />
 
                 <Form
-                    action={`/category/${category.cat_id}/edit`}
+                    action={`/system/category/${category.cat_id}/edit`}
                     method={'PUT'}
                     onSubmit={handleSubmit}
                     className="space-y-4"

@@ -36,7 +36,7 @@ export default function add() {
                 <Toaster position="top-center" richColors closeButton />
 
                 <Form
-                    action={'/user/add'}
+                    action={'/system/user/add'}
                     method={'POST'}
                     onSubmit={handleSubmit}
                     className="space-y-4"

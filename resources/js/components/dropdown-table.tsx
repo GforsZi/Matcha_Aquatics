@@ -21,7 +21,6 @@ import {
 import { Form, router, useForm } from '@inertiajs/react';
 import { Loader2, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 interface datas {
     id: number;
@@ -49,16 +48,6 @@ export default function DropdownTable({ data, page }: DropdownTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Opsi</DropdownMenuLabel>
-                <DropdownMenuItem
-                    onClick={() => {
-                        navigator.clipboard.writeText(data.id.toString());
-                        toast.success(
-                            `Berhasil menyalin ${data.id.toString()}.`,
-                        );
-                    }}
-                >
-                    Salin ID
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() =>
@@ -92,7 +81,7 @@ export default function DropdownTable({ data, page }: DropdownTableProps) {
                         </AlertDialogHeader>
 
                         <Form
-                            action={`/${page}/${data.id}/delete`}
+                            action={`/system/${page}/${data.id}/delete`}
                             method="delete"
                             resetOnSuccess
                             options={{
