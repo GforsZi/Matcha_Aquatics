@@ -54,16 +54,17 @@ export default function edit() {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Tambah Pengguna" />
+            <Head title="Tambah pengguna" />
             <div className="m-4">
                 <Toaster position="top-center" richColors closeButton />
 
                 <Form
                     action={`/system/user/${user.usr_id}/edit`}
-                    method={'PUT'}
+                    method={'POST'}
                     onSubmit={handleSubmit}
                     className="space-y-4"
                 >
+                    <input type="hidden" name="_method" value="PUT" />
                     <div>
                         <Label htmlFor="name">Nama Lengkap</Label>
                         <Input

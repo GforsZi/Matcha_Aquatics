@@ -3,6 +3,7 @@
 use App\Http\Controllers\ManageAccountController;
 use App\Http\Controllers\ManageCategoryController;
 use App\Http\Controllers\ManageProductController;
+use App\Http\Controllers\ManageTransactionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,6 +31,11 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::get('/manage/category/{id}/detail', [ManageCategoryController::class, 'show']);
     Route::get('/manage/category/add', [ManageCategoryController::class, 'add']);
     Route::get('/manage/category/{id}/edit', [ManageCategoryController::class, 'edit']);
+
+    Route::get('/manage/transaction', [ManageTransactionController::class, 'index']);
+    Route::get('/manage/transaction/{id}/detail', [ManageTransactionController::class, 'show']);
+    Route::get('/manage/transaction/add', [ManageTransactionController::class, 'add']);
+    Route::get('/manage/transaction/{id}/edit', [ManageTransactionController::class, 'edit']);
 });
 
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
@@ -51,6 +57,10 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::post('/system/category/add', [ManageCategoryController::class, 'add_system']);
     Route::put('/system/category/{id}/edit', [ManageCategoryController::class, 'edit_system']);
     Route::delete('/system/category/{id}/delete', [ManageCategoryController::class, 'delete_system']);
+
+    Route::post('/system/transaction/add', [ManageTransactionController::class, 'add_system']);
+    Route::put('/system/transaction/{id}/edit', [ManageTransactionController::class, 'edit_system']);
+    Route::delete('/system/transaction/{id}/delete', [ManageTransactionController::class, 'delete_system']);
 });
 
 require __DIR__ . '/settings.php';

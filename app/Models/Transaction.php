@@ -19,6 +19,11 @@ class Transaction extends Model
     const UPDATED_AT = 'trx_updated_at';
     const DELETED_AT = 'trx_deleted_at';
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'trx_buyer_id', 'usr_id');
+    }
+
     public function created_by(): BelongsTo
     {
         return $this->belongsTo(User::class, 'trx_created_by', 'usr_id');

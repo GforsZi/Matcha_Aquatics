@@ -16,7 +16,7 @@ class ManageProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::with('categories', 'created_by:usr_id,name', 'updated_by:usr_id,name', 'deleted_by:usr_id,name')->find($id)->toArray();
+        $product = Product::with('categories', 'created_by:usr_id,name', 'updated_by:usr_id,name', 'deleted_by:usr_id,name')->findOrFail($id)->toArray();
         return Inertia::render('product/detail', compact('product'));
     }
 
@@ -27,7 +27,7 @@ class ManageProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::select('prd_id', 'prd_name', 'prd_img_url', 'prd_description', 'prd_price', 'prd_status')->find($id);
+        $product = Product::select('prd_id', 'prd_name', 'prd_img_url', 'prd_description', 'prd_price', 'prd_status')->with('categories')->findOrFail($id);
         return Inertia::render('product/edit', compact('product'));
     }
 
@@ -96,12 +96,63 @@ class ManageProductController extends Controller
 
     public function edit_system(Request $request, $id)
     {
+        $product = Product::select('prd_id')->findOrFail($id);
         try {
+            $message = [
+                'prd_name.required' => 'Nama produk wajib diisi.',
+                'prd_name.max' => 'Nama produk wajib diisi.',
+                'prd_price.required' => 'Harga produk wajib diisi.',
+                'prd_price.max' => 'Harga produk tidak boleh melebihi :max.',
+                'prd_price.min' => 'Harga produk tidak boleh kurang :min.',
+                'prd_description.max' => 'Deskripsi produk tidak boleh melebihi :max.',
+                'prd_status.in' => 'Status produk tidak valid.',
+                'image.image' => 'File harus berupa gambar.',
+                'image.max' => 'Ukuran gambar maksimal 4MB.',
+
+            ];
+            $validateData = $request->validate([
+                'prd_name' => ['required', 'string', 'max:255'],
+                'prd_price' => ['sometimes', 'required', 'integer', 'max:9999999999', 'min:0'],
+                'prd_description' => ['nullable', 'string', 'max:65535'],
+                'prd_status' => ['sometimes', 'nullable', 'in:1,2,3'],
+                'image' => ['sometimes', 'nullable', 'image', 'max:4096'],
+            ], $message);
+
+            if ($request->prd_status == null) {
+                $validateData['prd_status'] = '3';
+            }
+
+            if ($request->hasFile('image')) {
+                $destinationPath = public_path('media/cover_product/');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->move($destinationPath, $filename);
+
+                $validateData['prd_img_url'] = 'media/cover_product/' . $filename;
+            }
+
+            $product->update($validateData);
+            $product->categories()->detach();
+            if ($request->has('category_id')) {
+                $validateDataCategory = $request->validate([
+                    'category_id' => 'required|array|min:1',
+                    'category_id.*' => 'exists:categories,cat_id',
+                ], [
+                    'category_id.array' => 'Format kategori tidak valid.',
+                    'category_id.min' => 'Minimal satu kategori wajib dipilih.',
+                    'category_id.*.exists' => 'kategori tidak ditemukan.',
+                ]);
+
+                $product->categories()->sync($validateDataCategory['category_id']);
+            }
             return redirect('/manage/product')->with([
                 'success' => 'Produk berhasil diubah.',
             ])->setStatusCode(303);
         } catch (\Throwable $th) {
-            return redirect('/manage/product' . $id . '/edit')->with([
+            return redirect('/manage/product/' . $id . '/edit')->with([
                 'error' => $th->getMessage() . ' | produk gagal diubah.',
             ])->setStatusCode(303);
         }
@@ -110,7 +161,7 @@ class ManageProductController extends Controller
     public function delete_system($id)
     {
         try {
-            $product = Product::select('prd_id')->find($id);
+            $product = Product::select('prd_id')->findOrFail($id);
             $product->delete();
             return redirect('/manage/product')->with([
                 'success' => 'Produk berhasil diubah.',

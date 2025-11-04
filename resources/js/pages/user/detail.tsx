@@ -38,7 +38,7 @@ export default function detail() {
     }>().props;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Detail Pengguna" />
+            <Head title="Detail pengguna" />
             <div className="mx-5 mt-5">
                 <div className="flex flex-col md:flex-row">
                     <div className="flex w-full justify-center p-3 md:w-1/3">
@@ -61,50 +61,50 @@ export default function detail() {
                             </TableHeader>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell>ID</TableCell>
+                                    <TableHead>ID</TableHead>
                                     <TableCell>{user.usr_id}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Nama</TableCell>
+                                    <TableHead>Nama</TableHead>
                                     <TableCell>{user.name}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Email</TableCell>
+                                    <TableHead>Email</TableHead>
                                     <TableCell>{user.email}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Diubah pada</TableCell>
+                                    <TableHead>Diubah pada</TableHead>
                                     <TableCell>
                                         {formatDate(user.usr_created_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Diubah pada</TableCell>
+                                    <TableHead>Diubah pada</TableHead>
                                     <TableCell>
                                         {formatDate(user.usr_updated_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Dihapus pada</TableCell>
+                                    <TableHead>Dihapus pada</TableHead>
                                     <TableCell>
                                         {formatDate(user.usr_deleted_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Dibuat oleh</TableCell>
+                                    <TableHead>Dibuat oleh</TableHead>
                                     <TableCell>
                                         {user.created_by?.name ||
                                             'Matcha sistem'}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Diubah oleh</TableCell>
+                                    <TableHead>Diubah oleh</TableHead>
                                     <TableCell>
                                         {user.updated_by?.name || '-'}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Dihapus oleh</TableCell>
+                                    <TableHead>Dihapus oleh</TableHead>
                                     <TableCell>
                                         {user.deleted_by?.name || '-'}
                                     </TableCell>

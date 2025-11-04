@@ -16,7 +16,7 @@ class ManageCategoryController extends Controller
 
     public function show($id)
     {
-        $category = Category::with('created_by:usr_id,name', 'updated_by:usr_id,name', 'deleted_by:usr_id,name')->find($id)->toArray();
+        $category = Category::with('created_by:usr_id,name', 'updated_by:usr_id,name', 'deleted_by:usr_id,name')->findOrFail($id)->toArray();
         return Inertia::render('category/detail', compact('category'));
     }
 
@@ -27,7 +27,7 @@ class ManageCategoryController extends Controller
 
     public function edit($id)
     {
-        $category = Category::select('cat_id', 'cat_name')->find($id);
+        $category = Category::select('cat_id', 'cat_name')->findOrFail($id);
         return Inertia::render('category/edit', compact('category'));
     }
 
@@ -68,7 +68,7 @@ class ManageCategoryController extends Controller
     public function edit_system(Request $request, $id)
     {
         try {
-            $category = Category::select('cat_id')->find($id);
+            $category = Category::select('cat_id')->findOrFail($id);
             $messages = [
                 'cat_name.required' => 'Nama kategori wajib diisi.',
                 'cat_name.max' => 'Nama kategori memiliki maksimal :max karakter.',
@@ -98,7 +98,7 @@ class ManageCategoryController extends Controller
     public function delete_system($id)
     {
         try {
-            $category = Category::select('cat_id')->find($id);
+            $category = Category::select('cat_id')->findOrFail($id);
             $category->delete();
             return redirect('/manage/category')->with([
                 'success' => 'Kategori berhasil dihapus.',

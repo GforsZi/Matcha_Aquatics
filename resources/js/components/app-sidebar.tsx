@@ -43,7 +43,7 @@ const mainNavItems: NavItem[] = [
         icon: PackagePlus,
     },
     {
-        title: 'Kelola Category',
+        title: 'Kelola Kategori',
         href: '/manage/category',
         icon: PackageSearch,
     },

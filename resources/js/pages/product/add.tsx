@@ -127,7 +127,7 @@ export default function add() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Tambah Produk" />
+            <Head title="Tambah produk" />
             <div className="m-4">
                 <Toaster position="top-center" richColors closeButton />
                 <div className="flex flex-col md:flex-row">

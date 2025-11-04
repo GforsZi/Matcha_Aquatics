@@ -80,7 +80,7 @@ export default function index() {
     }
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Detail Pengguna" />
+            <Head title="Detail produk" />
             <div className="mx-5 mt-5">
                 <div className="flex flex-col md:flex-row">
                     <div className="flex w-full justify-center p-4 md:w-1/3">
@@ -89,7 +89,7 @@ export default function index() {
                                 product.prd_img_url || 'user_placeholder.jpg',
                             )}
                             alt={product.prd_name}
-                            className="h-full w-full shrink-0 overflow-hidden border object-contain p-4 shadow-md"
+                            className="h-96 w-full shrink-0 overflow-hidden border object-contain p-4 shadow-md"
                         />
                     </div>
                     <div className="mb-4 w-full md:w-2/3">
@@ -102,60 +102,60 @@ export default function index() {
                             </TableHeader>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell>ID</TableCell>
+                                    <TableHead>ID</TableHead>
                                     <TableCell>{product.prd_id}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Nama</TableCell>
+                                    <TableHead>Nama</TableHead>
                                     <TableCell>{product.prd_name}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Slug</TableCell>
+                                    <TableHead>Slug</TableHead>
                                     <TableCell>{product.prd_slug}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Harga</TableCell>
+                                    <TableHead>Harga</TableHead>
                                     <TableCell>{formatted + ',-'}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Status</TableCell>
+                                    <TableHead>Status</TableHead>
                                     <TableCell className={color}>
                                         {label}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Diubah pada</TableCell>
+                                    <TableHead>Diubah pada</TableHead>
                                     <TableCell>
                                         {formatDate(product.prd_created_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Diubah pada</TableCell>
+                                    <TableHead>Diubah pada</TableHead>
                                     <TableCell>
                                         {formatDate(product.prd_updated_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Dihapus pada</TableCell>
+                                    <TableHead>Dihapus pada</TableHead>
                                     <TableCell>
                                         {formatDate(product.prd_deleted_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Dibuat oleh</TableCell>
+                                    <TableHead>Dibuat oleh</TableHead>
                                     <TableCell>
                                         {product.created_by?.name ||
                                             'Matcha sistem'}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Diubah oleh</TableCell>
+                                    <TableHead>Diubah oleh</TableHead>
                                     <TableCell>
                                         {product.updated_by?.name || '-'}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell>Dihapus oleh</TableCell>
+                                    <TableHead>Dihapus oleh</TableHead>
                                     <TableCell>
                                         {product.deleted_by?.name || '-'}
                                     </TableCell>
@@ -165,8 +165,8 @@ export default function index() {
                     </div>
                 </div>
                 <div className="mb-5 min-h-80 border p-2">
-                    <h1 className="mb-4 ml-5">Deskripsi</h1>
-                    <p className="wrap-break-word whitespace-pre-line">
+                    <h1 className="my-1 ml-5 font-medium">Deskripsi</h1>
+                    <p className="p-2 wrap-break-word whitespace-pre-line">
                         {product.prd_description}
                     </p>
                 </div>

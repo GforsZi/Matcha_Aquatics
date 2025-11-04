@@ -46,7 +46,7 @@ export default function index() {
     }>().props;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Detail Kategori" />
+            <Head title="Detail kategori" />
             <div className="mx-5 mt-5">
                 <Table className="border p-4 shadow-md">
                     <TableHeader>
@@ -57,49 +57,49 @@ export default function index() {
                     </TableHeader>
                     <TableBody>
                         <TableRow>
-                            <TableCell>ID</TableCell>
+                            <TableHead>ID</TableHead>
                             <TableCell>{category.cat_id}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Name</TableCell>
+                            <TableHead>Name</TableHead>
                             <TableCell>{category.cat_name}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Email</TableCell>
+                            <TableHead>Email</TableHead>
                             <TableCell>{category.cat_slug}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Diubah pada</TableCell>
+                            <TableHead>Diubah pada</TableHead>
                             <TableCell>
                                 {formatDate(category.cat_created_at)}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Diubah pada</TableCell>
+                            <TableHead>Diubah pada</TableHead>
                             <TableCell>
                                 {formatDate(category.cat_updated_at)}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Dihapus pada</TableCell>
+                            <TableHead>Dihapus pada</TableHead>
                             <TableCell>
                                 {formatDate(category.cat_deleted_at)}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Dibuat oleh</TableCell>
+                            <TableHead>Dibuat oleh</TableHead>
                             <TableCell>
                                 {category.created_by?.name || 'Matcha sistem'}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Diubah oleh</TableCell>
+                            <TableHead>Diubah oleh</TableHead>
                             <TableCell>
                                 {category.updated_by?.name || '-'}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Dihapus oleh</TableCell>
+                            <TableHead>Dihapus oleh</TableHead>
                             <TableCell>
                                 {category.deleted_by?.name || '-'}
                             </TableCell>

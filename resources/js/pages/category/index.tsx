@@ -117,7 +117,7 @@ export default function index() {
     const formattedData = manipulateData(categories.data);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Kelola Kategori" />
+            <Head title="Kelola kategori" />
             <div className="mx-5 mt-5">
                 <div className="mb-5 flex items-center justify-end px-4 lg:px-6">
                     <Button

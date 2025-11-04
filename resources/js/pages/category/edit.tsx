@@ -39,16 +39,17 @@ export default function edit() {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Ubah Kategori" />
+            <Head title="Ubah kategori" />
             <div className="m-4">
                 <Toaster position="top-center" richColors closeButton />
 
                 <Form
                     action={`/system/category/${category.cat_id}/edit`}
-                    method={'PUT'}
+                    method={'POST'}
                     onSubmit={handleSubmit}
                     className="space-y-4"
                 >
+                    <input type="hidden" name="_method" value="PUT" />
                     <div>
                         <Label htmlFor="name" className="my-1">
                             Nama Kategori
