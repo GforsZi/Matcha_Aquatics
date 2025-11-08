@@ -34,6 +34,22 @@ class ManageAccountController extends Controller
         return Inertia::render('user/edit', compact('user', 'role'));
     }
 
+    public function search_system(Request $request)
+    {
+        $query = trim($request->get('q', ''));
+
+        if ($query === '') {
+            return response()->json([]);
+        }
+
+        $users = User::where('email', 'like', "%{$query}%")
+            ->select('usr_id', 'name', 'email')
+            ->limit(10)
+            ->get();
+
+        return response()->json($users);
+    }
+
     public function add_system(Request $request)
     {
         try {

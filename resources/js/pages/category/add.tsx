@@ -64,7 +64,7 @@ export default function add() {
                                 Menyimpan...
                             </span>
                         ) : (
-                            'Tambah Akun'
+                            'Tambah Kategori'
                         )}
                     </Button>
                 </Form>

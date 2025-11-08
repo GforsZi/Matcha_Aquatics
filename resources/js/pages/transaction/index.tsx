@@ -1,7 +1,6 @@
 import { DataTable } from '@/components/data-table';
 import DropdownTable from '@/components/dropdown-table';
 import { Button } from '@/components/ui/button';
-import { Toaster } from '@/components/ui/sonner';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { formatDate } from '@/utils/date';
@@ -10,7 +9,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,8 +20,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface transaction {
     id: number;
-    trx_buyer_id: number;
-    trx_payment_status: '1' | '2' | '3' | '4';
+    trx_buyer_name: string;
     trx_status: '1' | '2' | '3' | '4' | '5' | '6' | '7';
     trx_created_at: Date;
     user: { name: string };
@@ -49,44 +47,31 @@ export const columns: ColumnDef<transaction>[] = [
         ),
     },
     {
-        accessorFn: (row) => row.user?.name || '-',
-        id: 'user_name',
+        accessorKey: 'trx_buyer_name',
         header: 'Nama',
-        cell: ({ getValue }) => (
-            <div className="capitalize">{getValue() as string}</div>
-        ),
     },
     {
-        accessorKey: 'trx_payment_status',
-        header: () => <div className="text-left">Status pembayaran</div>,
+        accessorKey: 'trx_payment_method',
+        header: () => <div className="text-left">Metode pembayaran</div>,
         cell: ({ row }) => {
-            const status = row.getValue('trx_payment_status') as string;
+            const status = row.getValue('trx_payment_method') as string;
 
             let label = '';
             let color = '';
 
             switch (status) {
                 case '1':
-                    label = 'Menunggu';
+                    label = 'Tunai';
                     color = 'text-green-500';
                     break;
                 case '2':
-                    label = 'Terbayar';
-                    color = 'text-yellow-600';
+                    label = 'Non-tunai';
+                    color = 'text-sky-600';
                     break;
                 case '3':
-                    label = 'Gagal';
-                    color = 'text-gray-600';
-                    break;
-                case '4':
-                    label = 'Kedaluwarsa';
-                    color = 'text-gray-600';
-                    break;
             }
 
-            return (
-                <div className={`font-medium capitalize ${color}`}>{label}</div>
-            );
+            return <div className={`font-medium ${color}`}>{label}</div>;
         },
     },
     {
@@ -101,31 +86,31 @@ export const columns: ColumnDef<transaction>[] = [
             switch (status) {
                 case '1':
                     label = 'Tertunda';
-                    color = 'text-green-500';
+                    color = 'text-gray-500';
                     break;
                 case '2':
                     label = 'Terbayar';
-                    color = 'text-yellow-600';
+                    color = 'text-green-600';
                     break;
                 case '3':
-                    label = 'Diproses';
-                    color = 'text-gray-600';
+                    label = 'Dikemas';
+                    color = 'text-warning-600';
                     break;
                 case '4':
                     label = 'Dikirim';
-                    color = 'text-gray-600';
+                    color = 'text-cyan-600';
                     break;
                 case '5':
                     label = 'Terkirim';
-                    color = 'text-gray-600';
+                    color = 'text-blue-600';
                     break;
                 case '6':
                     label = 'Dibatalkan';
-                    color = 'text-gray-600';
+                    color = 'text-red-600';
                     break;
                 case '7':
                     label = 'Dikembalikan';
-                    color = 'text-gray-600';
+                    color = 'text-red-600';
                     break;
             }
 
@@ -208,13 +193,16 @@ export default function index() {
                     >
                         <Link href={'/manage/transaction/add'}>
                             <IconPlus />
-                            <span>Tambah transaksi</span>
+                            <span>Tambah transaksi </span>
                         </Link>
                     </Button>
                 </div>
                 <Toaster position="top-center" richColors closeButton />
                 <DataTable
-                    search={{ header: 'nama peminjam', value: 'user_name' }}
+                    search={{
+                        header: 'nama peminjam',
+                        value: 'trx_buyer_name',
+                    }}
                     columns={columns}
                     data={formattedData}
                     link={transactions.links}

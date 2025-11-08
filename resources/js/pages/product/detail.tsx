@@ -11,7 +11,7 @@ import { BreadcrumbItem } from '@/types';
 import { formatDate } from '@/utils/date';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -81,6 +81,7 @@ export default function index() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail produk" />
+            <Toaster position="top-center" richColors closeButton />
             <div className="mx-5 mt-5">
                 <div className="flex flex-col md:flex-row">
                     <div className="flex w-full justify-center p-4 md:w-1/3">

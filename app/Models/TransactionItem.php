@@ -19,6 +19,11 @@ class TransactionItem extends Pivot
     const UPDATED_AT = 'trxi_updated_at';
     const DELETED_AT = 'trxi_deleted_at';
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'trxi_product_id', 'prd_id');
+    }
+
     public function created_by(): BelongsTo
     {
         return $this->belongsTo(User::class, 'trxi_created_by', 'usr_id');

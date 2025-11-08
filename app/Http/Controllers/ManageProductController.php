@@ -31,6 +31,22 @@ class ManageProductController extends Controller
         return Inertia::render('product/edit', compact('product'));
     }
 
+    public function search_system(Request $request)
+    {
+        $query = trim($request->get('q', ''));
+
+        if ($query === '') {
+            return response()->json([]);
+        }
+
+        $products = Product::where('prd_name', 'like', "%{$query}%")
+            ->select('prd_id', 'prd_name', 'prd_price', 'prd_img_url')->where('prd_status', '1')
+            ->limit(10)
+            ->get();
+
+        return response()->json($products);
+    }
+
     public function add_system(Request $request)
     {
         try {
@@ -39,7 +55,7 @@ class ManageProductController extends Controller
                 'prd_name.max' => 'Nama produk wajib diisi.',
                 'prd_price.required' => 'Harga produk wajib diisi.',
                 'prd_price.max' => 'Harga produk tidak boleh melebihi :max.',
-                'prd_price.min' => 'Harga produk tidak boleh kurang :min.',
+                'prd_price.min' => 'Harga produk tidak boleh kurang dari :min.',
                 'prd_description.max' => 'Deskripsi produk tidak boleh melebihi :max.',
                 'prd_status.in' => 'Status produk tidak valid.',
                 'image.image' => 'File harus berupa gambar.',

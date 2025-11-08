@@ -2,21 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ManageTransactionController extends Controller
 {
+    protected string $serverKey;
+    protected string $baseUrl;
+
+    public function __construct()
+    {
+        $this->serverKey = env('MIDTRANS_SERVER_KEY');
+        $this->baseUrl = env('MIDTRANS_BASE_URL', 'https://api.sandbox.midtrans.com/v1');
+    }
+
     public function index()
     {
-        $transactions = Transaction::select('trx_id as id', 'trx_buyer_id', 'trx_payment_status', 'trx_status', 'trx_created_at')->with('user')->latest()->paginate(10);
+        $transactions = Transaction::select('trx_id as id', 'trx_buyer_name', 'trx_payment_method', 'trx_status', 'trx_created_at')->with('user')->latest()->paginate(10);
         return Inertia::render('transaction/index', compact('transactions'));
     }
 
     public function show($id)
     {
-        return Inertia::render('transaction/detail');
+        $transaction = Transaction::with('products', 'payment', 'created_by', 'updated_by', 'deleted_by')->findOrFail($id);
+        return Inertia::render('transaction/detail', compact('transaction'));
     }
 
     public function add()
@@ -24,8 +40,254 @@ class ManageTransactionController extends Controller
         return Inertia::render('transaction/add');
     }
 
-    public function edit($id)
+    public function payment_link_page($id)
     {
-        return Inertia::render('transaction/edit');
+        $transaction = Transaction::select('trx_id', 'trx_invoice')->findOrFail($id);
+        return Inertia::render('transaction/payment_link', compact('transaction'));
+    }
+
+    public function add_offline_system(Request $request)
+    {
+        try {
+            $message = [
+                'trx_buyer_id.exists' => 'Data pembeli tidak tersedia.',
+                'trx_type.required' => 'Tipe transaksi wajib diisi.',
+                'trx_type.in' => 'Tipe transaksi tidak valid.',
+                'trx_buyer_name.min' => 'Nama pembeli tidak boleh kurang dari :min.',
+                'trx_buyer_name.max' => 'Nama pembeli tidak boleh melebihi :max.',
+                'trx_payment_method.required' => 'Metode pembayaran wajib diisi.',
+                'trx_payment_method.max' => 'Metode pembayaran wajib diisi.',
+                'trx_total.required' => 'Total dari transaksi wajib diisi.',
+                'trx_total.min' => 'Total dari transaksi tidak boleh kurang dari :min.',
+                'trx_total.max' => 'Total dari transaksi tidak boleh melebihi :max.',
+                'trx_discount.max' => 'Diskon tidak boleh melebihi :max.',
+                'trx_discount.min' => 'Diskon tidak boleh kurang dari :min.',
+
+            ];
+            $validateData = $request->validate([
+                'trx_buyer_id' => ['nullable', 'integer', 'exists:users,usr_id'],
+                'trx_buyer_name' => ['nullable', 'string', 'min:3', 'max:255'],
+                'trx_payment_method' => ['required', 'in:1,2'],
+                'trx_total' => ['required', 'integer', 'min:0', 'max:99999999999'],
+                'trx_discount' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
+                'trx_payment' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
+                'trx_change' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
+            ], $message);
+            $validateDataProduct = $request->validate([
+                'product_id' => 'required|array|min:1',
+                'product_id.*' => 'exists:products,prd_id',
+            ], [
+                'product_id.array' => 'Format Produk tidak valid.',
+                'product_id.min' => 'Minimal satu Produk wajib dipilih.',
+                'product_id.*.exists' => 'Produk tidak ditemukan.',
+            ]);
+            $validateData['trx_seller_id'] = Auth::id();
+            $validateData['trx_subtotal'] = $request->trx_total;
+            if ($request->trx_payment_method == '1') {
+                $validateData['trx_status'] = '2';
+            }
+
+            $transaction = Transaction::create($validateData);
+
+            if ($request->has('product_id')) {
+                foreach ($request->product_id as $prd_id) {
+                    if ($prd_id == null) {
+                        throw new \Exception('Terjadi kesalahan pada input transaksi');
+                    }
+                    $copy =
+                        Product::select('prd_status', 'prd_id')
+                        ->where('prd_id', $prd_id)
+                        ->where('prd_status', '1')
+                        ->findOrFail($prd_id);
+
+                    if (!$copy) {
+                        throw new \Exception('Terdapat product yang telah dibeli');
+                    }
+
+                    $copy->update(['prd_status' => '2']);
+                }
+                $transaction->products()->sync($validateDataProduct['product_id']);
+                if ($request->trx_payment_method == '1') {
+                    return redirect('/manage/transaction')->with([
+                        'success' => 'Transaksi berhasil dibuat.',
+                    ])->setStatusCode(303);
+                } elseif ($request->trx_payment_method == '2') {
+                    return redirect('/manage/transaction/' . $transaction->trx_id . '/payment_link')->with([
+                        'success' => 'Transaksi berhasil dibuat.',
+                    ])->setStatusCode(303);
+                }
+            }
+        } catch (\Throwable $th) {
+            $transaction_type = '';
+            if ($request->trx_type == '1') {
+                $transaction_type = 'online';
+            } else {
+                $transaction_type = 'offline';
+            }
+
+            return redirect('/manage/transaction/add')->with([
+                'error' => $th->getMessage() . ' | transaksi gagal dibuat.',
+                'tab' => $transaction_type
+            ])->setStatusCode(303);
+        }
+    }
+    public function payment_link_system($trx_id)
+    {
+        $trx = Transaction::with('items.product', 'user')->findOrFail($trx_id);
+
+        $paymentLinkId = 'pl-' . ($trx->trx_invoice ?? $trx->trx_id) . '-' . Str::random(6);
+
+        $itemDetails = [];
+        foreach ($trx->items as $item) {
+            $prod = $item->product;
+            if (! $prod) continue;
+
+            $itemDetails[] = [
+                'id' =>  $prod->prd_id,
+                'name' => $prod->prd_name,
+                'price' => (int) $prod->prd_price,
+                'quantity' => (int) ($item->quantity ?? 1),
+                'brand' => $prod->prd_sys_note ?? '',
+                'category' => 'General',
+                'merchant_name' => config('app.name', 'Merchant'),
+            ];
+        }
+
+        $customer = [
+            'first_name' => $trx->trx_buyer_name ?? 'Customer',
+            'last_name' => ' ',
+            'email' => $trx->user->email ?? null,
+            'phone' => null,
+            'notes' => $trx->trx_notes ?? null,
+        ];
+
+        $startTime = now()->format('Y-m-d H:i O');
+        $expiry = [
+            'start_time' => $startTime,
+            'duration' => 1,
+            'unit' => 'days'
+        ];
+
+        $payload = [
+            'transaction_details' => [
+                'order_id' => (string) ($trx->trx_invoice ?? $paymentLinkId),
+                'gross_amount' => (int) $trx->trx_total,
+                'payment_link_id' => $paymentLinkId,
+            ],
+            'customer_required' => true,
+            'usage_limit' => 1,
+            'expiry' => $expiry,
+            'enabled_payments' => ['credit_card', 'bca_va', 'indomaret'],
+            'item_details' => $itemDetails,
+            'customer_details' => $customer,
+            'enabled_payments' => ['gopay'],
+        ];
+
+        $url = $this->baseUrl . '/payment-links';
+
+        $response = Http::withBasicAuth($this->serverKey, '')
+            ->withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])
+            ->post($url, $payload);
+
+        if ($response->failed()) {
+            Log::error('Midtrans create payment link failed', [
+                'trx_id' => $trx->trx_id,
+                'payload' => $payload,
+                'response' => $response->json(),
+            ]);
+
+            return response()->json([
+                'message' => 'Gagal membuat payment link',
+                'detail' => $response->json(),
+            ], 500);
+        }
+
+        $resp = $response->json();
+
+        $payment = Payment::create([
+            'pay_transaction_id' => $trx->trx_id,
+            'pay_midtrans_id' => $resp['order_id'] ?? $paymentLinkId,
+            'pay_method' => 'midtrans_payment_link',
+            'pay_status' => '1',
+            'pay_amount' => (int) $trx->trx_total,
+            'pay_qr_url' => $resp['url'] ?? $resp['payment_link_url'] ?? null,
+            'pay_response' => json_encode($resp),
+        ]);
+
+        return response()->json([
+            'message' => 'Payment link dibuat',
+            'payment' => $payment,
+            'response' => $resp,
+        ], 201);
+    }
+
+    public function webhook(Request $request)
+    {
+        $payload = $request->all();
+        Log::info('Midtrans webhook');
+
+        if (isset($payload['signature_key'])) {
+            $orderId = $payload['order_id'] ?? '';
+            $statusCode = $payload['status_code'] ?? '';
+            $grossAmount = $payload['gross_amount'] ?? ($payload['transaction_details']['gross_amount'] ?? '');
+            $localSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $this->serverKey);
+
+            if (!hash_equals($localSignature, $payload['signature_key'])) {
+                Log::warning('Midtrans invalid signature', ['payload' => $payload, 'local' => $localSignature]);
+                return response()->json(['message' => 'Invalid signature'], 400);
+            }
+        }
+
+        $orderId = $payload['order_id'];
+        $transactionStatus = $payload['transaction_status'] ?? ($payload['status'] ?? null);
+        $orderId = $payload['order_id'] ?? '';
+        $transactionStatus = $payload['transaction_status'] ?? ($payload['status'] ?? null);
+
+        $baseOrderId = preg_replace('/-\d{10,}$/', '', $orderId);
+        $payment = Payment::where('pay_midtrans_id', $baseOrderId)->first();
+
+        if (! $payment) {
+            Log::warning('Payment not found for webhook', ['order_id' => $orderId]);
+            return response()->json(['message' => 'Payment not found'], 404);
+        }
+
+        if (in_array($transactionStatus, ['settlement', 'capture'])) {
+            $payment->update([
+                'pay_status' => '2',
+                'pay_paid_at' => now(),
+                'pay_response' => json_encode($payload),
+            ]);
+            $payment->transaction?->update(['trx_payment_status' => '2', 'trx_status' => '2']);
+        } elseif (in_array($transactionStatus, ['expire'])) {
+            $payment->update(['pay_status' => '3', 'pay_response' => json_encode($payload)]);
+            $payment->transaction?->update(['trx_payment_status' => '3']);
+        } elseif (in_array($transactionStatus, ['cancel', 'deny', 'failure'])) {
+            $payment->update(['pay_status' => '4', 'pay_response' => json_encode($payload)]);
+            $payment->transaction?->update(['trx_payment_status' => '4']);
+        } else {
+            $payment->update(['pay_response' => json_encode($payload)]);
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function delete_payment_link_system($orderId)
+    {
+        $url = $this->baseUrl . "/payment-links/{$orderId}";
+
+        $response = Http::withBasicAuth($this->serverKey, '')
+            ->delete($url);
+
+        if ($response->failed()) {
+            return response()->json(['message' => 'Delete failed', 'detail' => $response->json()], $response->status());
+        }
+
+        $payment = Payment::where('pay_midtrans_id', $orderId)->first();
+        if ($payment) $payment->update(['pay_status' => 'deleted']);
+
+        return response()->json(['message' => 'Deleted']);
     }
 }

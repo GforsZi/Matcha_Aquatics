@@ -15,7 +15,7 @@ import { edit } from '@/routes/password';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Password settings',
+        title: 'Pengaturan Kata Sandi',
         href: edit().url,
     },
 ];
@@ -31,8 +31,8 @@ export default function Password() {
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="Update password"
-                        description="Ensure your account is using a long, random password to stay secure"
+                        title="Ubah Kata Sandi"
+                        description="Pastikan akunmu menggunakan sandi yang aman."
                     />
 
                     <Form
@@ -61,7 +61,7 @@ export default function Password() {
                             <>
                                 <div className="grid gap-2">
                                     <Label htmlFor="current_password">
-                                        Current password
+                                        Sandi saat ini
                                     </Label>
 
                                     <Input
@@ -71,7 +71,7 @@ export default function Password() {
                                         type="password"
                                         className="mt-1 block w-full"
                                         autoComplete="current-password"
-                                        placeholder="Current password"
+                                        placeholder="Sandi saat ini"
                                     />
 
                                     <InputError
@@ -80,9 +80,7 @@ export default function Password() {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password">
-                                        New password
-                                    </Label>
+                                    <Label htmlFor="password">Sandi baru</Label>
 
                                     <Input
                                         id="password"
@@ -91,7 +89,7 @@ export default function Password() {
                                         type="password"
                                         className="mt-1 block w-full"
                                         autoComplete="new-password"
-                                        placeholder="New password"
+                                        placeholder="Sandi baru"
                                     />
 
                                     <InputError message={errors.password} />
@@ -99,7 +97,7 @@ export default function Password() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password_confirmation">
-                                        Confirm password
+                                        Konfimasi Sandi
                                     </Label>
 
                                     <Input
@@ -108,7 +106,7 @@ export default function Password() {
                                         type="password"
                                         className="mt-1 block w-full"
                                         autoComplete="new-password"
-                                        placeholder="Confirm password"
+                                        placeholder="Konfimasi Sandi"
                                     />
 
                                     <InputError
@@ -121,7 +119,7 @@ export default function Password() {
                                         disabled={processing}
                                         data-test="update-password-button"
                                     >
-                                        Save password
+                                        Simpan
                                     </Button>
 
                                     <Transition
@@ -132,7 +130,7 @@ export default function Password() {
                                         leaveTo="opacity-0"
                                     >
                                         <p className="text-sm text-neutral-600">
-                                            Saved
+                                            Tersimpan
                                         </p>
                                     </Transition>
                                 </div>
