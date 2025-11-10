@@ -104,6 +104,10 @@ export const columns: ColumnDef<product>[] = [
                     label = 'Diarsipkan';
                     color = 'text-gray-600';
                     break;
+                case '4':
+                    label = 'Diorder';
+                    color = 'text-amber-600';
+                    break;
             }
 
             return (

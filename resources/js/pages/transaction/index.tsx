@@ -21,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface transaction {
     id: number;
     trx_buyer_name: string;
-    trx_status: '1' | '2' | '3' | '4' | '5' | '6' | '7';
+    trx_status: '1' | '2' | '3' | '4';
     trx_created_at: Date;
     user: { name: string };
 }
@@ -85,38 +85,32 @@ export const columns: ColumnDef<transaction>[] = [
 
             switch (status) {
                 case '1':
-                    label = 'Tertunda';
-                    color = 'text-gray-500';
+                    label = 'Menunggu pembayaran';
+                    color = 'text-yellow-600';
                     break;
                 case '2':
-                    label = 'Terbayar';
-                    color = 'text-green-600';
-                    break;
-                case '3':
-                    label = 'Dikemas';
-                    color = 'text-warning-600';
-                    break;
-                case '4':
-                    label = 'Dikirim';
-                    color = 'text-cyan-600';
-                    break;
-                case '5':
-                    label = 'Terkirim';
+                    label = 'Pembayaran berhasil';
                     color = 'text-blue-600';
                     break;
-                case '6':
-                    label = 'Dibatalkan';
-                    color = 'text-red-600';
+                case '3':
+                    label = 'Menunggu pengiriman';
+                    color = 'text-yellow-600';
                     break;
-                case '7':
-                    label = 'Dikembalikan';
+                case '4':
+                    label = 'Pengiriman berhasil';
+                    color = 'text-blue-600';
+                    break;
+                case '5':
+                    label = 'Transaksi selesai';
+                    color = 'text-green-600';
+                    break;
+                case '6':
+                    label = 'Transaksi gagal';
                     color = 'text-red-600';
                     break;
             }
 
-            return (
-                <div className={`font-medium capitalize ${color}`}>{label}</div>
-            );
+            return <div className={`font-medium ${color}`}>{label}</div>;
         },
     },
     {

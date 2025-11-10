@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(Request $request): void
     {
         // disable this if projuct run on local
-        // URL::forceScheme('https');
+        URL::forceScheme('https');
         Inertia::share([
             // Data auth global
             'auth' => function () {

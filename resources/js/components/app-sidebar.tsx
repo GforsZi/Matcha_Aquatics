@@ -14,13 +14,13 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
+    Cog,
     FileChartColumnIncreasing,
     LayoutGrid,
     PackagePlus,
     PackageSearch,
     ShoppingCart,
     SquareUser,
-    Truck,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -51,14 +51,14 @@ const mainNavItems: NavItem[] = [
         icon: ShoppingCart,
     },
     {
-        title: 'Kelola Pengiriman',
-        href: '/manage/shipment',
-        icon: Truck,
-    },
-    {
         title: 'Kelola Laporan',
         href: '/manage/report',
         icon: FileChartColumnIncreasing,
+    },
+    {
+        title: 'Pengaturan Aplikasi',
+        href: '/manage/app_setting',
+        icon: Cog,
     },
 ];
 

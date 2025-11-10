@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -8,17 +9,19 @@ import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Detail Transaksi',
+        title: 'Payment link',
         href: '/manage/transaction',
     },
 ];
 
 export default function PaymentLink() {
     const [loading, setLoading] = useState(true);
+    const [link, setLink] = useState<string>();
     const [status, setStatus] = useState<'idle' | 'success' | 'failed'>('idle');
     const [message, setMessage] = useState<string>(
         'Membuat link pembayaran...',
     );
+    const [detailMessage, setDetailMessage] = useState<string>();
     const { transaction } = usePage<{
         transaction: {
             trx_id: number;
@@ -57,14 +60,16 @@ export default function PaymentLink() {
 
                 const data = await res.json();
 
-                if (data?.response.payment_url) {
+                if (data?.response?.payment_url != undefined) {
                     setStatus('success');
+                    setLink(data.response.payment_url);
                     setMessage('Link pembayaran berhasil dibuat.');
                     window.open(data.response.payment_url, '_blank');
                 } else {
                     setStatus('failed');
                     setMessage('Gagal membuat link pembayaran.');
                     console.error('Midtrans Error:', data);
+                    setDetailMessage(data?.detail.error_messages[0]);
                 }
             } catch (error: any) {
                 setStatus('failed');
@@ -87,7 +92,7 @@ export default function PaymentLink() {
                 <Head title="Membuat Link Pembayaran" />
                 <Toaster position="top-center" richColors closeButton />
 
-                <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+                <div className="flex h-full items-center justify-center px-4">
                     <Card className="w-full max-w-md shadow-md">
                         <CardHeader>
                             <CardTitle className="text-center text-lg font-semibold">
@@ -109,6 +114,14 @@ export default function PaymentLink() {
                                     <p className="font-medium text-green-700">
                                         {message}
                                     </p>
+                                    <Button
+                                        onClick={() =>
+                                            window.open(link, '_blank')
+                                        }
+                                        variant="outline"
+                                    >
+                                        Buka link
+                                    </Button>
                                 </>
                             )}
 
@@ -118,6 +131,15 @@ export default function PaymentLink() {
                                     <p className="font-medium text-red-600">
                                         {message}
                                     </p>
+                                    <p className="text-xs text-red-600">
+                                        {detailMessage}
+                                    </p>
+                                    <Button
+                                        onClick={() => window.location.reload()}
+                                        variant="outline"
+                                    >
+                                        Coba Lagi
+                                    </Button>
                                 </>
                             )}
                         </CardContent>

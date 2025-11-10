@@ -31,7 +31,9 @@ class ManageTransactionController extends Controller
 
     public function show($id)
     {
+
         $transaction = Transaction::with('products', 'payment', 'created_by', 'updated_by', 'deleted_by')->findOrFail($id);
+        dd($transaction->products->toArray());
         return Inertia::render('transaction/detail', compact('transaction'));
     }
 
@@ -95,7 +97,7 @@ class ManageTransactionController extends Controller
                         throw new \Exception('Terjadi kesalahan pada input transaksi');
                     }
                     $copy =
-                        Product::select('prd_status', 'prd_id')
+                        Product::select('prd_status', 'prd_id', 'prd_selled_at')
                         ->where('prd_id', $prd_id)
                         ->where('prd_status', '1')
                         ->findOrFail($prd_id);
@@ -103,8 +105,11 @@ class ManageTransactionController extends Controller
                     if (!$copy) {
                         throw new \Exception('Terdapat product yang telah dibeli');
                     }
-
-                    $copy->update(['prd_status' => '2']);
+                    if ($request->trx_payment_method == '1') {
+                        $copy->update(['prd_status' => '2', 'prd_selled_at' => now()]);
+                    } elseif ($request->trx_payment_method == '2') {
+                        $copy->update(['prd_status' => '4']);
+                    }
                 }
                 $transaction->products()->sync($validateDataProduct['product_id']);
                 if ($request->trx_payment_method == '1') {
@@ -213,7 +218,7 @@ class ManageTransactionController extends Controller
             'pay_method' => 'midtrans_payment_link',
             'pay_status' => '1',
             'pay_amount' => (int) $trx->trx_total,
-            'pay_qr_url' => $resp['url'] ?? $resp['payment_link_url'] ?? null,
+            'pay_qr_url' => $resp['url'] ?? $resp['payment_url'] ?? null,
             'pay_response' => json_encode($resp),
         ]);
 
@@ -248,27 +253,72 @@ class ManageTransactionController extends Controller
 
         $baseOrderId = preg_replace('/-\d{10,}$/', '', $orderId);
         $payment = Payment::where('pay_midtrans_id', $baseOrderId)->first();
+        $transaction = Transaction::with('products')->where('trx_invoice', $baseOrderId)->first();
 
         if (! $payment) {
             Log::warning('Payment not found for webhook', ['order_id' => $orderId]);
             return response()->json(['message' => 'Payment not found'], 404);
         }
+        $prd_status = '4';
 
-        if (in_array($transactionStatus, ['settlement', 'capture'])) {
+        if (in_array($transactionStatus, ['settlement'])) {
             $payment->update([
                 'pay_status' => '2',
                 'pay_paid_at' => now(),
                 'pay_response' => json_encode($payload),
+                'pay_method' => $payload['payment_type'],
             ]);
-            $payment->transaction?->update(['trx_payment_status' => '2', 'trx_status' => '2']);
+            $transaction->update(['trx_status' => '2', 'trx_payment' => (int) $payload['gross_amount']]);
+            $prd_status = '2';
+        } elseif (in_array($transactionStatus, ['capture'])) {
+            $payment->update([
+                'pay_status' => '3',
+                'pay_paid_at' => now(),
+                'pay_response' => json_encode($payload),
+                'pay_method' => $payload['payment_type'],
+            ]);
+            $transaction->update(['trx_status' => '2', 'trx_payment' => (int) $payload['gross_amount']]);
+            $prd_status = '2';
         } elseif (in_array($transactionStatus, ['expire'])) {
-            $payment->update(['pay_status' => '3', 'pay_response' => json_encode($payload)]);
-            $payment->transaction?->update(['trx_payment_status' => '3']);
-        } elseif (in_array($transactionStatus, ['cancel', 'deny', 'failure'])) {
             $payment->update(['pay_status' => '4', 'pay_response' => json_encode($payload)]);
-            $payment->transaction?->update(['trx_payment_status' => '4']);
+            $transaction->update(['trx_status' => '6']);
+            $prd_status = '3';
+        } elseif (in_array($transactionStatus, ['cancel'])) {
+            $payment->update(['pay_status' => '5', 'pay_response' => json_encode($payload)]);
+            $transaction->update(['trx_status' => '6']);
+            $prd_status = '3';
+        } elseif (in_array($transactionStatus, ['deny'])) {
+            $payment->update(['pay_status' => '6', 'pay_response' => json_encode($payload)]);
+            $transaction->update(['trx_status' => '6']);
+            $prd_status = '3';
+        } elseif (in_array($transactionStatus, ['failure'])) {
+            $payment->update(['pay_status' => '7', 'pay_response' => json_encode($payload)]);
+            $transaction->update(['trx_status' => '6']);
+            $prd_status = '3';
         } else {
             $payment->update(['pay_response' => json_encode($payload)]);
+            $prd_status = '4';
+            $transaction->update(['trx_status' => '1']);
+        }
+
+        foreach ($transaction->products as $prd) {
+            if ($prd == null) {
+                throw new \Exception('Terjadi kesalahan pada input transaksi');
+                Log::warning('product id is null');
+            }
+            $id = $prd->prd_id;
+            $copy =
+                Product::select('prd_status', 'prd_id', 'prd_selled_at')
+                ->findOrFail($id);
+
+            if (!$copy) {
+                Log::warning('data product is null');
+            }
+            if ($prd_status == '2') {
+                $copy->update(['prd_status' => $prd_status, 'prd_selled_at' => now()]);
+            } else {
+                $copy->update(['prd_status' => $prd_status]);
+            }
         }
 
         return response()->json(['ok' => true]);

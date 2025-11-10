@@ -376,6 +376,9 @@ export default function add() {
                                             <SelectItem value="1">
                                                 Aktif
                                             </SelectItem>
+                                            <SelectItem value="4">
+                                                Diorder
+                                            </SelectItem>
                                             <SelectItem value="2">
                                                 Terjual
                                             </SelectItem>

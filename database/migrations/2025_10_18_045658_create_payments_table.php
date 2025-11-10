@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('pay_transaction_id')->unsigned()->nullable();
             $table->string('pay_midtrans_id')->nullable();
             $table->string('pay_method')->nullable();
-            $table->enum('pay_status', ['1','2','3','4'])->default('1');
+            $table->enum('pay_status', ['1', '2', '3', '4', '5', '6', '7'])->default('1');
             $table->integer('pay_amount');
             $table->text('pay_qr_url')->nullable();
             $table->json('pay_response')->nullable();

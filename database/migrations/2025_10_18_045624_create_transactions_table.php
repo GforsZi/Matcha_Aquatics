@@ -22,13 +22,8 @@ return new class extends Migration
             $table->integer('trx_discount')->default(0);
             $table->integer('trx_payment')->nullable();
             $table->integer('trx_change')->nullable();
-            $table->integer('trx_shipping_cost')->default(0)->nullable();
             $table->enum('trx_payment_method', ['1', '2']);
-            $table->enum('trx_status', ['1', '2', '3', '4', '5', '6', '7'])->default('1');
-            $table->string('trx_shipping_service')->nullable();
-            $table->string('trx_shipping_courier')->nullable();
-            $table->string('trx_tracking_code')->nullable();
-            $table->string('trx_qr_reference')->nullable();
+            $table->enum('trx_status', ['1', '2', '3', '4', '5', '6'])->default('1');
             $table->text('trx_notes')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('trx_created_by')->unsigned()->nullable();

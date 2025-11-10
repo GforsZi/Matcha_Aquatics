@@ -1,4 +1,6 @@
 import { ChartArea } from '@/components/chart-area';
+import { ChartBarInteractive } from '@/components/chart-bar-interactive';
+import { ChartRadarDots } from '@/components/chart-radar-dots';
 import { SectionCards } from '@/components/section-cards';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
@@ -34,6 +36,14 @@ export default function Dashboard() {
                     <SectionCards />
                     <div className="px-4 lg:px-6">
                         <ChartArea />
+                    </div>
+                </div>
+                <div className="flex flex-col gap-2 px-4 md:flex-row md:gap-6 md:pb-6 lg:px-6">
+                    <div className="flex w-full justify-center md:w-1/3">
+                        <ChartRadarDots />
+                    </div>
+                    <div className="md:w-2/3">
+                        <ChartBarInteractive />
                     </div>
                 </div>
             </div>

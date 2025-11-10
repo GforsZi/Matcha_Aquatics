@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('usr_lg_user_id')->unsigned()->nullable();
             $table->ipAddress('usr_lg_ip_address')->nullable();
             $table->string('usr_lg_user_agent')->nullable();
+            $table->string('usr_lg_device_type', 50)->nullable();
             $table->timestamp('usr_lg_logged_in_at')->useCurrent();
             $table->timestamps();
             $table->unsignedBigInteger('usr_lg_created_by')->unsigned()->nullable();

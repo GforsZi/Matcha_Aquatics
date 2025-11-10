@@ -42,6 +42,7 @@ export default function index() {
             prd_description: string;
             prd_status: string;
             prd_price: number;
+            prd_selled_at: Date;
             prd_created_at: Date;
             prd_updated_at: Date;
             prd_deleted_at: Date;
@@ -76,6 +77,10 @@ export default function index() {
         case '3':
             label = 'Diarsipkan';
             color = 'text-gray-600';
+            break;
+        case '4':
+            label = 'Diorder';
+            color = 'text-amber-600';
             break;
     }
     return (
@@ -122,6 +127,12 @@ export default function index() {
                                     <TableHead>Status</TableHead>
                                     <TableCell className={color}>
                                         {label}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Dijual pada</TableHead>
+                                    <TableCell>
+                                        {formatDate(product.prd_selled_at)}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
