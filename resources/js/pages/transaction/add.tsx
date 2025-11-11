@@ -35,7 +35,9 @@ export default function add() {
     const { processing } = useForm();
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
-    const [paymentMethod, setPaymentMethod] = useState<'1' | '2' | ''>('');
+    const [paymentMethod, setPaymentMethod] = useState<
+        '1' | '2' | '3' | '4' | ''
+    >('');
 
     useEffect(() => {
         if (flash?.success) {
@@ -100,7 +102,7 @@ export default function add() {
                             name="trx_payment_method"
                             value={paymentMethod}
                             onValueChange={(value) =>
-                                setPaymentMethod(value as '1' | '2')
+                                setPaymentMethod(value as '1' | '2' | '3' | '4')
                             }
                         >
                             <SelectTrigger className="w-full">
@@ -111,6 +113,12 @@ export default function add() {
                                     <SelectLabel>Pilih metode</SelectLabel>
                                     <SelectItem value="1">Tunai</SelectItem>
                                     <SelectItem value="2">Non-Tunai</SelectItem>
+                                    <SelectItem value="3">
+                                        Tunai + Pengiriman
+                                    </SelectItem>
+                                    <SelectItem value="4">
+                                        Non-Tunai + Pengiriman
+                                    </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

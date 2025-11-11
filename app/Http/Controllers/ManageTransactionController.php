@@ -33,7 +33,7 @@ class ManageTransactionController extends Controller
     {
 
         $transaction = Transaction::with('products', 'payment', 'created_by', 'updated_by', 'deleted_by')->findOrFail($id);
-        dd($transaction->products->toArray());
+        dd($transaction->toArray());
         return Inertia::render('transaction/detail', compact('transaction'));
     }
 

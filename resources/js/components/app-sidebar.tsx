@@ -57,7 +57,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Pengaturan Aplikasi',
-        href: '/manage/app_setting',
+        href: '/app/setting',
         icon: Cog,
     },
 ];

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { usePage } from '@inertiajs/react';
 import { Plus, Search, X } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
+import ShippingCostCalculator from './shipping-cost-calculator';
 
 type ProductType = {
     prd_id: number;
@@ -274,6 +275,21 @@ const ProductSelector: React.FC<Props> = ({
                     />
                 </div>
             )}
+            {paymentMethod == '3' && (
+                <div className="mt-3">
+                    <label className="text-sm font-medium">Pembayaran</label>
+                    <Input
+                        type="number"
+                        name="trx_payment"
+                        value={paidAmount}
+                        onChange={(e) =>
+                            setPaidAmount(Number(e.target.value) || 0)
+                        }
+                        placeholder="Masukkan jumlah uang dibayar"
+                        className="mt-1"
+                    />
+                </div>
+            )}
 
             {paidAmount > 0 && (
                 <div className="mt-3 flex items-center justify-between">
@@ -288,6 +304,8 @@ const ProductSelector: React.FC<Props> = ({
                     <Input name="trx_change" value={change} type="hidden" />
                 </div>
             )}
+            {paymentMethod == '3' && <ShippingCostCalculator />}
+            {paymentMethod == '4' && <ShippingCostCalculator />}
         </div>
     );
 };

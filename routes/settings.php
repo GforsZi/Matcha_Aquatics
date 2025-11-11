@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\Apps\MapController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
@@ -25,4 +26,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
+});
+
+Route::middleware(['auth', 'role:seller'])->group(function () {
+    Route::redirect('/app/setting', '/app/setting/location');
+
+    Route::get('/app/setting/location', [MapController::class, 'index']);
+    Route::post('/app/setting/location', [MapController::class, 'edit_systems']);
 });

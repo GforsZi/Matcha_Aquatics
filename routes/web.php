@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ManageAccountController;
 use App\Http\Controllers\ManageCategoryController;
 use App\Http\Controllers\ManageProductController;
 use App\Http\Controllers\ManageTransactionController;
+use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -14,9 +17,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
 
     Route::get('/manage/user', [ManageAccountController::class, 'index']);
     Route::get('/manage/user/{id}/detail', [ManageAccountController::class, 'show']);
@@ -40,9 +41,7 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
-    Route::get('/home', function () {
-        return Inertia::render('dashboard');
-    });
+    Route::get('/home', [UserController::class, 'index']);
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
@@ -65,8 +64,13 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::post('/system/transaction/add/offline', [ManageTransactionController::class, 'add_offline_system']);
     Route::put('/system/transaction/{id}/edit', [ManageTransactionController::class, 'edit_system']);
     Route::delete('/system/transaction/{id}/delete', [ManageTransactionController::class, 'delete_system']);
+
     Route::post('/payment/create/{trx_id}', [ManageTransactionController::class, 'payment_link_system']);
     Route::delete('/payment/{order_id}', [ManageTransactionController::class, 'delete_payment_link_system']);
+
+    Route::get('/shipping/provinces', [ShippingController::class, 'provinces']);
+    Route::get('/shipping/cities/{province}', [ShippingController::class, 'cities']);
+    Route::post('/shipping/cost', [ShippingController::class, 'cost']);
 });
 Route::withoutMiddleware([VerifyCsrfToken::class])->post('/payment/webhook', [ManageTransactionController::class, 'webhook']);
 
