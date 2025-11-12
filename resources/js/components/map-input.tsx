@@ -1,11 +1,15 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
+import { Label } from '@/components/ui/label';
 import L, { LeafletMouseEvent } from 'leaflet';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, X } from 'lucide-react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 
 // Pastikan leaflet CSS sudah diimport di app.tsx
+import { Input } from '@/components/ui/input';
 import 'leaflet/dist/leaflet.css';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Konfigurasi icon agar tidak error
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -15,6 +19,29 @@ L.Icon.Default.mergeOptions({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
+
+interface Province {
+    id: string;
+    name: string;
+}
+
+interface City {
+    id: string;
+    name: string;
+    type?: string;
+}
+
+interface Cost {
+    service: string;
+    description: string;
+    cost: { value: number; etd: string; note: string }[];
+}
+
+interface ShippingCostCalculatorProps {
+    defaultOriginId?: string;
+    defaultDestinationId?: string;
+    onCostSelected?: (cost: Cost) => void;
+}
 
 function MapClickHandler() {
     const map = useMap();
@@ -52,27 +79,201 @@ function MapClickHandler() {
     return null;
 }
 
-export default function MapInput() {
+export default function MapInput({
+    defaultOriginId,
+    defaultDestinationId,
+    onCostSelected,
+}: ShippingCostCalculatorProps) {
+    const [provinces, setProvinces] = useState<Province[]>([]);
+    const [originCities, setOriginCities] = useState<City[]>([]);
+    const [destinationProvince, setDestinationProvince] = useState('');
+    const [destinationCities, setDestinationCities] = useState<City[]>([]);
+    const [originCity, setOriginCity] = useState(defaultOriginId || '');
+    const [destinationCity, setDestinationCity] = useState(
+        defaultDestinationId || '',
+    );
+    const [originProvince, setOriginProvince] = useState('');
+    const [queryProvOrigin, setQueryProvOrigin] = useState('');
+    const [queryCityOrigin, setQueryCityOrigin] = useState('');
     const position: [number, number] = [-6.2, 106.816666];
+
+    const [showProvList, setShowProvList] = useState<
+        'origin' | 'destination' | null
+    >(null);
+    const [showCityList, setShowCityList] = useState<
+        'origin' | 'destination' | null
+    >(null);
+
+    const ref = useRef<HTMLDivElement>(null);
+
+    const getShipping = () => {
+        fetch('/shipping/provinces')
+            .then((res) => res.json())
+            .then(setProvinces);
+    };
+
+    const handleProvinceChange = async (
+        provinceId: string,
+        type: 'origin' | 'destination',
+    ) => {
+        const res = await fetch(`/shipping/cities/${provinceId}`);
+        const data = await res.json();
+
+        if (type === 'origin') {
+            setOriginProvince(provinceId);
+            setOriginCities(data);
+        } else {
+            setDestinationProvince(provinceId);
+            setDestinationCities(data);
+        }
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setShowProvList(null);
+                setShowCityList(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () =>
+            document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <Card className="w-full">
             <CardContent className="pb-0">
-                <div className="mb-4 flex gap-4">
-                    <input
-                        id="lat-input"
-                        type="text"
-                        placeholder="Latitude"
-                        readOnly
-                        className="w-1/2 rounded-md border px-3 py-2 text-sm"
-                    />
-                    <input
-                        id="lng-input"
-                        type="text"
-                        placeholder="Longitude"
-                        readOnly
-                        className="w-1/2 rounded-md border px-3 py-2 text-sm"
-                    />
+                <div className="mb-4">
+                    <Label className="mb-1">Kota Asal</Label>
+
+                    {/* Provinsi Asal */}
+                    <div className="relative mb-2">
+                        <Input
+                            type="text"
+                            placeholder="Cari provinsi..."
+                            value={queryProvOrigin}
+                            onChange={(e) => setQueryProvOrigin(e.target.value)}
+                            onFocus={() => {
+                                setShowProvList('origin');
+                                if (provinces.length === 0) {
+                                    getShipping();
+                                }
+                            }}
+                            onBlur={() => {
+                                setTimeout(() => setShowProvList(null), 150);
+                            }}
+                            className="pr-10"
+                        />
+                        {queryProvOrigin && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="absolute top-1/2 right-1 -translate-y-1/2"
+                                onClick={() => setQueryProvOrigin('')}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        )}
+
+                        {showProvList === 'origin' && (
+                            <div className="absolute z-50 mt-1 w-full rounded-xl border bg-white shadow-md">
+                                <Command>
+                                    <CommandGroup>
+                                        {provinces
+                                            .filter((p) =>
+                                                p.name
+                                                    .toLowerCase()
+                                                    .includes(
+                                                        queryProvOrigin.toLowerCase(),
+                                                    ),
+                                            )
+                                            .map((prov) => (
+                                                <CommandItem
+                                                    key={`origin-prov-${prov.id}`}
+                                                    onSelect={() => {
+                                                        setQueryProvOrigin(
+                                                            prov.name,
+                                                        );
+                                                        handleProvinceChange(
+                                                            prov.id,
+                                                            'origin',
+                                                        );
+                                                        setShowProvList(null);
+                                                    }}
+                                                >
+                                                    {prov.name}
+                                                </CommandItem>
+                                            ))}
+                                    </CommandGroup>
+                                </Command>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Kota Asal */}
+                    <div className="relative">
+                        <Input
+                            type="text"
+                            placeholder="Cari kota..."
+                            value={queryCityOrigin}
+                            onChange={(e) => setQueryCityOrigin(e.target.value)}
+                            onFocus={() => {
+                                setShowCityList('origin');
+                                if (provinces.length === 0) {
+                                    getShipping();
+                                }
+                            }}
+                            onBlur={() => {
+                                setTimeout(() => setShowCityList(null), 150);
+                            }}
+                            className="pr-10"
+                        />
+                        {queryCityOrigin && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="absolute top-1/2 right-1 -translate-y-1/2"
+                                onClick={() => setQueryCityOrigin('')}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        )}
+
+                        {showCityList === 'origin' && (
+                            <div className="absolute z-50 mt-1 w-full rounded-xl border bg-white shadow-md">
+                                <Command>
+                                    <CommandGroup>
+                                        {originCities
+                                            .filter((c) =>
+                                                c.name
+                                                    .toLowerCase()
+                                                    .includes(
+                                                        queryCityOrigin.toLowerCase(),
+                                                    ),
+                                            )
+                                            .map((city) => (
+                                                <CommandItem
+                                                    key={`origin-city-${city.id}`}
+                                                    onSelect={() => {
+                                                        setQueryCityOrigin(
+                                                            city.type
+                                                                ? `${city.type} ${city.name}`
+                                                                : city.name,
+                                                        );
+                                                        setOriginCity(city.id);
+                                                        setShowCityList(null);
+                                                    }}
+                                                >
+                                                    {city.type
+                                                        ? `${city.type} ${city.name}`
+                                                        : city.name}
+                                                </CommandItem>
+                                            ))}
+                                    </CommandGroup>
+                                </Command>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="mx-auto aspect-square max-h-[250px] w-full overflow-hidden rounded-xl border sm:max-h-[250px]">
                     <MapContainer
@@ -93,6 +294,28 @@ export default function MapInput() {
                         <MapClickHandler />
                     </MapContainer>
                 </div>
+                <div className="mt-4 mb-2 flex gap-4">
+                    <Input
+                        id="lat-input"
+                        type="text"
+                        placeholder="Latitude"
+                        readOnly
+                        className="w-1/2 rounded-md border px-3 py-2 text-sm"
+                    />
+                    <Input
+                        id="lng-input"
+                        type="text"
+                        placeholder="Longitude"
+                        readOnly
+                        className="w-1/2 rounded-md border px-3 py-2 text-sm"
+                    />
+                </div>
+                <Input
+                    id="lng-input"
+                    type="text"
+                    placeholder="Nama Toko"
+                    className="w-full rounded-md border px-3 py-2 text-sm"
+                />
             </CardContent>
 
             <CardFooter className="flex-col gap-2 text-sm">

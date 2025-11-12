@@ -34,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
+                        'usr_latitude' => $user->usr_latitude,
+                        'usr_longtitude' => $user->usr_longtitude,
+                        'usr_no_wa' => $user->usr_no_wa,
                         'avatar' => $user->usr_foto_profile,
                     ] : null,
                 ];

@@ -34,6 +34,9 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    usr_no_wa: string;
+    usr_latitude: string;
+    usr_longtitude: string;
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;

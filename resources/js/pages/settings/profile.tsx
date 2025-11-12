@@ -5,6 +5,7 @@ import { Form, Head, usePage } from '@inertiajs/react';
 
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
+import MapInputUser from '@/components/map-input-user';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -64,6 +65,30 @@ export default function Profile({
                                     <InputError
                                         className="mt-2"
                                         message={errors.name}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="wa">Nomor WhatsApp</Label>
+
+                                    <Input
+                                        id="wa"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.usr_no_wa}
+                                        name="usr_no_wa"
+                                        autoComplete="usr_no_wa"
+                                        placeholder="Nomor WhatsApp"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.usr_no_wa}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label>Lokasi Anda</Label>
+                                    <MapInputUser
+                                        Longitude={auth.user.usr_latitude}
+                                        Latitude={auth.user.usr_longtitude}
                                     />
                                 </div>
 

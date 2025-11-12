@@ -18,7 +18,9 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-
+            'usr_latitude' => ['nullable', 'string'],
+            'usr_longtitude' => ['nullable', 'string'],
+            'usr_no_wa' => ['nullable', 'string', 'phone:ID', 'regex:/^[0-9]+$/'],
         ];
     }
 }

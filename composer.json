@@ -20,6 +20,7 @@
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
         "midtrans/midtrans-php": "^2.6",
+        "propaganistas/laravel-phone": "^6.0",
         "spatie/laravel-permission": "^6.21"
     },
     "require-dev": {

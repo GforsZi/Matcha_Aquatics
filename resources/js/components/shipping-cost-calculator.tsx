@@ -83,11 +83,11 @@ export default function ShippingCostCalculator({
 
     const ref = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+    const getShipping = () => {
         fetch('/shipping/provinces')
             .then((res) => res.json())
             .then(setProvinces);
-    }, []);
+    };
 
     const handleProvinceChange = async (
         provinceId: string,
@@ -180,7 +180,15 @@ export default function ShippingCostCalculator({
                             placeholder="Cari provinsi..."
                             value={queryProvOrigin}
                             onChange={(e) => setQueryProvOrigin(e.target.value)}
-                            onFocus={() => setShowProvList('origin')}
+                            onFocus={() => {
+                                setShowProvList('origin');
+                                if (provinces.length === 0) {
+                                    getShipping();
+                                }
+                            }}
+                            onBlur={() => {
+                                setTimeout(() => setShowProvList(null), 150);
+                            }}
                             className="pr-10"
                         />
                         {queryProvOrigin && (
@@ -237,6 +245,9 @@ export default function ShippingCostCalculator({
                             value={queryCityOrigin}
                             onChange={(e) => setQueryCityOrigin(e.target.value)}
                             onFocus={() => setShowCityList('origin')}
+                            onBlur={() => {
+                                setTimeout(() => setShowCityList(null), 150);
+                            }}
                             className="pr-10"
                         />
                         {queryCityOrigin && (
@@ -300,7 +311,15 @@ export default function ShippingCostCalculator({
                             onChange={(e) =>
                                 setQueryProvDestination(e.target.value)
                             }
-                            onFocus={() => setShowProvList('destination')}
+                            onFocus={() => {
+                                setShowProvList('destination');
+                                if (provinces.length === 0) {
+                                    getShipping();
+                                }
+                            }}
+                            onBlur={() => {
+                                setTimeout(() => setShowProvList(null), 150);
+                            }}
                             className="pr-10"
                         />
                         {queryProvDestination && (
@@ -359,6 +378,9 @@ export default function ShippingCostCalculator({
                                 setQueryCityDestination(e.target.value)
                             }
                             onFocus={() => setShowCityList('destination')}
+                            onBlur={() => {
+                                setTimeout(() => setShowCityList(null), 150);
+                            }}
                             className="pr-10"
                         />
                         {queryCityDestination && (

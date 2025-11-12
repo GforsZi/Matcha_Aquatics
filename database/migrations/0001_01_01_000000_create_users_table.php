@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('usr_google_id')->nullable();
             $table->string('usr_foto_profile')->nullable();
+            $table->string('usr_latitude')->nullable();
+            $table->string('usr_longtitude')->nullable();
+            $table->string('usr_no_wa')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->unsignedBigInteger('usr_created_by')->unsigned()->nullable();

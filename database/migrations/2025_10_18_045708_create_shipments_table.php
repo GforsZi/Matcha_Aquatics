@@ -20,10 +20,12 @@ return new class extends Migration
             $table->string('shp_service')->nullable();
             $table->integer('shp_cost')->nullable();
             $table->integer('shp_weight')->nullable();
-            $table->string('shp_tracking_code')->nullable();
-            $table->enum('shp_status', ['1', '2', '3', '4', '5'])->default('1');
-            $table->json('shp_tracking_payload',)->nullable();
+            // $table->enum('shp_status', ['1', '2', '3', '4', '5'])->default('1');
             $table->string('shp_tracking_url')->nullable();
+            $table->string('shp_origin_latitude')->nullable();
+            $table->string('shp_origin_longtitude')->nullable();
+            $table->string('shp_destination_latitude')->nullable();
+            $table->string('shp_destination_longtitude')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('shp_created_by')->unsigned()->nullable();
             $table->unsignedBigInteger('shp_deleted_by')->unsigned()->nullable();
