@@ -87,8 +87,19 @@ export default function Profile({
                                 <div className="grid gap-2">
                                     <Label>Lokasi Anda</Label>
                                     <MapInputUser
-                                        Longitude={auth.user.usr_latitude}
-                                        Latitude={auth.user.usr_longtitude}
+                                        Latitude={
+                                            auth.user.usr_latitude ||
+                                            '-6.922480'
+                                        }
+                                        Longitude={
+                                            auth.user.usr_longtitude ||
+                                            '107.606223'
+                                        }
+                                        Provice_name={
+                                            auth.user.usr_provice_name
+                                        }
+                                        City_name={auth.user.usr_city_name}
+                                        City_id={auth.user.usr_city_id}
                                     />
                                 </div>
 

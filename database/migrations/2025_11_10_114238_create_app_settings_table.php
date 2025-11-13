@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('app_settings', function (Blueprint $table) {
             $table->bigIncrements('app_stg_id');
-            $table->string('app_stg_title')->unique();
-            $table->string('app_stg_value')->unique();
+            $table->string('app_stg_title');
+            $table->string('app_stg_value');
             $table->timestamps();
             $table->unsignedBigInteger('app_stg_created_by')->unsigned()->nullable();
             $table->unsignedBigInteger('app_stg_deleted_by')->unsigned()->nullable();

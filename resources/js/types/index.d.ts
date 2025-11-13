@@ -37,6 +37,9 @@ export interface User {
     usr_no_wa: string;
     usr_latitude: string;
     usr_longtitude: string;
+    usr_provice_name: string;
+    usr_city_name: string;
+    usr_city_id: string;
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;

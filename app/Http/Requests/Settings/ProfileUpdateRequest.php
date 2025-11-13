@@ -21,6 +21,9 @@ class ProfileUpdateRequest extends FormRequest
             'usr_latitude' => ['nullable', 'string'],
             'usr_longtitude' => ['nullable', 'string'],
             'usr_no_wa' => ['nullable', 'string', 'phone:ID', 'regex:/^[0-9]+$/'],
+            'usr_provice_name' => ['nullable', 'string'],
+            'usr_city_name' => ['nullable', 'string'],
+            'usr_city_id' => ['nullable', 'string']
         ];
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Settings\Apps\MapController;
+use App\Http\Controllers\Settings\Apps\SellerController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
@@ -32,5 +33,7 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::redirect('/app/setting', '/app/setting/location');
 
     Route::get('/app/setting/location', [MapController::class, 'index']);
-    Route::post('/app/setting/location', [MapController::class, 'edit_systems']);
+    Route::post('/app/setting/location', [MapController::class, 'edit_system']);
+    Route::get('/app/setting/seller', [SellerController::class, 'index']);
+    Route::post('/app/setting/seller', [SellerController::class, 'edit_system']);
 });

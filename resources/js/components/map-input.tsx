@@ -1,13 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
-import { Label } from '@/components/ui/label';
 import L, { LeafletMouseEvent } from 'leaflet';
-import { TrendingUp, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 
 // Pastikan leaflet CSS sudah diimport di app.tsx
 import { Input } from '@/components/ui/input';
+import { useForm } from '@inertiajs/react';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 
@@ -41,48 +41,18 @@ interface ShippingCostCalculatorProps {
     defaultOriginId?: string;
     defaultDestinationId?: string;
     onCostSelected?: (cost: Cost) => void;
-}
-
-function MapClickHandler() {
-    const map = useMap();
-
-    useEffect(() => {
-        const handleClick = (e: LeafletMouseEvent) => {
-            const lat = e.latlng.lat.toFixed(6);
-            const lng = e.latlng.lng.toFixed(6);
-
-            // Isi input HTML (jika elemen ada)
-            const latInput = document.getElementById(
-                'lat-input',
-            ) as HTMLInputElement | null;
-            const lngInput = document.getElementById(
-                'lng-input',
-            ) as HTMLInputElement | null;
-            if (latInput && lngInput) {
-                latInput.value = lat;
-                lngInput.value = lng;
-            }
-
-            // Tampilkan popup pada lokasi yang diklik
-            L.popup()
-                .setLatLng(e.latlng)
-                .setContent(`Location:<br>${lat}, ${lng}`)
-                .openOn(map);
-        };
-
-        map.on('click', handleClick);
-        return () => {
-            map.off('click', handleClick);
-        };
-    }, [map]);
-
-    return null;
+    Latitude?: string;
+    Longitude?: string;
+    Name?: string;
 }
 
 export default function MapInput({
     defaultOriginId,
     defaultDestinationId,
     onCostSelected,
+    Longitude = '107.606223',
+    Latitude = '-6.922480',
+    Name = '',
 }: ShippingCostCalculatorProps) {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [originCities, setOriginCities] = useState<City[]>([]);
@@ -95,7 +65,55 @@ export default function MapInput({
     const [originProvince, setOriginProvince] = useState('');
     const [queryProvOrigin, setQueryProvOrigin] = useState('');
     const [queryCityOrigin, setQueryCityOrigin] = useState('');
-    const position: [number, number] = [-6.2, 106.816666];
+    const [varLatitude, setVarLatitude] = useState(Latitude);
+    const [varLongitude, setVarLongitude] = useState(Longitude);
+
+    const { data, setData } = useForm({
+        name: Name,
+    });
+    const position: [number, number] = [Number(Latitude), Number(Longitude)];
+    useEffect(() => {
+        if (!Latitude || !Longitude) {
+            setVarLatitude('-6.922480');
+            setVarLongitude('107.606223');
+        }
+    }, [Latitude, Longitude]);
+
+    function MapClickHandler() {
+        const map = useMap();
+
+        useEffect(() => {
+            const handleClick = (e: LeafletMouseEvent) => {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+
+                const latInput = document.getElementById(
+                    'lat-input',
+                ) as HTMLInputElement | null;
+                const lngInput = document.getElementById(
+                    'lng-input',
+                ) as HTMLInputElement | null;
+                if (latInput && lngInput) {
+                    latInput.value = lat;
+                    lngInput.value = lng;
+                    setVarLatitude(latInput.value);
+                    setVarLongitude(lngInput.value);
+                }
+
+                L.popup()
+                    .setLatLng(e.latlng)
+                    .setContent(`Location:<br>${lat}, ${lng}`)
+                    .openOn(map);
+            };
+
+            map.on('click', handleClick);
+            return () => {
+                map.off('click', handleClick);
+            };
+        }, [map]);
+
+        return null;
+    }
 
     const [showProvList, setShowProvList] = useState<
         'origin' | 'destination' | null
@@ -144,8 +162,6 @@ export default function MapInput({
         <Card className="w-full">
             <CardContent className="pb-0">
                 <div className="mb-4">
-                    <Label className="mb-1">Kota Asal</Label>
-
                     {/* Provinsi Asal */}
                     <div className="relative mb-2">
                         <Input
@@ -299,34 +315,31 @@ export default function MapInput({
                         id="lat-input"
                         type="text"
                         placeholder="Latitude"
+                        value={varLatitude}
                         readOnly
+                        name="app_location_latitude"
                         className="w-1/2 rounded-md border px-3 py-2 text-sm"
                     />
                     <Input
                         id="lng-input"
                         type="text"
+                        value={varLongitude}
                         placeholder="Longitude"
                         readOnly
+                        name="app_location_longitude"
                         className="w-1/2 rounded-md border px-3 py-2 text-sm"
                     />
                 </div>
                 <Input
                     id="lng-input"
                     type="text"
+                    value={data.name}
+                    onChange={(e) => setData('name', e.target.value)}
+                    name="app_location_name"
                     placeholder="Nama Toko"
                     className="w-full rounded-md border px-3 py-2 text-sm"
                 />
             </CardContent>
-
-            <CardFooter className="flex-col gap-2 text-sm">
-                <div className="flex items-center gap-2 leading-none font-medium">
-                    Showing latest updated markers{' '}
-                    <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                    Last updated: November 2025
-                </div>
-            </CardFooter>
         </Card>
     );
 }

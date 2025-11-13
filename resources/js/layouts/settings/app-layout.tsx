@@ -14,7 +14,7 @@ const sidebarNavItems: NavItem[] = [
     },
     {
         title: 'Nomor Penjual',
-        href: '/app/setting/no_seller',
+        href: '/app/setting/seller',
         icon: null,
     },
 ];

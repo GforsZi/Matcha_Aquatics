@@ -77,11 +77,11 @@ class ManageAccountController extends Controller
 
             return redirect('/manage/user')->with([
                 'success' => 'Akun berhasil dibuat.',
-            ]);
+            ])->setStatusCode(303);
         } catch (\Throwable $th) {
             return redirect('/manage/user/add')->with([
                 'error' => $th->getMessage() . ' | akun gagal dibuat.',
-            ]);
+            ])->setStatusCode(303);
         }
     }
 

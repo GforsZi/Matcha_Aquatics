@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('usr_foto_profile')->nullable();
             $table->string('usr_latitude')->nullable();
             $table->string('usr_longtitude')->nullable();
+            $table->string('usr_provice_name')->nullable();
+            $table->string('usr_city_name')->nullable();
+            $table->string('usr_city_id')->nullable();
             $table->string('usr_no_wa')->nullable();
             $table->rememberToken();
             $table->timestamps();
