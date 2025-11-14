@@ -8,13 +8,22 @@ interface User {
     usr_id: number;
     name: string;
     email: string;
+    usr_provice_name: string;
+    usr_city_name: string;
+    usr_city_id: string;
 }
 
 interface Props {
-    name?: string; // 👈 untuk dikirim ke backend
+    name?: string;
     value?: string;
     defaultId?: number | null;
-    onChange?: (id: number | null, name: string | null) => void;
+    onChange?: (
+        id: number | null,
+        name: string | null,
+        provice_name: string,
+        city_name: string,
+        city_id: string,
+    ) => void;
 }
 
 const UserSearchInput: React.FC<Props> = ({
@@ -62,14 +71,20 @@ const UserSearchInput: React.FC<Props> = ({
         setQuery(user.name);
         setSelectedId(user.usr_id);
         setShowList(false);
-        onChange?.(user.usr_id, user.name);
+        onChange?.(
+            user.usr_id,
+            user.name,
+            user.usr_provice_name,
+            user.usr_city_name,
+            user.usr_city_id,
+        );
     };
 
     const handleClear = () => {
         setQuery('');
         setSelectedId(null);
         setUsers([]);
-        onChange?.(null, null);
+        onChange?.(null, null, '', '', '');
     };
 
     return (

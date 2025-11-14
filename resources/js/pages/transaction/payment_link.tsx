@@ -47,7 +47,7 @@ export default function PaymentLink() {
         const createPayment = async () => {
             try {
                 const res = await fetch(
-                    `/payment/create/${transaction.trx_id}`,
+                    `/system/payment/create/${transaction.trx_id}`,
                     {
                         method: 'POST',
                         headers: {

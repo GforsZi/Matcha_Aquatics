@@ -31,7 +31,7 @@ export default function Profile({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
+            <Head title="Pengaturan Profil" />
 
             <SettingsLayout>
                 <div className="space-y-6">

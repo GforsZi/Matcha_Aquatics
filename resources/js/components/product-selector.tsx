@@ -27,11 +27,23 @@ type ProductType = {
 interface Props {
     name?: string;
     paymentMethod?: string;
+    Origin_Provice_name?: string;
+    Origin_City_name?: string;
+    Origin_City_id?: string;
+    Destination_Provice_name?: string;
+    Destination_City_name?: string;
+    Destination_City_id?: string;
 }
 
 const ProductSelector: React.FC<Props> = ({
     name = 'product_id[]',
     paymentMethod,
+    Origin_Provice_name,
+    Origin_City_name,
+    Origin_City_id,
+    Destination_Provice_name,
+    Destination_City_name,
+    Destination_City_id,
 }) => {
     const { assetBaseUrl } = usePage().props;
     const asset = (path: string) => `${assetBaseUrl}${path}`;
@@ -304,8 +316,26 @@ const ProductSelector: React.FC<Props> = ({
                     <Input name="trx_change" value={change} type="hidden" />
                 </div>
             )}
-            {paymentMethod == '3' && <ShippingCostCalculator />}
-            {paymentMethod == '4' && <ShippingCostCalculator />}
+            {paymentMethod == '3' && (
+                <ShippingCostCalculator
+                    defaultOriginProviceName={Origin_Provice_name}
+                    defaultOriginCityName={Origin_City_name}
+                    defaultOriginId={Origin_City_id}
+                    defaultDestinationProviceName={Destination_Provice_name}
+                    defaultDestinationCityName={Destination_City_name}
+                    defaultDestinationId={Destination_City_id}
+                />
+            )}
+            {paymentMethod == '4' && (
+                <ShippingCostCalculator
+                    defaultOriginProviceName={Origin_Provice_name}
+                    defaultOriginCityName={Origin_City_name}
+                    defaultOriginId={Origin_City_id}
+                    defaultDestinationProviceName={Destination_Provice_name}
+                    defaultDestinationCityName={Destination_City_name}
+                    defaultDestinationId={Destination_City_id}
+                />
+            )}
         </div>
     );
 };

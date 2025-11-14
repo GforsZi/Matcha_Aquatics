@@ -44,6 +44,9 @@ interface ShippingCostCalculatorProps {
     Latitude?: string;
     Longitude?: string;
     Name?: string;
+    Provice_name: string;
+    City_name: string;
+    City_id: string;
 }
 
 export default function MapInput({
@@ -53,12 +56,15 @@ export default function MapInput({
     Longitude = '107.606223',
     Latitude = '-6.922480',
     Name = '',
+    Provice_name,
+    City_name,
+    City_id,
 }: ShippingCostCalculatorProps) {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [originCities, setOriginCities] = useState<City[]>([]);
     const [destinationProvince, setDestinationProvince] = useState('');
     const [destinationCities, setDestinationCities] = useState<City[]>([]);
-    const [originCity, setOriginCity] = useState(defaultOriginId || '');
+    const [originCity, setOriginCity] = useState(City_id || '');
     const [destinationCity, setDestinationCity] = useState(
         defaultDestinationId || '',
     );
@@ -73,11 +79,23 @@ export default function MapInput({
     });
     const position: [number, number] = [Number(Latitude), Number(Longitude)];
     useEffect(() => {
-        if (!Latitude || !Longitude) {
+        if (!Latitude && !Longitude) {
             setVarLatitude('-6.922480');
             setVarLongitude('107.606223');
         }
     }, [Latitude, Longitude]);
+
+    useEffect(() => {
+        if (!Provice_name || !City_name || !City_id) {
+            setQueryProvOrigin('');
+            setQueryCityOrigin('');
+            setOriginCity('');
+        } else {
+            setQueryProvOrigin(Provice_name);
+            setQueryCityOrigin(City_name);
+            setOriginCity(City_id);
+        }
+    }, [Provice_name, City_name, City_id]);
 
     function MapClickHandler() {
         const map = useMap();
@@ -125,7 +143,7 @@ export default function MapInput({
     const ref = useRef<HTMLDivElement>(null);
 
     const getShipping = () => {
-        fetch('/shipping/provinces')
+        fetch('/system/shipping/provinces')
             .then((res) => res.json())
             .then(setProvinces);
     };
@@ -134,7 +152,7 @@ export default function MapInput({
         provinceId: string,
         type: 'origin' | 'destination',
     ) => {
-        const res = await fetch(`/shipping/cities/${provinceId}`);
+        const res = await fetch(`/system/shipping/cities/${provinceId}`);
         const data = await res.json();
 
         if (type === 'origin') {
@@ -176,8 +194,9 @@ export default function MapInput({
                                 }
                             }}
                             onBlur={() => {
-                                setTimeout(() => setShowProvList(null), 150);
+                                setTimeout(() => setShowProvList(null), 500);
                             }}
+                            name="app_provice_name"
                             className="pr-10"
                         />
                         {queryProvOrigin && (
@@ -240,9 +259,15 @@ export default function MapInput({
                                 }
                             }}
                             onBlur={() => {
-                                setTimeout(() => setShowCityList(null), 150);
+                                setTimeout(() => setShowCityList(null), 500);
                             }}
+                            name="app_city_name"
                             className="pr-10"
+                        />
+                        <Input
+                            type="hidden"
+                            name="app_city_id"
+                            value={originCity}
                         />
                         {queryCityOrigin && (
                             <Button

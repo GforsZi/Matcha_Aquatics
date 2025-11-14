@@ -18,8 +18,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Appearance() {
-    const { app_latitude, app_longitude, app_name } = usePage<{
+export default function location() {
+    const {
+        app_latitude,
+        app_longitude,
+        app_name = { app_stg_title: '', app_stg_value: '' },
+        app_provice_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_id = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
         app_latitude: {
             app_stg_title: string;
             app_stg_value: string;
@@ -29,6 +36,18 @@ export default function Appearance() {
             app_stg_value: string;
         };
         app_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_provice_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_id: {
             app_stg_title: string;
             app_stg_value: string;
         };
@@ -49,7 +68,7 @@ export default function Appearance() {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Appearance settings" />
+            <Head title="Pengaturan Lokasi" />
             <Toaster position="top-center" richColors closeButton />
 
             <AppSettingsLayout>
@@ -64,9 +83,12 @@ export default function Appearance() {
                         className="mt-5"
                     >
                         <MapInput
-                            Name={app_name?.app_stg_value || ''}
+                            Name={app_name?.app_stg_value}
                             Latitude={app_latitude?.app_stg_value}
                             Longitude={app_longitude?.app_stg_value}
+                            Provice_name={app_provice_name?.app_stg_value}
+                            City_name={app_city_name?.app_stg_value}
+                            City_id={app_city_id?.app_stg_value}
                         />
                         <Button
                             type="submit"

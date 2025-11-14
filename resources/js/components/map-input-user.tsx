@@ -81,14 +81,15 @@ export default function MapInputUser({
             setVarLongitude('107.606223');
         }
     }, [Latitude, Longitude]);
-    console.log(Provice_name);
     useEffect(() => {
         if (!Provice_name || !City_name || !City_id) {
             setQueryProvOrigin('');
             setQueryCityOrigin('');
+            setOriginCity('');
         } else {
             setQueryProvOrigin(Provice_name);
             setQueryCityOrigin(City_name);
+            setOriginCity(City_id);
         }
     }, [Provice_name, City_name, City_id]);
 
@@ -138,7 +139,7 @@ export default function MapInputUser({
     const ref = useRef<HTMLDivElement>(null);
 
     const getShipping = () => {
-        fetch('/shipping/provinces')
+        fetch('/system/shipping/provinces')
             .then((res) => res.json())
             .then(setProvinces);
     };
@@ -147,7 +148,7 @@ export default function MapInputUser({
         provinceId: string,
         type: 'origin' | 'destination',
     ) => {
-        const res = await fetch(`/shipping/cities/${provinceId}`);
+        const res = await fetch(`/system/shipping/cities/${provinceId}`);
         const data = await res.json();
 
         if (type === 'origin') {
@@ -189,7 +190,7 @@ export default function MapInputUser({
                                 }
                             }}
                             onBlur={() => {
-                                setTimeout(() => setShowProvList(null), 150);
+                                setTimeout(() => setShowProvList(null), 500);
                             }}
                             name="usr_provice_name"
                             className="pr-10"
@@ -255,7 +256,7 @@ export default function MapInputUser({
                             }}
                             name="usr_city_name"
                             onBlur={() => {
-                                setTimeout(() => setShowCityList(null), 150);
+                                setTimeout(() => setShowCityList(null), 500);
                             }}
                             className="pr-10"
                         />

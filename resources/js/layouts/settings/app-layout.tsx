@@ -13,7 +13,7 @@ const sidebarNavItems: NavItem[] = [
         icon: null,
     },
     {
-        title: 'Nomor Penjual',
+        title: 'Pusat Bantuan',
         href: '/app/setting/seller',
         icon: null,
     },

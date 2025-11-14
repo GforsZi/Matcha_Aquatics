@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
-    Route::get('/home', [UserController::class, 'index']);
+    Route::get('/home', [AdminController::class, 'index']);
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
@@ -60,19 +60,18 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::put('/system/category/{id}/edit', [ManageCategoryController::class, 'edit_system']);
     Route::delete('/system/category/{id}/delete', [ManageCategoryController::class, 'delete_system']);
 
-    Route::post('/system/transaction/add/online', [ManageTransactionController::class, 'add_online_system']);
-    Route::post('/system/transaction/add/offline', [ManageTransactionController::class, 'add_offline_system']);
+    Route::post('/system/transaction/add', [ManageTransactionController::class, 'add_system']);
     Route::put('/system/transaction/{id}/edit', [ManageTransactionController::class, 'edit_system']);
     Route::delete('/system/transaction/{id}/delete', [ManageTransactionController::class, 'delete_system']);
 
-    Route::post('/payment/create/{trx_id}', [ManageTransactionController::class, 'payment_link_system']);
+    Route::post('/system/payment/create/{trx_id}', [ManageTransactionController::class, 'payment_link_system']);
     Route::delete('/payment/{order_id}', [ManageTransactionController::class, 'delete_payment_link_system']);
 
-    Route::get('/shipping/provinces', [ShippingController::class, 'provinces']);
-    Route::get('/shipping/cities/{province}', [ShippingController::class, 'cities']);
-    Route::post('/shipping/cost', [ShippingController::class, 'cost']);
+    Route::get('/system/shipping/provinces', [ShippingController::class, 'provinces']);
+    Route::get('/system/shipping/cities/{province}', [ShippingController::class, 'cities']);
+    Route::post('/system/shipping/cost', [ShippingController::class, 'cost']);
 });
-Route::withoutMiddleware([VerifyCsrfToken::class])->post('/payment/webhook', [ManageTransactionController::class, 'webhook']);
+Route::withoutMiddleware([VerifyCsrfToken::class])->post('/system/payment/webhook', [ManageTransactionController::class, 'webhook']);
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

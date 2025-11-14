@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppSetting;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -39,7 +40,10 @@ class ManageTransactionController extends Controller
 
     public function add()
     {
-        return Inertia::render('transaction/add');
+        $app_provice_name = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_provice_name')->first();
+        $app_city_name = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_city_name')->first();
+        $app_city_id = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_city_id')->first();
+        return Inertia::render('transaction/add', compact('app_provice_name', 'app_city_name', 'app_city_id'));
     }
 
     public function payment_link_page($id)
@@ -48,7 +52,7 @@ class ManageTransactionController extends Controller
         return Inertia::render('transaction/payment_link', compact('transaction'));
     }
 
-    public function add_offline_system(Request $request)
+    public function add_system(Request $request)
     {
         try {
             $message = [

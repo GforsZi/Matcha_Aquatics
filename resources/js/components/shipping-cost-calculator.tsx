@@ -27,6 +27,10 @@ interface Cost {
 interface ShippingCostCalculatorProps {
     defaultOriginId?: string;
     defaultDestinationId?: string;
+    defaultOriginProviceName?: string;
+    defaultOriginCityName?: string;
+    defaultDestinationProviceName?: string;
+    defaultDestinationCityName?: string;
     onCostSelected?: (cost: Cost) => void;
 }
 
@@ -49,7 +53,11 @@ export function getCsrfToken(): string {
 
 export default function ShippingCostCalculator({
     defaultOriginId,
+    defaultOriginProviceName = '',
+    defaultOriginCityName = '',
     defaultDestinationId,
+    defaultDestinationProviceName = '',
+    defaultDestinationCityName = '',
     onCostSelected,
 }: ShippingCostCalculatorProps) {
     const [provinces, setProvinces] = useState<Province[]>([]);
@@ -64,10 +72,18 @@ export default function ShippingCostCalculator({
         defaultDestinationId || '',
     );
 
-    const [queryProvOrigin, setQueryProvOrigin] = useState('');
-    const [queryProvDestination, setQueryProvDestination] = useState('');
-    const [queryCityOrigin, setQueryCityOrigin] = useState('');
-    const [queryCityDestination, setQueryCityDestination] = useState('');
+    const [queryProvOrigin, setQueryProvOrigin] = useState(
+        defaultOriginProviceName,
+    );
+    const [queryProvDestination, setQueryProvDestination] = useState(
+        defaultDestinationProviceName,
+    );
+    const [queryCityOrigin, setQueryCityOrigin] = useState(
+        defaultOriginCityName,
+    );
+    const [queryCityDestination, setQueryCityDestination] = useState(
+        defaultDestinationCityName,
+    );
 
     const [selectedCourier, setSelectedCourier] = useState('jne');
     const [weight, setWeight] = useState('1000');
@@ -84,7 +100,7 @@ export default function ShippingCostCalculator({
     const ref = useRef<HTMLDivElement>(null);
 
     const getShipping = () => {
-        fetch('/shipping/provinces')
+        fetch('/system/shipping/provinces')
             .then((res) => res.json())
             .then(setProvinces);
     };
@@ -93,7 +109,7 @@ export default function ShippingCostCalculator({
         provinceId: string,
         type: 'origin' | 'destination',
     ) => {
-        const res = await fetch(`/shipping/cities/${provinceId}`);
+        const res = await fetch(`/system/shipping/cities/${provinceId}`);
         const data = await res.json();
 
         if (type === 'origin') {
@@ -110,7 +126,7 @@ export default function ShippingCostCalculator({
         setLoading(true);
 
         try {
-            const res = await fetch('/shipping/cost', {
+            const res = await fetch('/system/shipping/cost', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,9 +141,7 @@ export default function ShippingCostCalculator({
             });
 
             const data = await res.json();
-            console.log('Response:', data);
 
-            // --- Normalisasi hasil agar sesuai tipe Cost[] ---
             let parsed: Cost[] = [];
 
             if (data?.rajaongkir?.results?.length) {
@@ -168,8 +182,6 @@ export default function ShippingCostCalculator({
         <Card className="w-full">
             <CardContent className="space-y-4 p-4" ref={ref}>
                 <h2 className="text-base font-semibold">Hitung Ongkir</h2>
-
-                {/* =================== KOTA ASAL =================== */}
                 <div>
                     <Label className="mb-1">Kota Asal</Label>
 
@@ -187,7 +199,7 @@ export default function ShippingCostCalculator({
                                 }
                             }}
                             onBlur={() => {
-                                setTimeout(() => setShowProvList(null), 150);
+                                setTimeout(() => setShowProvList(null), 500);
                             }}
                             className="pr-10"
                         />
@@ -236,8 +248,6 @@ export default function ShippingCostCalculator({
                             </div>
                         )}
                     </div>
-
-                    {/* Kota Asal */}
                     <div className="relative">
                         <Input
                             type="text"
@@ -246,7 +256,7 @@ export default function ShippingCostCalculator({
                             onChange={(e) => setQueryCityOrigin(e.target.value)}
                             onFocus={() => setShowCityList('origin')}
                             onBlur={() => {
-                                setTimeout(() => setShowCityList(null), 150);
+                                setTimeout(() => setShowCityList(null), 500);
                             }}
                             className="pr-10"
                         />
@@ -297,12 +307,8 @@ export default function ShippingCostCalculator({
                         )}
                     </div>
                 </div>
-
-                {/* =================== KOTA TUJUAN =================== */}
                 <div>
                     <Label className="mb-1">Kota Tujuan</Label>
-
-                    {/* Provinsi Tujuan */}
                     <div className="relative mb-2">
                         <Input
                             type="text"
@@ -318,7 +324,7 @@ export default function ShippingCostCalculator({
                                 }
                             }}
                             onBlur={() => {
-                                setTimeout(() => setShowProvList(null), 150);
+                                setTimeout(() => setShowProvList(null), 500);
                             }}
                             className="pr-10"
                         />
@@ -367,8 +373,6 @@ export default function ShippingCostCalculator({
                             </div>
                         )}
                     </div>
-
-                    {/* Kota Tujuan */}
                     <div className="relative">
                         <Input
                             type="text"
@@ -379,7 +383,7 @@ export default function ShippingCostCalculator({
                             }
                             onFocus={() => setShowCityList('destination')}
                             onBlur={() => {
-                                setTimeout(() => setShowCityList(null), 150);
+                                setTimeout(() => setShowCityList(null), 500);
                             }}
                             className="pr-10"
                         />
@@ -432,8 +436,6 @@ export default function ShippingCostCalculator({
                         )}
                     </div>
                 </div>
-
-                {/* Berat */}
                 <div>
                     <Label className="mb-1">Berat (gram)</Label>
                     <Input
@@ -443,8 +445,6 @@ export default function ShippingCostCalculator({
                         onChange={(e) => setWeight(e.target.value)}
                     />
                 </div>
-
-                {/* Kurir */}
                 <div>
                     <Label className="mb-1">Kurir</Label>
                     <div className="flex flex-wrap gap-2">
@@ -463,8 +463,6 @@ export default function ShippingCostCalculator({
                         ))}
                     </div>
                 </div>
-
-                {/* Tombol Hitung */}
                 <div className="pt-2">
                     <Button
                         onClick={handleCalculate}
@@ -474,8 +472,6 @@ export default function ShippingCostCalculator({
                         {loading ? 'Menghitung...' : 'Hitung Ongkir'}
                     </Button>
                 </div>
-
-                {/* Hasil */}
                 {costs.length > 0 && (
                     <div className="mt-4 border-t pt-3">
                         <p className="mb-2 text-sm font-semibold">

@@ -25,12 +25,32 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 export default function add() {
+    const { app_provice_name, app_city_name, app_city_id } = usePage<{
+        app_provice_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_id: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+    }>().props;
     const [buyer, setBuyer] = useState<{
         id: number | null;
         name: string | null;
+        provice_name: string;
+        city_name: string;
+        city_id: string;
     }>({
         id: null,
         name: null,
+        provice_name: '',
+        city_name: '',
+        city_id: '',
     });
     const { processing } = useForm();
     const { props } = usePage();
@@ -61,7 +81,7 @@ export default function add() {
             <Toaster position="top-center" richColors closeButton />
             <div className="p-5">
                 <Form
-                    action={'/system/transaction/add/offline'}
+                    action={'/system/transaction/add/'}
                     method={'POST'}
                     onSubmit={handleSubmit}
                     className="space-y-4"
@@ -71,8 +91,20 @@ export default function add() {
                         <UserSearchInput
                             name="trx_buyer_id"
                             value={buyer.name ?? ''}
-                            onChange={(id, name) => (
-                                setBuyer({ id, name }),
+                            onChange={(
+                                id,
+                                name,
+                                provice_name,
+                                city_name,
+                                city_id,
+                            ) => (
+                                setBuyer({
+                                    id,
+                                    name,
+                                    provice_name,
+                                    city_name,
+                                    city_id,
+                                }),
                                 setData('trx_name', name)
                             )}
                         />
@@ -132,6 +164,14 @@ export default function add() {
                             <ProductSelector
                                 name="product_id[]"
                                 paymentMethod={paymentMethod}
+                                Origin_Provice_name={
+                                    app_provice_name.app_stg_value
+                                }
+                                Origin_City_name={app_city_name.app_stg_value}
+                                Origin_City_id={app_city_id.app_stg_value}
+                                Destination_Provice_name={buyer.provice_name}
+                                Destination_City_name={buyer.city_name}
+                                Destination_City_id={buyer.city_id}
                             />
                         </div>
                     )}
