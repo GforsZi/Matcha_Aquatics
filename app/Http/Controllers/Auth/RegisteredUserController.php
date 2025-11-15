@@ -18,9 +18,9 @@ class RegisteredUserController extends Controller
     /**
      * Show the registration page.
      */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('auth/register');
+        return redirect('/login')->setStatusCode(303);
     }
 
     /**
@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

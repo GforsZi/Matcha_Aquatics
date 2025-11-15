@@ -52,6 +52,7 @@ export default function add() {
         city_name: '',
         city_id: '',
     });
+
     const { processing } = useForm();
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
@@ -105,6 +106,7 @@ export default function add() {
                                     city_name,
                                     city_id,
                                 }),
+                                setPaymentMethod(''),
                                 setData('trx_name', name)
                             )}
                         />
@@ -162,6 +164,7 @@ export default function add() {
                                 Pilih Produk
                             </label>
                             <ProductSelector
+                                key={paymentMethod + String(buyer.id)}
                                 name="product_id[]"
                                 paymentMethod={paymentMethod}
                                 Origin_Provice_name={

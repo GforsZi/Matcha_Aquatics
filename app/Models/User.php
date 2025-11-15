@@ -14,9 +14,16 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @method \Illuminate\Support\Collection getRoleNames()
+ * @method bool hasRole(string|array|\Spatie\Permission\Models\Role $roles)
+ * @method $this assignRole(...$roles)
+ * @method $this removeRole($role)
+ * @method $this syncRoles(...$roles)
+ */
+
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes, Blameable, HasRoles;
 
     protected $guarded = ['id', 'timestamps'];
@@ -56,7 +63,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function login(): HasMany {
+    public function login(): HasMany
+    {
         return $this->hasMany(User::class, 'usr_lg_user_id', 'usr_id');
     }
 

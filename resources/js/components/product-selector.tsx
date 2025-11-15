@@ -95,17 +95,32 @@ const ProductSelector: React.FC<Props> = ({
         );
     }, [selected]);
 
-    const change = useMemo(() => {
-        const diff = paidAmount - totalPrice;
-        return diff > 0 ? diff : 0;
-    }, [paidAmount, totalPrice]);
-
     const formatRupiah = (value: number) =>
         new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',
             minimumFractionDigits: 0,
         }).format(value);
+
+    const [cost, setCost] = useState<{
+        code: string;
+        name: string;
+        cost: number;
+        etd: string;
+        service: string;
+    }>({
+        code: '',
+        name: '',
+        cost: 0,
+        etd: '',
+        service: '',
+    });
+    const [costShp, setCostShp] = useState(0);
+
+    const change = useMemo(() => {
+        const diff = paidAmount - totalPrice - costShp;
+        return diff > 0 ? diff : 0;
+    }, [paidAmount, totalPrice]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -263,15 +278,6 @@ const ProductSelector: React.FC<Props> = ({
                 </AlertDialogContent>
             </AlertDialog>
 
-            <div className="flex items-center justify-between rounded-md border bg-muted/40 px-4 py-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                    Total Produk: {Object.values(selected).length}
-                </span>
-                <span className="text-base font-semibold text-primary">
-                    Total: {formatRupiah(totalPrice) + ',-'}
-                </span>
-                <Input name="trx_total" value={totalPrice} type="hidden" />
-            </div>
             {paymentMethod == '1' && (
                 <div className="mt-3">
                     <label className="text-sm font-medium">Pembayaran</label>
@@ -287,21 +293,61 @@ const ProductSelector: React.FC<Props> = ({
                     />
                 </div>
             )}
+
             {paymentMethod == '3' && (
-                <div className="mt-3">
-                    <label className="text-sm font-medium">Pembayaran</label>
-                    <Input
-                        type="number"
-                        name="trx_payment"
-                        value={paidAmount}
-                        onChange={(e) =>
-                            setPaidAmount(Number(e.target.value) || 0)
-                        }
-                        placeholder="Masukkan jumlah uang dibayar"
-                        className="mt-1"
-                    />
-                </div>
+                <ShippingCostCalculator
+                    defaultOriginProviceName={Origin_Provice_name}
+                    defaultOriginCityName={Origin_City_name}
+                    defaultOriginId={Origin_City_id}
+                    defaultDestinationProviceName={Destination_Provice_name}
+                    defaultDestinationCityName={Destination_City_name}
+                    defaultDestinationId={Destination_City_id}
+                    onChange={(code, name, cost, etd, service) => (
+                        setCost({
+                            code,
+                            name,
+                            cost,
+                            etd,
+                            service,
+                        }),
+                        setCostShp(cost)
+                    )}
+                />
             )}
+            {paymentMethod == '4' && (
+                <ShippingCostCalculator
+                    defaultOriginProviceName={Origin_Provice_name}
+                    defaultOriginCityName={Origin_City_name}
+                    defaultOriginId={Origin_City_id}
+                    defaultDestinationProviceName={Destination_Provice_name}
+                    defaultDestinationCityName={Destination_City_name}
+                    defaultDestinationId={Destination_City_id}
+                    onChange={(code, name, cost, etd, service) => (
+                        setCost({
+                            code,
+                            name,
+                            cost,
+                            etd,
+                            service,
+                        }),
+                        setCostShp(cost)
+                    )}
+                />
+            )}
+            <div className="flex items-center justify-between rounded-md border bg-muted/40 px-4 py-2">
+                <span className="text-sm font-medium text-muted-foreground">
+                    Total Produk: {Object.values(selected).length}
+                </span>
+                <span className="text-base font-semibold text-primary">
+                    Total: {formatRupiah(totalPrice + costShp) + ',-'}
+                </span>
+                <Input name="trx_total" value={totalPrice} type="hidden" />
+                <Input name="trx_shipping_cost" value={costShp} type="hidden" />
+                <Input name="shp_courier" value={cost.code} type="hidden" />
+                <Input name="shp_cost" value={cost.cost} type="hidden" />
+                <Input name="shp_service" value={cost.service} type="hidden" />
+                <Input name="shp_etd" value={cost.etd} type="hidden" />
+            </div>
 
             {paidAmount > 0 && (
                 <div className="mt-3 flex items-center justify-between">
@@ -317,24 +363,19 @@ const ProductSelector: React.FC<Props> = ({
                 </div>
             )}
             {paymentMethod == '3' && (
-                <ShippingCostCalculator
-                    defaultOriginProviceName={Origin_Provice_name}
-                    defaultOriginCityName={Origin_City_name}
-                    defaultOriginId={Origin_City_id}
-                    defaultDestinationProviceName={Destination_Provice_name}
-                    defaultDestinationCityName={Destination_City_name}
-                    defaultDestinationId={Destination_City_id}
-                />
-            )}
-            {paymentMethod == '4' && (
-                <ShippingCostCalculator
-                    defaultOriginProviceName={Origin_Provice_name}
-                    defaultOriginCityName={Origin_City_name}
-                    defaultOriginId={Origin_City_id}
-                    defaultDestinationProviceName={Destination_Provice_name}
-                    defaultDestinationCityName={Destination_City_name}
-                    defaultDestinationId={Destination_City_id}
-                />
+                <div className="mt-3">
+                    <label className="text-sm font-medium">Pembayaran</label>
+                    <Input
+                        type="number"
+                        name="trx_payment"
+                        value={paidAmount}
+                        onChange={(e) =>
+                            setPaidAmount(Number(e.target.value) || 0)
+                        }
+                        placeholder="Masukkan jumlah uang dibayar"
+                        className="mt-1"
+                    />
+                </div>
             )}
         </div>
     );

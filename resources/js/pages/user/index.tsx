@@ -80,7 +80,13 @@ export const columns: ColumnDef<user>[] = [
 
             return (
                 <>
-                    <DropdownTable data={user} page={'user'} />
+                    <DropdownTable
+                        data={user}
+                        page={'user'}
+                        showDetail
+                        showEdit
+                        showDelete
+                    />
                 </>
             );
         },

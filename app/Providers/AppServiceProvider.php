@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
                         'usr_city_name' => $user->usr_city_name,
                         'usr_city_id' => $user->usr_city_id,
                         'usr_no_wa' => $user->usr_no_wa,
+                        'role' => $user->getRoleNames(),
                         'avatar' => $user->usr_foto_profile,
                     ] : null,
                 ];

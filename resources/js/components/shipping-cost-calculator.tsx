@@ -1,4 +1,3 @@
-// resources/js/components/shipping/ShippingCostCalculator.tsx
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
@@ -6,6 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from './ui/select';
 
 interface Province {
     id: string;
@@ -21,7 +27,10 @@ interface City {
 interface Cost {
     service: string;
     description: string;
-    cost: { value: number; etd: string; note: string }[];
+    cost: number;
+    name: string;
+    etd: string;
+    code: string;
 }
 
 interface ShippingCostCalculatorProps {
@@ -32,6 +41,13 @@ interface ShippingCostCalculatorProps {
     defaultDestinationProviceName?: string;
     defaultDestinationCityName?: string;
     onCostSelected?: (cost: Cost) => void;
+    onChange?: (
+        code: string,
+        name: string,
+        cost: number,
+        etd: string,
+        sercice: string,
+    ) => void;
 }
 
 const couriers = [
@@ -59,6 +75,7 @@ export default function ShippingCostCalculator({
     defaultDestinationProviceName = '',
     defaultDestinationCityName = '',
     onCostSelected,
+    onChange,
 }: ShippingCostCalculatorProps) {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [originCities, setOriginCities] = useState<City[]>([]);
@@ -164,6 +181,7 @@ export default function ShippingCostCalculator({
 
     const handleSelectCost = (cost: Cost) => {
         onCostSelected?.(cost);
+        onChange?.(cost.code, cost.name, cost.cost, cost.etd, cost.service);
     };
 
     useEffect(() => {
@@ -182,6 +200,16 @@ export default function ShippingCostCalculator({
         <Card className="w-full">
             <CardContent className="space-y-4 p-4" ref={ref}>
                 <h2 className="text-base font-semibold">Hitung Ongkir</h2>
+                <Input
+                    type="hidden"
+                    name="shp_origin_city_id"
+                    value={originCity}
+                />
+                <Input
+                    type="hidden"
+                    name="shp_destination_city_id"
+                    value={destinationCity}
+                />
                 <div>
                     <Label className="mb-1">Kota Asal</Label>
 
@@ -192,6 +220,7 @@ export default function ShippingCostCalculator({
                             placeholder="Cari provinsi..."
                             value={queryProvOrigin}
                             onChange={(e) => setQueryProvOrigin(e.target.value)}
+                            name="shp_origin_province_name"
                             onFocus={() => {
                                 setShowProvList('origin');
                                 if (provinces.length === 0) {
@@ -255,6 +284,7 @@ export default function ShippingCostCalculator({
                             value={queryCityOrigin}
                             onChange={(e) => setQueryCityOrigin(e.target.value)}
                             onFocus={() => setShowCityList('origin')}
+                            name="shp_origin_city_name"
                             onBlur={() => {
                                 setTimeout(() => setShowCityList(null), 500);
                             }}
@@ -314,6 +344,7 @@ export default function ShippingCostCalculator({
                             type="text"
                             placeholder="Cari provinsi..."
                             value={queryProvDestination}
+                            name="shp_destination_province_name"
                             onChange={(e) =>
                                 setQueryProvDestination(e.target.value)
                             }
@@ -377,6 +408,7 @@ export default function ShippingCostCalculator({
                         <Input
                             type="text"
                             placeholder="Cari kota..."
+                            name="shp_destination_city_name"
                             value={queryCityDestination}
                             onChange={(e) =>
                                 setQueryCityDestination(e.target.value)
@@ -442,27 +474,31 @@ export default function ShippingCostCalculator({
                         type="number"
                         placeholder="Contoh: 1000"
                         value={weight}
+                        name="shp_weight"
                         onChange={(e) => setWeight(e.target.value)}
                     />
                 </div>
                 <div>
                     <Label className="mb-1">Kurir</Label>
-                    <div className="flex flex-wrap gap-2">
-                        {couriers.map((c) => (
-                            <Button
-                                key={c.code}
-                                variant={
-                                    selectedCourier === c.code
-                                        ? 'default'
-                                        : 'outline'
-                                }
-                                onClick={() => setSelectedCourier(c.code)}
-                            >
-                                {c.name}
-                            </Button>
-                        ))}
-                    </div>
+
+                    <Select
+                        onValueChange={(value) => setSelectedCourier(value)}
+                        value={selectedCourier}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Pilih kurir" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                            {couriers.map((c) => (
+                                <SelectItem key={c.code} value={c.code}>
+                                    {c.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
+
                 <div className="pt-2">
                     <Button
                         onClick={handleCalculate}

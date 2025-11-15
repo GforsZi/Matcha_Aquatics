@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AppSetting;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Shipment;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,7 @@ class ManageTransactionController extends Controller
 
     public function add_system(Request $request)
     {
+        // dd($request);
         try {
             $message = [
                 'trx_buyer_id.exists' => 'Data pembeli tidak tersedia.',
@@ -68,12 +70,14 @@ class ManageTransactionController extends Controller
                 'trx_total.max' => 'Total dari transaksi tidak boleh melebihi :max.',
                 'trx_discount.max' => 'Diskon tidak boleh melebihi :max.',
                 'trx_discount.min' => 'Diskon tidak boleh kurang dari :min.',
+                'trx_shipping_cost.max' => 'Ongkir tidak boleh melebihi :max.',
+                'trx_shipping_cost.min' => 'Ongkir tidak boleh kurang dari :min.',
 
             ];
-            $validateData = $request->validate([
+            $validateDataTrx = $request->validate([
                 'trx_buyer_id' => ['nullable', 'integer', 'exists:users,usr_id'],
                 'trx_buyer_name' => ['nullable', 'string', 'min:3', 'max:255'],
-                'trx_payment_method' => ['required', 'in:1,2'],
+                'trx_payment_method' => ['required', 'in:1,2,3,4'],
                 'trx_total' => ['required', 'integer', 'min:0', 'max:99999999999'],
                 'trx_discount' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
                 'trx_payment' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
@@ -87,13 +91,14 @@ class ManageTransactionController extends Controller
                 'product_id.min' => 'Minimal satu Produk wajib dipilih.',
                 'product_id.*.exists' => 'Produk tidak ditemukan.',
             ]);
-            $validateData['trx_seller_id'] = Auth::id();
-            $validateData['trx_subtotal'] = $request->trx_total;
+            $validateDataTrx['trx_seller_id'] = Auth::id();
+            $validateDataTrx['trx_subtotal'] = $request->trx_total + $request->trx_shipping_cost;
             if ($request->trx_payment_method == '1') {
-                $validateData['trx_status'] = '2';
+                $validateDataTrx['trx_status'] = '2';
             }
 
-            $transaction = Transaction::create($validateData);
+            $transaction = Transaction::create($validateDataTrx);
+            $validateDataShp['shp_transaction_id'] = $transaction->trx_id;
 
             if ($request->has('product_id')) {
                 foreach ($request->product_id as $prd_id) {
@@ -116,7 +121,44 @@ class ManageTransactionController extends Controller
                     }
                 }
                 $transaction->products()->sync($validateDataProduct['product_id']);
+                if ($request->trx_payment_method == '3') {
+                    $validateDataShp = $request->validate([
+                        'trx_shipping_cost' => ['required', 'integer', 'min:0', 'max:99999999999'],
+                        'shp_transaction_id' => ['required', 'integer', 'exists:transactions,trx_id'],
+                        'shp_origin_city_id' => ['required', 'string'],
+                        'shp_destination_city_id' => ['required', 'string'],
+                        'shp_courier' => ['required', 'string'],
+                        'shp_cost' => ['required', 'integer'],
+                        'shp_weight' => ['required', 'integer'],
+                        'shp_tracking_url' => ['required', 'string'],
+                        'shp_origin_latitude' => ['nullable', 'string'],
+                        'shp_origin_longitude' => ['nullable', 'string'],
+                        'shp_destination_latitude' => ['nullable', 'string'],
+                        'shp_destination_longitude' => ['nullable', 'string'],
+                    ]);
+                    Shipment::create($validateDataShp);
+                } elseif ($request->trx_payment_method == '4') {
+                    $validateDataShp = $request->validate([
+                        'trx_shipping_cost' => ['required', 'integer', 'min:0', 'max:99999999999'],
+                        'shp_transaction_id' => ['required', 'integer', 'exists:transactions,trx_id'],
+                        'shp_origin_city_id' => ['required', 'string'],
+                        'shp_destination_city_id' => ['required', 'string'],
+                        'shp_courier' => ['required', 'string'],
+                        'shp_cost' => ['required', 'integer'],
+                        'shp_weight' => ['required', 'integer'],
+                        'shp_tracking_url' => ['required', 'string'],
+                        'shp_origin_latitude' => ['nullable', 'string'],
+                        'shp_origin_longitude' => ['nullable', 'string'],
+                        'shp_destination_latitude' => ['nullable', 'string'],
+                        'shp_destination_longitude' => ['nullable', 'string'],
+                    ]);
+                    Shipment::create($validateDataShp);
+                }
                 if ($request->trx_payment_method == '1') {
+                    return redirect('/manage/transaction')->with([
+                        'success' => 'Transaksi berhasil dibuat.',
+                    ])->setStatusCode(303);
+                } elseif ($request->trx_payment_method == '3') {
                     return redirect('/manage/transaction')->with([
                         'success' => 'Transaksi berhasil dibuat.',
                     ])->setStatusCode(303);
@@ -124,19 +166,16 @@ class ManageTransactionController extends Controller
                     return redirect('/manage/transaction/' . $transaction->trx_id . '/payment_link')->with([
                         'success' => 'Transaksi berhasil dibuat.',
                     ])->setStatusCode(303);
+                } elseif ($request->trx_payment_method == '4') {
+                    return redirect('/manage/transaction/' . $transaction->trx_id . '/payment_link')->with([
+                        'success' => 'Transaksi berhasil dibuat.',
+                    ])->setStatusCode(303);
                 }
             }
         } catch (\Throwable $th) {
-            $transaction_type = '';
-            if ($request->trx_type == '1') {
-                $transaction_type = 'online';
-            } else {
-                $transaction_type = 'offline';
-            }
 
             return redirect('/manage/transaction/add')->with([
-                'error' => $th->getMessage() . ' | transaksi gagal dibuat.',
-                'tab' => $transaction_type
+                'error' => $th->getMessage() . ' | transaksi gagal dibuat.'
             ])->setStatusCode(303);
         }
     }

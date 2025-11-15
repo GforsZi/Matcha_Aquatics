@@ -1,5 +1,7 @@
-import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
+import HeaderLayout from '@/layouts/app/app-header-layout';
+import SidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { type BreadcrumbItem } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { type ReactNode } from 'react';
 
 interface AppLayoutProps {
@@ -7,8 +9,21 @@ interface AppLayoutProps {
     breadcrumbs?: BreadcrumbItem[];
 }
 
-export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
-    <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
-        {children}
-    </AppLayoutTemplate>
-);
+export default function AppLayout({
+    children,
+    breadcrumbs,
+    ...props
+}: AppLayoutProps) {
+    const { auth } = usePage().props as any;
+
+    const roles: string[] = auth?.user?.role ?? [];
+
+    const isSeller = roles.includes('seller');
+    const LayoutComponent = isSeller ? SidebarLayout : HeaderLayout;
+
+    return (
+        <LayoutComponent breadcrumbs={breadcrumbs} {...props}>
+            {children}
+        </LayoutComponent>
+    );
+}

@@ -139,7 +139,12 @@ export const columns: ColumnDef<transaction>[] = [
 
             return (
                 <>
-                    <DropdownTable data={transaction} page={'transaction'} />
+                    <DropdownTable
+                        data={transaction}
+                        page={'transaction'}
+                        showDetail
+                        showDelete
+                    />
                 </>
             );
         },

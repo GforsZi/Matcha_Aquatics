@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
-    Route::get('/home', [AdminController::class, 'index']);
+    Route::get('/home', [UserController::class, 'index']);
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {

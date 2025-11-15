@@ -78,7 +78,13 @@ export const columns: ColumnDef<category>[] = [
 
             return (
                 <>
-                    <DropdownTable data={category} page={'category'} />
+                    <DropdownTable
+                        data={category}
+                        page={'category'}
+                        showDetail
+                        showEdit
+                        showDelete
+                    />
                 </>
             );
         },
