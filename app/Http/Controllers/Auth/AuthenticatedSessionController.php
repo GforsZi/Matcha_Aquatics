@@ -30,22 +30,27 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $user = $request->validateCredentials();
+        try {
 
-        if (Features::enabled(Features::twoFactorAuthentication()) && $user->hasEnabledTwoFactorAuthentication()) {
-            $request->session()->put([
-                'login.id' => $user->getKey(),
-                'login.remember' => $request->boolean('remember'),
-            ]);
+            $user = $request->validateCredentials();
 
-            return to_route('two-factor.login');
+            if (Features::enabled(Features::twoFactorAuthentication()) && $user->hasEnabledTwoFactorAuthentication()) {
+                $request->session()->put([
+                    'login.id' => $user->getKey(),
+                    'login.remember' => $request->boolean('remember'),
+                ]);
+
+                return to_route('two-factor.login');
+            }
+
+            Auth::login($user, $request->boolean('remember'));
+
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('dashboard', absolute: false))->with('success', 'Login berhasil.')->setStatusCode(303);
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Login gagal.')->setStatusCode(303);
         }
-
-        Auth::login($user, $request->boolean('remember'));
-
-        $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false))->with('success', 'Login berhasil.');
     }
 
     /**

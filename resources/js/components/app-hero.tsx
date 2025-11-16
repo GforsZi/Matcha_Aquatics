@@ -1,56 +1,22 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export const AppHero = () => {
     return (
-        <section className="relative flex w-full justify-center overflow-hidden py-16 md:py-24">
+        <section className="relative flex w-full justify-center overflow-hidden py-10 md:py-10">
             <div className="container">
                 <div className="flex flex-col items-center space-y-8 text-center">
                     <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
                         <Sparkles className="h-4 w-4" />
-                        <span>Grand Opening Sale - Up to 50% Off!</span>
+                        <span>Matcha Aquatics</span>
                     </div>
-
                     <div className="max-w-3xl space-y-4">
                         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                            Shop Your Favorite Products
-                            <span className="mt-2 block text-primary">
-                                At Amazing Prices
-                            </span>
+                            Cari Cupang Impianmu
                         </h1>
                         <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
-                            Discover incredible deals on top brands. Fast
-                            shipping, easy returns, and 24/7 customer support.
+                            Kesederhanaan dan harmoni yang tidak bisa dinikmati
+                            semua orang.
                         </p>
-                    </div>
-
-                    <div className="flex flex-col gap-4 sm:flex-row">
-                        <Button size="lg" className="text-base">
-                            Shop Now
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                        </Button>
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            className="text-base"
-                        >
-                            View Deals
-                        </Button>
-                    </div>
-
-                    <div className="flex flex-wrap justify-center gap-8 pt-8 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                            <div className="bg-success h-2 w-2 rounded-full"></div>
-                            <span>Free Shipping Over $50</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="bg-success h-2 w-2 rounded-full"></div>
-                            <span>Easy 30-Day Returns</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="bg-success h-2 w-2 rounded-full"></div>
-                            <span>Secure Checkout</span>
-                        </div>
                     </div>
                 </div>
             </div>

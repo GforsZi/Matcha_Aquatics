@@ -36,7 +36,7 @@ class ManageCategoryController extends Controller
         $q = $request->query('q');
         return Category::query()
             ->where('cat_name', 'like', "%$q%")
-            ->select('cat_id', 'cat_name')
+            ->select('cat_id', 'cat_name', 'cat_slug')
             ->limit(10)
             ->get();
     }

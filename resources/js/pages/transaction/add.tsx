@@ -25,7 +25,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 export default function add() {
-    const { app_provice_name, app_city_name, app_city_id } = usePage<{
+    const {
+        app_provice_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_id = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
         app_provice_name: {
             app_stg_title: string;
             app_stg_value: string;
@@ -45,12 +49,16 @@ export default function add() {
         provice_name: string;
         city_name: string;
         city_id: string;
+        latitude: string;
+        longitude: string;
     }>({
         id: null,
         name: null,
         provice_name: '',
         city_name: '',
         city_id: '',
+        latitude: '',
+        longitude: '',
     });
 
     const { processing } = useForm();
@@ -98,6 +106,8 @@ export default function add() {
                                 provice_name,
                                 city_name,
                                 city_id,
+                                latitude,
+                                longitude,
                             ) => (
                                 setBuyer({
                                     id,
@@ -105,6 +115,8 @@ export default function add() {
                                     provice_name,
                                     city_name,
                                     city_id,
+                                    latitude,
+                                    longitude,
                                 }),
                                 setPaymentMethod(''),
                                 setData('trx_name', name)
@@ -168,13 +180,13 @@ export default function add() {
                                 name="product_id[]"
                                 paymentMethod={paymentMethod}
                                 Origin_Provice_name={
-                                    app_provice_name.app_stg_value
+                                    app_provice_name?.app_stg_value
                                 }
-                                Origin_City_name={app_city_name.app_stg_value}
-                                Origin_City_id={app_city_id.app_stg_value}
-                                Destination_Provice_name={buyer.provice_name}
-                                Destination_City_name={buyer.city_name}
-                                Destination_City_id={buyer.city_id}
+                                Origin_City_name={app_city_name?.app_stg_value}
+                                Origin_City_id={app_city_id?.app_stg_value}
+                                Destination_Provice_name={buyer?.provice_name}
+                                Destination_City_name={buyer?.city_name}
+                                Destination_City_id={buyer?.city_id}
                             />
                         </div>
                     )}

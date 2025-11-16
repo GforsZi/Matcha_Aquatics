@@ -55,7 +55,7 @@ class ManageTransactionController extends Controller
 
     public function add_system(Request $request)
     {
-        // dd($request);
+        dd($request);
         try {
             $message = [
                 'trx_buyer_id.exists' => 'Data pembeli tidak tersedia.',

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\Apps\BannerController;
 use App\Http\Controllers\Settings\Apps\MapController;
 use App\Http\Controllers\Settings\Apps\SellerController;
 use App\Http\Controllers\Settings\PasswordController;
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
 
     Route::get('/app/setting/location', [MapController::class, 'index']);
     Route::post('/app/setting/location', [MapController::class, 'edit_system']);
-    Route::get('/app/setting/seller', [SellerController::class, 'index']);
-    Route::post('/app/setting/seller', [SellerController::class, 'edit_system']);
+    Route::get('/app/setting/cs', [SellerController::class, 'index']);
+    Route::post('/app/setting/cs', [SellerController::class, 'edit_system']);
+    Route::get('/app/setting/banner', [BannerController::class, 'index']);
+    Route::post('/app/setting/banner', [BannerController::class, 'edit_system']);
 });

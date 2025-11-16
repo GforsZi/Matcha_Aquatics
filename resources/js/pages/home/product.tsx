@@ -1,9 +1,17 @@
-import { LoginForm } from '@/components/login-form';
-import { usePage } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 
-export default function Login() {
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Detail Produk',
+        href: '/product',
+    },
+];
+
+export default function Product() {
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
     useEffect(() => {
@@ -16,11 +24,11 @@ export default function Login() {
     }, [flash?.success, flash?.error]);
 
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
-            <div className="w-full max-w-sm md:max-w-4xl">
+        <>
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Detail Produk" />
                 <Toaster position="top-center" richColors closeButton />
-                <LoginForm />
-            </div>
-        </div>
+            </AppLayout>
+        </>
     );
 }

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import AppSettingsLayout from '@/layouts/settings/app-layout';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,9 +20,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function seller() {
-    const [csName, setCsName] = useState('');
-    const [csNomor, setCsNomor] = useState('');
-    const { app_cs_name, app_cs_nomor } = usePage<{
+    const {
+        app_cs_name = { app_stg_title: '', app_stg_value: '' },
+        app_cs_nomor = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
         app_cs_name: {
             app_stg_title: string;
             app_stg_value: string;
@@ -32,19 +33,21 @@ export default function seller() {
             app_stg_value: string;
         };
     }>().props;
+
+    const { processing, data, setData } = useForm({
+        app_cs_name: '',
+        app_cs_nomor: '',
+    });
     useEffect(() => {
         if (!app_cs_name || !app_cs_nomor) {
-            setCsName('');
-            setCsNomor('');
+            setData({ app_cs_name: '', app_cs_nomor: '' });
         } else {
-            setCsName(app_cs_name.app_stg_value);
-            setCsNomor(app_cs_nomor.app_stg_value);
+            setData({
+                app_cs_name: app_cs_name.app_stg_value,
+                app_cs_nomor: app_cs_nomor.app_stg_value,
+            });
         }
     }, [app_cs_name, app_cs_nomor]);
-    const { processing, data, setData } = useForm({
-        app_cs_name: csName,
-        app_cs_nomor: csNomor,
-    });
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
     useEffect(() => {
@@ -66,7 +69,11 @@ export default function seller() {
                         title="Pengaturan Pusat Bantuan"
                         description="Sesuaikan informasi dari Pusat Bantuan pada aplikasi."
                     />
-                    <Form action={''} method="post" className="mt-5">
+                    <Form
+                        action={'/app/setting/cs'}
+                        method="post"
+                        className="mt-5"
+                    >
                         <Card>
                             <CardContent className="pb-0">
                                 <div className="mb-2">

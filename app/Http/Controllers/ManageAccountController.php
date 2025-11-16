@@ -43,7 +43,7 @@ class ManageAccountController extends Controller
         }
 
         $users = User::where('email', 'like', "%{$query}%")
-            ->select('usr_id', 'name', 'email', 'usr_provice_name', 'usr_city_name', 'usr_city_id')
+            ->select('usr_id', 'name', 'email', 'usr_provice_name', 'usr_city_name', 'usr_city_id', 'usr_latitude', 'usr_longtitude')
             ->limit(10)
             ->get();
 

@@ -14,7 +14,12 @@ const sidebarNavItems: NavItem[] = [
     },
     {
         title: 'Pusat Bantuan',
-        href: '/app/setting/seller',
+        href: '/app/setting/cs',
+        icon: null,
+    },
+    {
+        title: 'Sepanduk',
+        href: '/app/setting/banner',
         icon: null,
     },
 ];

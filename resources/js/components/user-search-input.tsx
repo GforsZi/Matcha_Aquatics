@@ -11,6 +11,8 @@ interface User {
     usr_provice_name: string;
     usr_city_name: string;
     usr_city_id: string;
+    usr_latitude: string;
+    usr_longtitude: string;
 }
 
 interface Props {
@@ -23,6 +25,8 @@ interface Props {
         provice_name: string,
         city_name: string,
         city_id: string,
+        latitude: string,
+        longitude: string,
     ) => void;
 }
 
@@ -77,6 +81,8 @@ const UserSearchInput: React.FC<Props> = ({
             user.usr_provice_name,
             user.usr_city_name,
             user.usr_city_id,
+            user.usr_latitude,
+            user.usr_longtitude,
         );
     };
 
@@ -84,7 +90,7 @@ const UserSearchInput: React.FC<Props> = ({
         setQuery('');
         setSelectedId(null);
         setUsers([]);
-        onChange?.(null, null, '', '', '');
+        onChange?.(null, null, '', '', '', '', '');
     };
 
     return (

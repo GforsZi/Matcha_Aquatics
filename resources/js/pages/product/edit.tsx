@@ -185,15 +185,6 @@ export default function edit() {
                                     alt="Preview"
                                     className="h-48 w-full rounded-md border object-cover"
                                 />
-                                <Button
-                                    type="button"
-                                    size="icon"
-                                    variant="destructive"
-                                    className="absolute top-2 right-2 rounded-full"
-                                    onClick={handleRemove}
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
                             </div>
                         )}
 

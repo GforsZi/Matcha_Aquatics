@@ -33,17 +33,21 @@ interface Props {
     Destination_Provice_name?: string;
     Destination_City_name?: string;
     Destination_City_id?: string;
+    Destination_Latitude?: string;
+    Destination_Longitude?: string;
 }
 
 const ProductSelector: React.FC<Props> = ({
     name = 'product_id[]',
     paymentMethod,
-    Origin_Provice_name,
-    Origin_City_name,
-    Origin_City_id,
-    Destination_Provice_name,
-    Destination_City_name,
-    Destination_City_id,
+    Origin_Provice_name = '',
+    Origin_City_name = '',
+    Origin_City_id = '',
+    Destination_Provice_name = '',
+    Destination_City_name = '',
+    Destination_City_id = '',
+    Destination_Latitude = '',
+    Destination_Longitude = '',
 }) => {
     const { assetBaseUrl } = usePage().props;
     const asset = (path: string) => `${assetBaseUrl}${path}`;
@@ -124,7 +128,7 @@ const ProductSelector: React.FC<Props> = ({
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
                 {Object.values(selected).length === 0 ? (
                     <div className="flex h-24 items-center justify-center rounded-md border text-sm text-muted-foreground">
                         Belum ada produk dipilih
@@ -144,14 +148,15 @@ const ProductSelector: React.FC<Props> = ({
                                 <img
                                     src={asset(prd.prd_img_url)}
                                     alt={prd.prd_name}
-                                    className="h-32 w-full object-cover"
+                                    className="h-56 w-full border object-contain"
                                 />
                             ) : (
-                                <div className="flex h-32 w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
+                                <div className="flex h-auto w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
                                     Tidak ada gambar
                                 </div>
                             )}
-                            <CardContent className="space-y-1 p-3">
+                            <CardContent className="flex h-full flex-col justify-end px-3">
+                                <hr className="mb-2" />
                                 <h3 className="text-sm font-medium">
                                     {prd.prd_name}
                                 </h3>
@@ -159,13 +164,15 @@ const ProductSelector: React.FC<Props> = ({
                                     {formatRupiah(prd.prd_price) + ',-'}
                                 </p>
                             </CardContent>
-                            <button
+                            <Button
                                 type="button"
+                                size="icon"
+                                variant="destructive"
                                 onClick={() => removeProduct(prd.prd_id)}
-                                className="absolute top-2 right-2 rounded-full bg-white/80 p-1 opacity-0 transition group-hover:opacity-100 hover:bg-white"
+                                className="absolute top-2 right-2 rounded-full"
                             >
                                 <X size={14} />
-                            </button>
+                            </Button>
                         </Card>
                     ))
                 )}

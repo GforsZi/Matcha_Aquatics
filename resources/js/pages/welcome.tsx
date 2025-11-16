@@ -71,16 +71,11 @@ export default function Welcome() {
                         <div className="container mx-auto flex h-full items-center px-4">
                             <div className="max-w-xl space-y-6">
                                 <h2 className="text-5xl leading-tight font-bold md:text-6xl">
-                                    Discover Your{' '}
-                                    <span className="text-emerald-700">
-                                        Perfect Betta
-                                    </span>
+                                    Ikan cupang <span>berkualitas tinggi</span>
                                 </h2>
                                 <p className="text-shadow text-lg">
-                                    Temukan ikan cupang berkualitas tinggi yang
-                                    dipilih secara khusus. Keindahan warna dan
-                                    karakter terbaik untuk menambah koleksi
-                                    maupun memperindah ruang Anda.
+                                    Dengan kesederhanaan dan harmoni yang tidak
+                                    bisa dinikmati semua orang.
                                 </p>
                             </div>
                         </div>
@@ -99,7 +94,7 @@ export default function Welcome() {
                                     Mendukung pengiriman
                                 </h3>
                                 <p className="text-muted-foreground">
-                                    Dengan biaya terjangkau
+                                    Biaya Terjangkau
                                 </p>
                             </div>
                             <div className="flex flex-col items-center space-y-4 text-center">
@@ -110,7 +105,7 @@ export default function Welcome() {
                                     Pembayaran Terjaga
                                 </h3>
                                 <p className="text-muted-foreground">
-                                    Mendukung Qris
+                                    Mendukung QRIS
                                 </p>
                             </div>
                             <div className="flex flex-col items-center space-y-4 text-center">
@@ -133,43 +128,58 @@ export default function Welcome() {
                     <div className="container mx-auto px-4">
                         <div className="mb-12 text-center">
                             <h2 className="mb-4 text-4xl font-bold text-foreground">
-                                Shop by Category
+                                Berbagai Kategori Cupang
                             </h2>
                             <p className="text-lg text-muted-foreground">
-                                Explore our curated collections
+                                Jelajahi dan temukan cupang yang cocok untukmu.
                             </p>
                         </div>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                             <Card className="group cursor-pointer border-2 transition-shadow hover:border-emerald-500 hover:shadow-lg">
                                 <CardHeader>
-                                    <div className="mb-4 h-48 w-full rounded-lg bg-secondary"></div>
+                                    <img
+                                        src={asset('/cupang-1.jpg')}
+                                        className="mb-4 h-48 w-full rounded-lg bg-secondary object-cover"
+                                        alt="cupang 1"
+                                    />
                                     <CardTitle className="transition-colors group-hover:text-emerald-800">
-                                        New Arrivals
+                                        Cupang Hias
                                     </CardTitle>
                                     <CardDescription>
-                                        Discover the latest trends
+                                        Cupang yang cocok dijadikan pajangan
+                                        atau koleksi.
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
                             <Card className="group cursor-pointer border-2 transition-shadow hover:border-emerald-500 hover:shadow-lg">
                                 <CardHeader>
-                                    <div className="mb-4 h-48 w-full rounded-lg bg-secondary"></div>
+                                    <img
+                                        src={asset('/cupang-2.jpg')}
+                                        className="mb-4 h-48 w-full rounded-lg bg-secondary object-cover"
+                                        alt="cupang 2"
+                                    />
                                     <CardTitle className="transition-colors group-hover:text-emerald-800">
-                                        Best Sellers
+                                        Cupang Aduan
                                     </CardTitle>
                                     <CardDescription>
-                                        Customer favorites
+                                        Cupang yang agresif, dengan kemampuan
+                                        bertarung.
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
                             <Card className="group cursor-pointer border-2 transition-shadow hover:border-emerald-500 hover:shadow-lg">
                                 <CardHeader>
-                                    <div className="mb-4 h-48 w-full rounded-lg bg-secondary"></div>
+                                    <img
+                                        src={asset('/cupang-3.jpg')}
+                                        className="mb-4 h-48 w-full rounded-lg bg-secondary object-cover"
+                                        alt="cupang 3"
+                                    />
                                     <CardTitle className="transition-colors group-hover:text-emerald-800">
-                                        Limited Edition
+                                        Cupang Ternak
                                     </CardTitle>
                                     <CardDescription>
-                                        Exclusive items
+                                        Indukan cupang yang sudah dipilih untuk
+                                        diternakan.
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -181,10 +191,11 @@ export default function Welcome() {
                 <section className="bg-emerald-600 py-20 text-primary-foreground">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="mb-4 text-4xl font-bold">
-                            Join Our Community
+                            Bergabung Dengan Komunitas
                         </h2>
                         <p className="mb-8 text-lg opacity-90">
-                            Subscribe to get special offers and updates
+                            Bergabung untuk mendapatkan berbagai keuntungan dan
+                            informasi terbaru.
                         </p>
                     </div>
                 </section>
@@ -195,16 +206,16 @@ export default function Welcome() {
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
                             <div>
                                 <h3 className="mb-4 text-lg font-bold text-foreground">
-                                    EmeraldShop
+                                    Matcha Aquatics
                                 </h3>
                                 <p className="text-muted-foreground">
-                                    Your destination for premium lifestyle
-                                    products.
+                                    Kesederhanaan dan harmoni yang tidak bisa
+                                    dinikmati semua orang.
                                 </p>
                             </div>
                             <div>
                                 <h4 className="mb-4 font-semibold text-foreground">
-                                    Shop
+                                    Belanja
                                 </h4>
                                 <ul className="space-y-2 text-muted-foreground">
                                     <li>
@@ -212,7 +223,7 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            New Arrivals
+                                            Cupang Hias
                                         </a>
                                     </li>
                                     <li>
@@ -220,7 +231,7 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            Best Sellers
+                                            Cupang Aduan
                                         </a>
                                     </li>
                                     <li>
@@ -228,14 +239,14 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            Collections
+                                            Cupang Ternak
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                             <div>
                                 <h4 className="mb-4 font-semibold text-foreground">
-                                    Support
+                                    Dukung / Bantuan
                                 </h4>
                                 <ul className="space-y-2 text-muted-foreground">
                                     <li>
@@ -243,7 +254,7 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            Contact Us
+                                            Hubungi Kami
                                         </a>
                                     </li>
                                     <li>
@@ -251,7 +262,7 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            Shipping Info
+                                            Info Produk
                                         </a>
                                     </li>
                                     <li>
@@ -259,14 +270,14 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            Returns
+                                            Info Transaksi
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                             <div>
                                 <h4 className="mb-4 font-semibold text-foreground">
-                                    Follow Us
+                                    Ikuti Kamu
                                 </h4>
                                 <ul className="space-y-2 text-muted-foreground">
                                     <li>
@@ -290,14 +301,14 @@ export default function Welcome() {
                                             href="#"
                                             className="transition-colors hover:text-primary"
                                         >
-                                            Twitter
+                                            TikTok
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div className="mt-8 border-t border-border pt-8 text-center text-muted-foreground">
-                            <p>&copy; 2025 EmeraldShop. All rights reserved.</p>
+                            <p>&copy; 2025 Matcha Aquatics.</p>
                         </div>
                     </div>
                 </footer>
