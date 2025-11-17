@@ -44,7 +44,9 @@ class ManageTransactionController extends Controller
         $app_provice_name = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_provice_name')->first();
         $app_city_name = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_city_name')->first();
         $app_city_id = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_city_id')->first();
-        return Inertia::render('transaction/add', compact('app_provice_name', 'app_city_name', 'app_city_id'));
+        $app_location_latitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_latitude')->first();
+        $app_location_longitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_longitude')->first();
+        return Inertia::render('transaction/add', compact('app_provice_name', 'app_city_name', 'app_city_id', 'app_location_latitude', 'app_location_longitude'));
     }
 
     public function payment_link_page($id)

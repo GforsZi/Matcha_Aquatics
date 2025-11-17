@@ -137,7 +137,7 @@ export default function edit() {
                     </div>
                     <Button
                         type="submit"
-                        className="w-full bg-emerald-600 hover:bg-emerald-700"
+                        className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                     >
                         Ubah Akun
                     </Button>

@@ -30,6 +30,8 @@ interface Props {
     Origin_Provice_name?: string;
     Origin_City_name?: string;
     Origin_City_id?: string;
+    Origin_Latitude?: string;
+    Origin_Longitude?: string;
     Destination_Provice_name?: string;
     Destination_City_name?: string;
     Destination_City_id?: string;
@@ -43,6 +45,8 @@ const ProductSelector: React.FC<Props> = ({
     Origin_Provice_name = '',
     Origin_City_name = '',
     Origin_City_id = '',
+    Origin_Latitude = '',
+    Origin_Longitude = '',
     Destination_Provice_name = '',
     Destination_City_name = '',
     Destination_City_id = '',
@@ -309,6 +313,10 @@ const ProductSelector: React.FC<Props> = ({
                     defaultDestinationProviceName={Destination_Provice_name}
                     defaultDestinationCityName={Destination_City_name}
                     defaultDestinationId={Destination_City_id}
+                    defaultOriginLatitude={Origin_Latitude}
+                    defaultOriginLongitude={Origin_Longitude}
+                    defaultDestinationLatitude={Destination_Latitude}
+                    defaultDestinationLongitude={Destination_Longitude}
                     onChange={(code, name, cost, etd, service) => (
                         setCost({
                             code,
@@ -329,6 +337,10 @@ const ProductSelector: React.FC<Props> = ({
                     defaultDestinationProviceName={Destination_Provice_name}
                     defaultDestinationCityName={Destination_City_name}
                     defaultDestinationId={Destination_City_id}
+                    defaultOriginLatitude={Origin_Latitude}
+                    defaultOriginLongitude={Origin_Longitude}
+                    defaultDestinationLatitude={Destination_Latitude}
+                    defaultDestinationLongitude={Destination_Longitude}
                     onChange={(code, name, cost, etd, service) => (
                         setCost({
                             code,

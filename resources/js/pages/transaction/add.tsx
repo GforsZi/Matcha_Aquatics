@@ -29,6 +29,8 @@ export default function add() {
         app_provice_name = { app_stg_title: '', app_stg_value: '' },
         app_city_name = { app_stg_title: '', app_stg_value: '' },
         app_city_id = { app_stg_title: '', app_stg_value: '' },
+        app_location_latitude = { app_stg_title: '', app_stg_value: '' },
+        app_location_longitude = { app_stg_title: '', app_stg_value: '' },
     } = usePage<{
         app_provice_name: {
             app_stg_title: string;
@@ -42,7 +44,16 @@ export default function add() {
             app_stg_title: string;
             app_stg_value: string;
         };
+        app_location_latitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_location_longitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
     }>().props;
+
     const [buyer, setBuyer] = useState<{
         id: number | null;
         name: string | null;
@@ -187,6 +198,14 @@ export default function add() {
                                 Destination_Provice_name={buyer?.provice_name}
                                 Destination_City_name={buyer?.city_name}
                                 Destination_City_id={buyer?.city_id}
+                                Destination_Latitude={buyer?.latitude}
+                                Destination_Longitude={buyer?.longitude}
+                                Origin_Latitude={
+                                    app_location_latitude?.app_stg_value
+                                }
+                                Origin_Longitude={
+                                    app_location_longitude?.app_stg_value
+                                }
                             />
                         </div>
                     )}
@@ -199,7 +218,7 @@ export default function add() {
 
                     <Button
                         type="submit"
-                        className="w-full bg-emerald-600 hover:bg-emerald-700"
+                        className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                         disabled={processing}
                     >
                         {processing ? (

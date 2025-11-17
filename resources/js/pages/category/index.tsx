@@ -129,7 +129,7 @@ export default function index() {
                     <Button
                         variant={'default'}
                         asChild
-                        className="bg-emerald-600 hover:bg-emerald-700"
+                        className="bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                     >
                         <Link href={'/manage/category/add'}>
                             <IconPlus />

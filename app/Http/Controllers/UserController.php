@@ -43,8 +43,9 @@ class UserController extends Controller
         return Inertia::render('home/cart');
     }
 
-    public function product()
+    public function product($slug)
     {
-        return Inertia::render('home/product');
+        $product = Product::with('categories')->where('prd_slug', $slug)->get()->first();
+        return Inertia::render('home/product', compact('product'));
     }
 }

@@ -118,6 +118,7 @@ export default function Password() {
                                     <Button
                                         disabled={processing}
                                         data-test="update-password-button"
+                                        className="bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                                     >
                                         Simpan
                                     </Button>

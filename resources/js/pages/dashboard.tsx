@@ -17,6 +17,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
+    const {
+        app_location_latitude = { app_stg_title: '', app_stg_value: '' },
+        app_location_longitude = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
+        app_location_latitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_location_longitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+    }>().props;
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
     useEffect(() => {
@@ -40,7 +53,10 @@ export default function Dashboard() {
                 </div>
                 <div className="flex flex-col gap-2 px-4 md:flex-row md:gap-6 md:pb-6 lg:px-6">
                     <div className="flex w-full justify-center md:w-1/3">
-                        <MapView />
+                        <MapView
+                            Latitude={app_location_latitude.app_stg_value}
+                            Longitude={app_location_longitude.app_stg_value}
+                        />
                     </div>
                     <div className="md:w-2/3">
                         <ChartBarInteractive />

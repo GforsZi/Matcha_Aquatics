@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import MapTransaction from './map-transaction';
 import {
     Select,
     SelectContent,
@@ -40,6 +41,10 @@ interface ShippingCostCalculatorProps {
     defaultOriginCityName?: string;
     defaultDestinationProviceName?: string;
     defaultDestinationCityName?: string;
+    defaultDestinationLatitude?: string;
+    defaultDestinationLongitude?: string;
+    defaultOriginLatitude?: string;
+    defaultOriginLongitude?: string;
     onCostSelected?: (cost: Cost) => void;
     onChange?: (
         code: string,
@@ -74,6 +79,10 @@ export default function ShippingCostCalculator({
     defaultDestinationId,
     defaultDestinationProviceName = '',
     defaultDestinationCityName = '',
+    defaultDestinationLatitude = '',
+    defaultDestinationLongitude = '',
+    defaultOriginLatitude = '',
+    defaultOriginLongitude = '',
     onCostSelected,
     onChange,
 }: ShippingCostCalculatorProps) {
@@ -498,7 +507,19 @@ export default function ShippingCostCalculator({
                         </SelectContent>
                     </Select>
                 </div>
-
+                <hr />
+                <div className="mx-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2">
+                    <MapTransaction
+                        mapType="origin"
+                        Latitude={defaultOriginLatitude}
+                        Longitude={defaultOriginLongitude}
+                    />
+                    <MapTransaction
+                        mapType="destination"
+                        Latitude={defaultDestinationLatitude}
+                        Longitude={defaultDestinationLongitude}
+                    />
+                </div>
                 <div className="pt-2">
                     <Button
                         onClick={handleCalculate}

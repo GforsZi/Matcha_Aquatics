@@ -7,7 +7,6 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import L from 'leaflet';
-import { TrendingUp } from 'lucide-react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 // Pastikan leaflet CSS sudah diimport di app.tsx
@@ -22,15 +21,22 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-export default function MapView() {
-    const position: [number, number] = [-6.2, 106.816666];
+interface ShippingCostCalculatorProps {
+    Latitude?: string;
+    Longitude?: string;
+}
+export default function MapView({
+    Longitude = '107.606223',
+    Latitude = '-6.922480',
+}: ShippingCostCalculatorProps) {
+    const position: [number, number] = [Number(Latitude), Number(Longitude)];
 
     return (
         <Card className="w-full">
             <CardHeader className="items-center">
-                <CardTitle>Leaflet Map - Location Overview</CardTitle>
+                <CardTitle>Peta Lokasi Toko</CardTitle>
                 <CardDescription>
-                    Showing asset locations and markers dynamically
+                    Memperlihatkan titik lokasi dari toko.
                 </CardDescription>
             </CardHeader>
 
@@ -47,21 +53,18 @@ export default function MapView() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
                         <Marker position={position}>
-                            <Popup>
-                                Jakarta, Indonesia <br /> Example marker.
-                            </Popup>
+                            <Popup>Lokasi Toko</Popup>
                         </Marker>
                     </MapContainer>
                 </div>
             </CardContent>
 
             <CardFooter className="flex-col gap-2 text-sm">
-                <div className="flex items-center gap-2 leading-none font-medium">
-                    Showing latest updated markers{' '}
-                    <TrendingUp className="h-4 w-4" />
+                <div className="flex items-center gap-2 text-center leading-none font-medium">
+                    Data ini menjadi patokan pengiriman berasal dari mana.
                 </div>
                 <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                    Last updated: November 2025
+                    Matcha Aquatics
                 </div>
             </CardFooter>
         </Card>

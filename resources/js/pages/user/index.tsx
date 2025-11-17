@@ -131,7 +131,7 @@ export default function user() {
                     <Button
                         variant={'default'}
                         asChild
-                        className="bg-emerald-600 hover:bg-emerald-700"
+                        className="bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                     >
                         <Link href={'/manage/user/add'}>
                             <IconPlus />

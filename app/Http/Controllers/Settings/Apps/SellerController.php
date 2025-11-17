@@ -47,7 +47,7 @@ class SellerController extends Controller
             ])->setStatusCode(303);
         } catch (\Throwable $th) {
             return redirect('/app/setting/cs')->with([
-                'error' => $th->getMessage() . ' | Pusat bantuan pada aplikasi gagal diubah.',
+                'error' => $th->getMessage() . ' | pusat bantuan pada aplikasi gagal diubah.',
             ])->setStatusCode(303);
         }
     }

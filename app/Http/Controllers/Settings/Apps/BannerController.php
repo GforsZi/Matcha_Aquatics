@@ -41,11 +41,11 @@ class BannerController extends Controller
                 );
             }
             return redirect('/app/setting/banner')->with([
-                'success' => 'Pusat bantuan pada aplikasi berhasil diubah.',
+                'success' => 'Sepanduk pada aplikasi berhasil diubah.',
             ])->setStatusCode(303);
         } catch (\Throwable $th) {
             return redirect('/app/setting/banner')->with([
-                'error' => $th->getMessage() . ' | Pusat bantuan pada aplikasi gagal diubah.',
+                'error' => $th->getMessage() . ' | sepanduk pada aplikasi gagal diubah.',
             ])->setStatusCode(303);
         }
     }

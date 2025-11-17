@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppSetting;
 use App\Models\UserLogin;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,6 +28,8 @@ class AdminController extends Controller
             ->groupBy(DB::raw('DATE(usr_lg_logged_in_at)'))
             ->orderBy('date', 'asc')
             ->get();
-        return Inertia::render('dashboard', compact('logins'));
+        $app_location_latitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_latitude')->first();
+        $app_location_longitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_longitude')->first();
+        return Inertia::render('dashboard', compact('logins', 'app_location_latitude', 'app_location_longitude'));
     }
 }
