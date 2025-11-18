@@ -55,6 +55,10 @@ class Transaction extends Model
         return $this->hasOne(Payment::class, 'pay_transaction_id', 'trx_id');
     }
 
+    public function shipment()
+    {
+        return $this->hasOne(Shipment::class, 'shp_transaction_id', 'trx_id');
+    }
 
     public function created_by(): BelongsTo
     {

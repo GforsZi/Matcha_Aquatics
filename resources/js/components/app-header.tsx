@@ -31,7 +31,7 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Home, Menu, ShoppingCart } from 'lucide-react';
+import { Home, Menu, MessageCircleQuestion, ShoppingCart } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 import { CommandDialogSearch } from './command-dialog';
@@ -49,6 +49,11 @@ const rightNavItems: NavItem[] = [
         title: 'Keranjang',
         href: '/cart',
         icon: ShoppingCart,
+    },
+    {
+        title: 'Pusat Bantuan',
+        href: '/customer_service',
+        icon: MessageCircleQuestion,
     },
 ];
 

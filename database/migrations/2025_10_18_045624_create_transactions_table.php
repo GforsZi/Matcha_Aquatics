@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('trx_discount')->default(0);
             $table->integer('trx_payment')->nullable();
             $table->integer('trx_change')->nullable();
-            $table->enum('trx_payment_method', ['1', '2']);
+            $table->enum('trx_payment_method', ['1', '2', '3', '4']);
             $table->enum('trx_status', ['1', '2', '3', '4', '5', '6'])->default('1');
             $table->text('trx_notes')->nullable();
             $table->timestamps();

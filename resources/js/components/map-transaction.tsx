@@ -130,7 +130,7 @@ export default function MapTransaction({
                         placeholder="Latitude"
                         value={varLatitude}
                         readOnly
-                        name="app_location_latitude"
+                        name={`shp_${mapType}_latitude`}
                         className="w-1/2 rounded-md border px-3 py-2 text-sm"
                     />
                     <Input
@@ -139,7 +139,7 @@ export default function MapTransaction({
                         value={varLongitude}
                         placeholder="Longitude"
                         readOnly
-                        name="app_location_longitude"
+                        name={`shp_${mapType}_longitude`}
                         className="w-1/2 rounded-md border px-3 py-2 text-sm"
                     />
                 </div>

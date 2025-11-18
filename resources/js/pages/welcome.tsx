@@ -277,7 +277,7 @@ export default function Welcome() {
                             </div>
                             <div>
                                 <h4 className="mb-4 font-semibold text-foreground">
-                                    Ikuti Kamu
+                                    Ikuti Kami
                                 </h4>
                                 <ul className="space-y-2 text-muted-foreground">
                                     <li>

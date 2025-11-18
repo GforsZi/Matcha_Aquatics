@@ -69,6 +69,13 @@ export const columns: ColumnDef<transaction>[] = [
                     color = 'text-sky-600';
                     break;
                 case '3':
+                    label = 'Non-tunai + Pengiriman';
+                    color = 'text-green-600';
+                    break;
+                case '4':
+                    label = 'Non-tunai + Pengiriman';
+                    color = 'text-sky-600';
+                    break;
             }
 
             return <div className={`font-medium ${color}`}>{label}</div>;

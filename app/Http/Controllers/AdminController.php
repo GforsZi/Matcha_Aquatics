@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppSetting;
+use App\Models\Product;
+use App\Models\User;
 use App\Models\UserLogin;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,6 +32,8 @@ class AdminController extends Controller
             ->get();
         $app_location_latitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_latitude')->first();
         $app_location_longitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_longitude')->first();
-        return Inertia::render('dashboard', compact('logins', 'app_location_latitude', 'app_location_longitude'));
+        $total_product = Product::select('prd_id')->whereIn('prd_status', ['1', '3'])->get()->count();
+        $total_customer = User::select('usr_id')->role('buyer')->get()->count();
+        return Inertia::render('dashboard', compact('logins', 'app_location_latitude', 'app_location_longitude', 'total_product', 'total_customer'));
     }
 }

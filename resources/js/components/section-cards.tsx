@@ -6,7 +6,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-export function SectionCards() {
+export function SectionCards({
+    total_product = 0,
+    total_customer = 0,
+}: {
+    total_product?: number;
+    total_customer?: number;
+}) {
     return (
         <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-3 @5xl/main:grid-cols-3 dark:*:data-[slot=card]:bg-card">
             <Card className="card-gradient card-gradient @container/card">
@@ -26,7 +32,7 @@ export function SectionCards() {
                 <CardHeader>
                     <CardDescription>Total Produk</CardDescription>
                     <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        45,678
+                        {total_product}
                     </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -40,7 +46,7 @@ export function SectionCards() {
                 <CardHeader>
                     <CardDescription>Jumlah Pelanggan</CardDescription>
                     <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        1,234
+                        {total_customer}
                     </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">

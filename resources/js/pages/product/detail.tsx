@@ -10,6 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { formatDate } from '@/utils/date';
 import { Head, usePage } from '@inertiajs/react';
+import { ImageIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 
@@ -90,13 +91,21 @@ export default function index() {
             <div className="mx-5 mt-5">
                 <div className="flex flex-col md:flex-row">
                     <div className="flex w-full justify-center p-4 md:w-1/3">
-                        <img
-                            src={asset(
-                                product.prd_img_url || 'user_placeholder.jpg',
-                            )}
-                            alt={product.prd_name}
-                            className="h-96 w-full shrink-0 overflow-hidden border object-contain p-4 shadow-md"
-                        />
+                        {product.prd_img_url && (
+                            <img
+                                src={asset(product.prd_img_url)}
+                                alt={product.prd_name}
+                                className="h-96 w-full shrink-0 overflow-hidden border object-contain p-4 shadow-md"
+                            />
+                        )}
+                        {!product.prd_img_url && (
+                            <div className="flex h-96 w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain p-4 text-muted-foreground shadow-md md:mx-16">
+                                <ImageIcon className="mb-2 h-10 w-10" />
+                                <span className="text-sm">
+                                    Belum ada gambar dipilih
+                                </span>
+                            </div>
+                        )}
                     </div>
                     <div className="mb-4 w-full md:w-2/3">
                         <Table className="border p-4 shadow-md">

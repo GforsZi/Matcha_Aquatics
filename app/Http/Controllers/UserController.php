@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         $app_banner = AppSetting::select('app_stg_value')->where('app_stg_title', 'app_banner')->get()->first();
-        $products = Product::select('prd_id', 'prd_name', 'prd_price', 'prd_img_url', 'prd_status', 'prd_slug')->latest()->limit(40)->get();
+        $products = Product::select('prd_id', 'prd_name', 'prd_price', 'prd_img_url', 'prd_status', 'prd_slug')->where('prd_status', '1')->latest()->limit(40)->get();
         return Inertia::render('home/index', compact('app_banner', 'products'));
     }
     public function search(Request $request)
@@ -25,7 +25,7 @@ class UserController extends Controller
         if ($request->has('category')) {
             $cat_products = Product::query()
                 ->select('prd_id', 'prd_name', 'prd_price', 'prd_img_url', 'prd_status', 'prd_slug')
-                ->with('categories')
+                ->with('categories')->where('prd_status', '1')
                 ->when($request->query('category'), function ($query, $category) {
                     $query->whereHas('categories', function ($q) use ($category) {
                         $q->where('cat_slug', $category);

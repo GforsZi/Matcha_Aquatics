@@ -72,12 +72,12 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::post('/system/payment/create/{trx_id}', [ManageTransactionController::class, 'payment_link_system']);
     Route::delete('/payment/{order_id}', [ManageTransactionController::class, 'delete_payment_link_system']);
 
-    Route::get('/system/shipping/provinces', [ShippingController::class, 'provinces']);
-    Route::get('/system/shipping/cities/{province}', [ShippingController::class, 'cities']);
     Route::post('/system/shipping/cost', [ShippingController::class, 'cost']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/system/shipping/provinces', [ShippingController::class, 'provinces']);
+    Route::get('/system/shipping/cities/{province}', [ShippingController::class, 'cities']);
     Route::get('/system/product/search', [ManageProductController::class, 'search_system']);
     Route::get('/system/categories/search', [ManageCategoryController::class, 'search_system']);
 });

@@ -34,8 +34,7 @@ class ManageTransactionController extends Controller
     public function show($id)
     {
 
-        $transaction = Transaction::with('products', 'payment', 'created_by', 'updated_by', 'deleted_by')->findOrFail($id);
-        dd($transaction->toArray());
+        $transaction = Transaction::with('products', 'payment', 'shipment', 'created_by', 'updated_by', 'deleted_by')->findOrFail($id);
         return Inertia::render('transaction/detail', compact('transaction'));
     }
 
@@ -57,7 +56,6 @@ class ManageTransactionController extends Controller
 
     public function add_system(Request $request)
     {
-        dd($request);
         try {
             $message = [
                 'trx_buyer_id.exists' => 'Data pembeli tidak tersedia.',
@@ -97,10 +95,11 @@ class ManageTransactionController extends Controller
             $validateDataTrx['trx_subtotal'] = $request->trx_total + $request->trx_shipping_cost;
             if ($request->trx_payment_method == '1') {
                 $validateDataTrx['trx_status'] = '2';
+            } elseif ($request->trx_payment_method == '3') {
+                $validateDataTrx['trx_status'] = '2';
             }
 
             $transaction = Transaction::create($validateDataTrx);
-            $validateDataShp['shp_transaction_id'] = $transaction->trx_id;
 
             if ($request->has('product_id')) {
                 foreach ($request->product_id as $prd_id) {
@@ -120,40 +119,54 @@ class ManageTransactionController extends Controller
                         $copy->update(['prd_status' => '2', 'prd_selled_at' => now()]);
                     } elseif ($request->trx_payment_method == '2') {
                         $copy->update(['prd_status' => '4']);
+                    } elseif ($request->trx_payment_method == '3') {
+                        $copy->update(['prd_status' => '2', 'prd_selled_at' => now()]);
+                    } elseif ($request->trx_payment_method == '4') {
+                        $copy->update(['prd_status' => '4']);
                     }
                 }
                 $transaction->products()->sync($validateDataProduct['product_id']);
                 if ($request->trx_payment_method == '3') {
                     $validateDataShp = $request->validate([
                         'trx_shipping_cost' => ['required', 'integer', 'min:0', 'max:99999999999'],
-                        'shp_transaction_id' => ['required', 'integer', 'exists:transactions,trx_id'],
                         'shp_origin_city_id' => ['required', 'string'],
                         'shp_destination_city_id' => ['required', 'string'],
+                        'shp_origin_province_name' => ['required', 'string'],
+                        'shp_origin_city_name' => ['required', 'string'],
+                        'shp_destination_province_name' => ['required', 'string'],
+                        'shp_destination_city_name' => ['required', 'string'],
                         'shp_courier' => ['required', 'string'],
                         'shp_cost' => ['required', 'integer'],
+                        'shp_etd' => ['required', 'string'],
+                        'shp_service' => ['required', 'string'],
                         'shp_weight' => ['required', 'integer'],
-                        'shp_tracking_url' => ['required', 'string'],
-                        'shp_origin_latitude' => ['nullable', 'string'],
-                        'shp_origin_longitude' => ['nullable', 'string'],
-                        'shp_destination_latitude' => ['nullable', 'string'],
-                        'shp_destination_longitude' => ['nullable', 'string'],
+                        'shp_tracking_url' => ['nullable', 'string'],
+                        'shp_origin_latitude' => ['required', 'string'],
+                        'shp_origin_longitude' => ['required', 'string'],
+                        'shp_destination_latitude' => ['required', 'string'],
+                        'shp_destination_longitude' => ['required', 'string'],
                     ]);
+                    $validateDataShp['shp_transaction_id'] = $transaction->trx_id;
                     Shipment::create($validateDataShp);
                 } elseif ($request->trx_payment_method == '4') {
                     $validateDataShp = $request->validate([
                         'trx_shipping_cost' => ['required', 'integer', 'min:0', 'max:99999999999'],
-                        'shp_transaction_id' => ['required', 'integer', 'exists:transactions,trx_id'],
                         'shp_origin_city_id' => ['required', 'string'],
                         'shp_destination_city_id' => ['required', 'string'],
+                        'shp_origin_province_name' => ['required', 'string'],
+                        'shp_origin_city_name' => ['required', 'string'],
+                        'shp_destination_province_name' => ['required', 'string'],
+                        'shp_destination_city_name' => ['required', 'string'],
                         'shp_courier' => ['required', 'string'],
                         'shp_cost' => ['required', 'integer'],
                         'shp_weight' => ['required', 'integer'],
-                        'shp_tracking_url' => ['required', 'string'],
+                        'shp_tracking_url' => ['nullable', 'string'],
                         'shp_origin_latitude' => ['nullable', 'string'],
                         'shp_origin_longitude' => ['nullable', 'string'],
                         'shp_destination_latitude' => ['nullable', 'string'],
                         'shp_destination_longitude' => ['nullable', 'string'],
                     ]);
+                    $validateDataShp['shp_transaction_id'] = $transaction->trx_id;
                     Shipment::create($validateDataShp);
                 }
                 if ($request->trx_payment_method == '1') {

@@ -20,17 +20,26 @@ export default function Dashboard() {
     const {
         app_location_latitude = { app_stg_title: '', app_stg_value: '' },
         app_location_longitude = { app_stg_title: '', app_stg_value: '' },
+        logins,
+        total_product,
+        total_customer,
     } = usePage<{
-        app_location_latitude: {
-            app_stg_title: string;
-            app_stg_value: string;
-        };
+        app_location_latitude: { app_stg_title: string; app_stg_value: string };
         app_location_longitude: {
             app_stg_title: string;
             app_stg_value: string;
         };
+        logins: {
+            date: string;
+            desktop: number;
+            mobile: number;
+            tablet: number;
+        }[];
+        total_product: number;
+        total_customer: number;
     }>().props;
     const { props } = usePage();
+
     const flash = props.flash as { success?: string; error?: string };
     useEffect(() => {
         if (flash?.success) {
@@ -46,7 +55,10 @@ export default function Dashboard() {
             <Toaster position="top-center" richColors closeButton />
             <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                    <SectionCards />
+                    <SectionCards
+                        total_product={total_product}
+                        total_customer={total_customer}
+                    />
                     <div className="px-4 lg:px-6">
                         <ChartArea />
                     </div>
@@ -54,12 +66,12 @@ export default function Dashboard() {
                 <div className="flex flex-col gap-2 px-4 md:flex-row md:gap-6 md:pb-6 lg:px-6">
                     <div className="flex w-full justify-center md:w-1/3">
                         <MapView
-                            Latitude={app_location_latitude.app_stg_value}
-                            Longitude={app_location_longitude.app_stg_value}
+                            Latitude={app_location_latitude?.app_stg_value}
+                            Longitude={app_location_longitude?.app_stg_value}
                         />
                     </div>
                     <div className="md:w-2/3">
-                        <ChartBarInteractive />
+                        <ChartBarInteractive chartData={logins} />
                     </div>
                 </div>
             </div>

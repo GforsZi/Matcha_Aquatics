@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('shipments', function (Blueprint $table) {
             $table->bigIncrements('shp_id');
             $table->unsignedBigInteger('shp_transaction_id')->unsigned();
-            $table->integer('shp_origin_province_name');
-            $table->integer('shp_origin_city_name');
-            $table->integer('shp_origin_city_id');
-            $table->integer('shp_destination_province_name');
-            $table->integer('shp_destination_city_name');
-            $table->integer('shp_destination_city_id');
+            $table->string('shp_origin_province_name');
+            $table->string('shp_origin_city_name');
+            $table->string('shp_origin_city_id');
+            $table->string('shp_destination_province_name');
+            $table->string('shp_destination_city_name');
+            $table->string('shp_destination_city_id');
             $table->string('shp_courier')->nullable();
             $table->string('shp_service')->nullable();
             $table->string('shp_etd')->nullable();
@@ -27,10 +27,10 @@ return new class extends Migration
             $table->integer('shp_weight')->nullable();
             // $table->enum('shp_status', ['1', '2', '3', '4', '5'])->default('1');
             $table->string('shp_tracking_url')->nullable();
-            $table->string('shp_origin_latitude')->nullable();
-            $table->string('shp_origin_longitude')->nullable();
-            $table->string('shp_destination_latitude')->nullable();
-            $table->string('shp_destination_longitude')->nullable();
+            $table->string('shp_origin_latitude');
+            $table->string('shp_origin_longitude');
+            $table->string('shp_destination_latitude');
+            $table->string('shp_destination_longitude');
             $table->timestamps();
             $table->unsignedBigInteger('shp_created_by')->unsigned()->nullable();
             $table->unsignedBigInteger('shp_deleted_by')->unsigned()->nullable();

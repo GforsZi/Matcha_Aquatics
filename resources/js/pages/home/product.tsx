@@ -17,6 +17,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { ImageIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -64,8 +65,6 @@ export default function Product() {
     const [qty, setQty] = useState<number>(1);
     const [loadingAdd, setLoadingAdd] = useState(false);
     const [loadingBuy, setLoadingBuy] = useState(false);
-
-    const imageUrl = product?.prd_img_url || '/images/placeholder-product.png';
 
     function formatCurrency(value: number) {
         // IDR formatting
@@ -153,11 +152,21 @@ export default function Product() {
                             <Card className="shadow-sm">
                                 <CardContent className="p-4">
                                     <div className="relative w-full">
-                                        <img
-                                            src={asset(imageUrl)}
-                                            alt={product.prd_name}
-                                            className="h-[430px] w-full rounded-lg object-contain"
-                                        />
+                                        {product.prd_img_url && (
+                                            <img
+                                                src={asset(product.prd_img_url)}
+                                                alt={product.prd_name}
+                                                className="h-[430px] w-full rounded-lg object-contain"
+                                            />
+                                        )}
+                                        {!product.prd_img_url && (
+                                            <div className="flex h-[430px] w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain text-muted-foreground shadow-md">
+                                                <ImageIcon className="mb-2 h-10 w-10" />
+                                                <span className="text-sm">
+                                                    Belum ada gambar
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -189,7 +198,7 @@ export default function Product() {
                                         ))
                                     ) : (
                                         <Badge variant="outline">
-                                            Uncategorized
+                                            Tidak memiliki kategori
                                         </Badge>
                                     )}
                                 </div>
@@ -205,8 +214,12 @@ export default function Product() {
                                             {product.prd_status === '1'
                                                 ? 'Tersedia'
                                                 : product.prd_status === '2'
-                                                  ? 'Habis'
-                                                  : 'Tidak diketahui'}
+                                                  ? 'Terjual'
+                                                  : product.prd_status === '3'
+                                                    ? 'Tidak tersedia'
+                                                    : product.prd_status === '4'
+                                                      ? 'Dalam orderan'
+                                                      : 'Tidak diketahui'}
                                         </p>
                                     </div>
                                     <div>

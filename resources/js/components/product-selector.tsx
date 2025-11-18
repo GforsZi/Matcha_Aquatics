@@ -155,16 +155,15 @@ const ProductSelector: React.FC<Props> = ({
                                     className="h-56 w-full border object-contain"
                                 />
                             ) : (
-                                <div className="flex h-auto w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
+                                <div className="flex h-56 w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
                                     Tidak ada gambar
                                 </div>
                             )}
-                            <CardContent className="flex h-full flex-col justify-end px-3">
-                                <hr className="mb-2" />
+                            <CardContent className="flex flex-col justify-end px-3">
                                 <h3 className="text-sm font-medium">
                                     {prd.prd_name}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="mt-1 text-sm font-bold text-emerald-600">
                                     {formatRupiah(prd.prd_price) + ',-'}
                                 </p>
                             </CardContent>
