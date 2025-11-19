@@ -5,7 +5,6 @@ import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
 import {
     Card,
-    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -102,10 +101,10 @@ export function ChartBarInteractive({
                     </Select>
                 </div>
             </CardHeader>
-            <CardContent className="px-2 sm:p-6">
+            <div className="flex h-full items-end px-2 sm:p-6">
                 <ChartContainer
                     config={chartConfig}
-                    className="aspect-auto h-[250px] w-full"
+                    className="aspect-auto h-[150px] w-full"
                 >
                     <BarChart
                         accessibilityLayer
@@ -114,6 +113,7 @@ export function ChartBarInteractive({
                             left: 12,
                             right: 12,
                         }}
+                        className="h-[100px]"
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis
@@ -153,7 +153,7 @@ export function ChartBarInteractive({
                         />
                     </BarChart>
                 </ChartContainer>
-            </CardContent>
+            </div>
         </Card>
     );
 }

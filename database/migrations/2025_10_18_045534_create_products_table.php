@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('prd_img_url')->nullable();
             $table->text('prd_description')->nullable();
             $table->integer('prd_price');
+            $table->integer('prd_weight');
             $table->enum('prd_status', ['1', '2', '3', '4'])->default('3');
             $table->timestamp('prd_selled_at')->nullable();
             $table->timestamps();

@@ -86,8 +86,8 @@ export default function Product() {
         setLoadingAdd(true);
         try {
             router.post(
-                '/cart',
-                { product_id: product.prd_id, qty },
+                '/system/cart/add',
+                { product_id: product.prd_id },
                 {
                     onSuccess: () =>
                         toast.success('Produk ditambahkan ke keranjang'),
@@ -129,6 +129,7 @@ export default function Product() {
     if (!product) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
+                <Toaster position="top-center" richColors closeButton />
                 <Head title="Detail Produk" />
                 <div className="py-20">
                     <div className="container mx-auto text-center text-sm text-muted-foreground">
@@ -269,7 +270,8 @@ export default function Product() {
                                             Harga
                                         </span>
                                         <span className="font-medium">
-                                            {formatCurrency(product.prd_price)}
+                                            {formatCurrency(product.prd_price) +
+                                                ',-'}
                                         </span>
                                     </div>
 
@@ -290,7 +292,8 @@ export default function Product() {
                                                 Total
                                             </div>
                                             <div className="text-2xl font-bold">
-                                                {formatCurrency(subtotal)}
+                                                {formatCurrency(subtotal) +
+                                                    ',-'}
                                             </div>
                                         </div>
                                     </div>
@@ -304,18 +307,7 @@ export default function Product() {
                                     >
                                         {loadingAdd
                                             ? 'Memproses...'
-                                            : 'Masukkan Keranjang'}
-                                    </Button>
-
-                                    <Button
-                                        variant="default"
-                                        onClick={handleBuyNow}
-                                        disabled={loadingBuy}
-                                        className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700"
-                                    >
-                                        {loadingBuy
-                                            ? 'Mengarahkan...'
-                                            : 'Beli Sekarang'}
+                                            : 'Checkout'}
                                     </Button>
                                 </CardFooter>
                             </Card>

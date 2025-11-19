@@ -56,6 +56,9 @@ class ManageProductController extends Controller
                 'prd_price.required' => 'Harga produk wajib diisi.',
                 'prd_price.max' => 'Harga produk tidak boleh melebihi :max.',
                 'prd_price.min' => 'Harga produk tidak boleh kurang dari :min.',
+                'prd_weight.required' => 'Berat produk wajib diisi.',
+                'prd_weight.max' => 'Berat produk tidak boleh melebihi :max.',
+                'prd_weight.min' => 'Berat produk tidak boleh kurang dari :min.',
                 'prd_description.max' => 'Deskripsi produk tidak boleh melebihi :max.',
                 'prd_status.in' => 'Status produk tidak valid.',
                 'image.image' => 'File harus berupa gambar.',
@@ -65,6 +68,7 @@ class ManageProductController extends Controller
             $validateData = $request->validate([
                 'prd_name' => ['required', 'string', 'max:255'],
                 'prd_price' => ['required', 'integer', 'max:9999999999', 'min:0'],
+                'prd_weight' => ['required', 'integer', 'max:9999999999', 'min:0'],
                 'prd_description' => ['nullable', 'string', 'max:65535'],
                 'prd_status' => ['nullable', 'in:1,2,3'],
                 'image' => ['nullable', 'image', 'max:4096'],
@@ -119,7 +123,10 @@ class ManageProductController extends Controller
                 'prd_name.max' => 'Nama produk wajib diisi.',
                 'prd_price.required' => 'Harga produk wajib diisi.',
                 'prd_price.max' => 'Harga produk tidak boleh melebihi :max.',
-                'prd_price.min' => 'Harga produk tidak boleh kurang :min.',
+                'prd_price.min' => 'Harga produk tidak boleh kurang dari :min.',
+                'prd_weight.required' => 'Berat produk wajib diisi.',
+                'prd_weight.max' => 'Berat produk tidak boleh melebihi :max.',
+                'prd_weight.min' => 'Berat produk tidak boleh kurang dari :min.',
                 'prd_description.max' => 'Deskripsi produk tidak boleh melebihi :max.',
                 'prd_status.in' => 'Status produk tidak valid.',
                 'image.image' => 'File harus berupa gambar.',
@@ -132,6 +139,7 @@ class ManageProductController extends Controller
                 'prd_description' => ['nullable', 'string', 'max:65535'],
                 'prd_status' => ['sometimes', 'nullable', 'in:1,2,3'],
                 'image' => ['sometimes', 'nullable', 'image', 'max:4096'],
+                'prd_weight' => ['required', 'integer', 'max:9999999999', 'min:0'],
             ], $message);
 
             if ($request->prd_status == null) {

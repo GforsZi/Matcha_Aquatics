@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
         ]);
 
+
         $admin = User::firstOrCreate(
             ['email' => 'admin@matcha.com'],
             [
@@ -29,5 +30,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $admin->assignRole('seller');
+        $this->call(UserLoginSeeder::class);
     }
 }

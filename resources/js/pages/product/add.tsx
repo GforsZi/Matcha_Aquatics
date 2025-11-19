@@ -209,6 +209,14 @@ export default function add() {
                                     onChange={handleFileChange}
                                 />
                             </div>
+                            <div>
+                                <Label className="my-1">Berat (gram)</Label>
+                                <Input
+                                    type="number"
+                                    placeholder="Contoh: 1000"
+                                    name="prd_weight"
+                                />
+                            </div>
 
                             <div>
                                 <Label htmlFor="description" className="my-1">

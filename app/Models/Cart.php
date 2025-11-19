@@ -19,6 +19,16 @@ class Cart extends Model
     const UPDATED_AT = 'crt_updated_at';
     const DELETED_AT = 'crt_deleted_at';
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'crt_product_id', 'prd_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'crt_user_id', 'usr_id');
+    }
+
     public function created_by(): BelongsTo
     {
         return $this->belongsTo(User::class, 'crt_created_by', 'usr_id');

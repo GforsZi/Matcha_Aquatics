@@ -22,7 +22,7 @@ interface product {
     id: number;
     prd_name: string;
     prd_price: number;
-    prd_status: '1' | '2' | '3';
+    prd_status: '1' | '2' | '3' | '4';
     prd_created_at: Date;
     categories: { cat_name: string; cat_slug: string };
 }

@@ -80,6 +80,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/system/shipping/cities/{province}', [ShippingController::class, 'cities']);
     Route::get('/system/product/search', [ManageProductController::class, 'search_system']);
     Route::get('/system/categories/search', [ManageCategoryController::class, 'search_system']);
+    Route::post('/system/cart/add', [UserController::class, 'add_cart_system']);
+    Route::delete('/system/cart/delete', [UserController::class, 'delete_cart_system']);
 });
 
 Route::withoutMiddleware([VerifyCsrfToken::class])->post('/system/payment/webhook', [ManageTransactionController::class, 'webhook']);
