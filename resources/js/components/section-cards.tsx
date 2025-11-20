@@ -9,17 +9,26 @@ import {
 export function SectionCards({
     total_product = 0,
     total_customer = 0,
+    total_transaction = 0,
 }: {
     total_product?: number;
     total_customer?: number;
+    total_transaction?: number;
 }) {
+    function formatCurrency(value: number) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            maximumFractionDigits: 0,
+        }).format(value);
+    }
     return (
         <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-3 @5xl/main:grid-cols-3 dark:*:data-[slot=card]:bg-card">
             <Card className="card-gradient card-gradient @container/card">
                 <CardHeader>
                     <CardDescription>Total Pendapatan</CardDescription>
                     <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        $1,250.00
+                        {formatCurrency(total_transaction) + ',-'}
                     </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">

@@ -1,5 +1,5 @@
 import { ChartArea } from '@/components/chart-area';
-import { ChartBarInteractive } from '@/components/chart-bar-interactive';
+import { ChartAreaInteractive } from '@/components/chart-area-interactive';
 import MapView from '@/components/map-view';
 import { SectionCards } from '@/components/section-cards';
 import AppLayout from '@/layouts/app-layout';
@@ -23,6 +23,8 @@ export default function Dashboard() {
         logins,
         total_product,
         total_customer,
+        transactions,
+        total_transaction,
     } = usePage<{
         app_location_latitude: { app_stg_title: string; app_stg_value: string };
         app_location_longitude: {
@@ -37,6 +39,8 @@ export default function Dashboard() {
         }[];
         total_product: number;
         total_customer: number;
+        total_transaction: number;
+        transactions: { date: string; desktop: number }[];
     }>().props;
     const { props } = usePage();
 
@@ -58,9 +62,10 @@ export default function Dashboard() {
                     <SectionCards
                         total_product={total_product}
                         total_customer={total_customer}
+                        total_transaction={total_transaction}
                     />
                     <div className="px-4 lg:px-6">
-                        <ChartArea />
+                        <ChartArea chartData={transactions} />
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 px-4 md:flex-row md:gap-6 md:pb-6 lg:px-6">
@@ -71,7 +76,7 @@ export default function Dashboard() {
                         />
                     </div>
                     <div className="md:w-2/3">
-                        <ChartBarInteractive chartData={logins} />
+                        <ChartAreaInteractive chartData={logins} />
                     </div>
                 </div>
             </div>

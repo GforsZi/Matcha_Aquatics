@@ -524,7 +524,7 @@ export default function ShippingCostCalculator({
                     <Button
                         onClick={handleCalculate}
                         disabled={loading}
-                        className="w-full"
+                        className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                     >
                         {loading ? 'Menghitung...' : 'Hitung Ongkir'}
                     </Button>

@@ -67,7 +67,6 @@ export default function Product() {
     const [loadingBuy, setLoadingBuy] = useState(false);
 
     function formatCurrency(value: number) {
-        // IDR formatting
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',

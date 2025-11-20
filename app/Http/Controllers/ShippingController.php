@@ -18,9 +18,6 @@ class ShippingController extends Controller
     public function provinces()
     {
         $data = $this->rajaOngkir->getProvinces();
-
-        // API format baru: hasil ada di $data['data']
-        Log::info('Get Provinces', ['response' => $data]);
         return response()->json($data['data'] ?? []);
     }
 

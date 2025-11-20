@@ -50,7 +50,6 @@ export function ChartBarInteractive({
         date: string;
         desktop: number;
         mobile: number;
-        tablet: number;
     }[];
 }) {
     const [activeChart, setActiveChart] =
@@ -60,10 +59,11 @@ export function ChartBarInteractive({
         () => ({
             desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
             mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
-            tablet: chartData.reduce((acc, curr) => acc + curr.tablet, 0),
         }),
         [chartData],
     );
+
+    console.log(chartData);
 
     return (
         <Card className="h-full py-0">

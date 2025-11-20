@@ -73,6 +73,7 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::delete('/payment/{order_id}', [ManageTransactionController::class, 'delete_payment_link_system']);
 
     Route::post('/system/shipping/cost', [ShippingController::class, 'cost']);
+    Route::get('/system/report/export', [ManageReportController::class, 'export']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
