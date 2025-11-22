@@ -1,6 +1,5 @@
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -359,13 +358,8 @@ export default function add() {
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>
-                                                    Batal
+                                                    Tutup
                                                 </AlertDialogCancel>
-                                                <AlertDialogAction
-                                                    onClick={handleContinue}
-                                                >
-                                                    Lanjutkan
-                                                </AlertDialogAction>
                                             </AlertDialogFooter>
                                         </AlertDialogContent>
                                     </AlertDialog>

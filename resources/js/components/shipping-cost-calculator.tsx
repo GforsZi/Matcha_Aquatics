@@ -45,6 +45,7 @@ interface ShippingCostCalculatorProps {
     defaultDestinationLongitude?: string;
     defaultOriginLatitude?: string;
     defaultOriginLongitude?: string;
+    defaultweight?: number;
     onCostSelected?: (cost: Cost) => void;
     onChange?: (
         code: string,
@@ -83,6 +84,7 @@ export default function ShippingCostCalculator({
     defaultDestinationLongitude = '',
     defaultOriginLatitude = '',
     defaultOriginLongitude = '',
+    defaultweight = 0,
     onCostSelected,
     onChange,
 }: ShippingCostCalculatorProps) {
@@ -112,7 +114,7 @@ export default function ShippingCostCalculator({
     );
 
     const [selectedCourier, setSelectedCourier] = useState('jne');
-    const [weight, setWeight] = useState('1000');
+    const [weight, setWeight] = useState(defaultweight.toString());
     const [costs, setCosts] = useState<Cost[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -124,6 +126,7 @@ export default function ShippingCostCalculator({
     >(null);
 
     const ref = useRef<HTMLDivElement>(null);
+    console.log(weight);
 
     const getShipping = () => {
         fetch('/system/shipping/provinces')
@@ -482,7 +485,8 @@ export default function ShippingCostCalculator({
                     <Input
                         type="number"
                         placeholder="Contoh: 1000"
-                        value={weight}
+                        value={parseInt(weight)}
+                        key={weight}
                         name="shp_weight"
                         onChange={(e) => setWeight(e.target.value)}
                     />

@@ -17,6 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { formatDate } from '@/utils/date';
 
 export default function ReportIndex() {
     const { props } = usePage();
@@ -76,14 +77,14 @@ export default function ReportIndex() {
                                     <Button
                                         className="bg-emerald-600 text-stone-950 hover:bg-emerald-700"
                                         onClick={() => {
-                                            // Validate basic
                                             if (!from || !to) {
                                                 toast.error(
                                                     'Silakan isi periode from dan to.',
                                                 );
+
                                                 return;
                                             }
-                                            window.open(exportUrl(), '_blank');
+                                            window.open(exportUrl());
                                         }}
                                     >
                                         Export
@@ -95,17 +96,17 @@ export default function ReportIndex() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Riwayat Export</CardTitle>
+                            <CardTitle>Riwayat Ekspor</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Periode</TableHead>
-                                        <TableHead>Total Sales</TableHead>
-                                        <TableHead>Items Terjual</TableHead>
+                                        <TableHead>Total Penjualan</TableHead>
+                                        <TableHead>Product Terjual</TableHead>
                                         <TableHead>Dibuat Pada</TableHead>
-                                        <TableHead>Aksi</TableHead>
+                                        <TableHead></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -130,15 +131,14 @@ export default function ReportIndex() {
                                                         currency: 'IDR',
                                                         minimumFractionDigits: 0,
                                                     },
-                                                ).format(r.rpt_total_sales)}
+                                                ).format(r.rpt_total_sales) +
+                                                    ',-'}
                                             </TableCell>
                                             <TableCell>
                                                 {r.rpt_total_items_sold}
                                             </TableCell>
                                             <TableCell>
-                                                {new Date(
-                                                    r.rpt_created_at,
-                                                ).toLocaleString()}
+                                                {formatDate(r.rpt_created_at)}
                                             </TableCell>
                                             <TableCell>
                                                 <a

@@ -27,7 +27,13 @@ class ManageProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::select('prd_id', 'prd_name', 'prd_img_url', 'prd_description', 'prd_price', 'prd_status')->with('categories')->findOrFail($id);
+        $product = Product::select('prd_id', 'prd_name', 'prd_img_url', 'prd_weight', 'prd_description', 'prd_price', 'prd_status')->with('categories')->findOrFail($id);
+
+        if ($product->prd_status == '2' || $product->prd_status == '4') {
+            return redirect('/manage/product')->with([
+                'error' => 'Produk yang dalam ke adaan order atau terjual tidak bisa diubah.',
+            ])->setStatusCode(303);
+        }
         return Inertia::render('product/edit', compact('product'));
     }
 
@@ -40,7 +46,7 @@ class ManageProductController extends Controller
         }
 
         $products = Product::where('prd_name', 'like', "%{$query}%")
-            ->select('prd_id', 'prd_name', 'prd_price', 'prd_img_url', 'prd_status', 'prd_slug')->where('prd_status', '1')
+            ->select('prd_id', 'prd_name', 'prd_price', 'prd_weight', 'prd_img_url', 'prd_status', 'prd_slug')->where('prd_status', '1')
             ->limit(10)
             ->get();
 

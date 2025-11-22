@@ -4,7 +4,6 @@ import { Head, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Table,
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/table';
 
 import { formatDate } from '@/utils/date';
+import { ImageIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -111,12 +111,12 @@ export default function DetailTransaction() {
     };
 
     const transactionStatusColor: { [key: string]: string } = {
-        '1': 'bg-yellow-100 text-yellow-700',
-        '2': 'bg-blue-100 text-blue-700',
-        '3': 'bg-yellow-100 text-yellow-700',
-        '4': 'bg-blue-100 text-blue-700',
-        '5': 'bg-green-100 text-green-700',
-        '6': 'bg-red-100 text-red-700',
+        '1': 'text-yellow-700',
+        '2': 'text-blue-700',
+        '3': 'text-yellow-700',
+        '4': 'text-blue-700',
+        '5': 'text-green-700',
+        '6': 'text-red-700',
     };
 
     return (
@@ -124,9 +124,6 @@ export default function DetailTransaction() {
             <Head title="Detail Transaksi" />
 
             <div className="mx-5 mt-5 space-y-6">
-                {/* =======================
-                      Header Card
-                ======================= */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Informasi Transaksi</CardTitle>
@@ -155,20 +152,18 @@ export default function DetailTransaction() {
 
                                 <TableRow>
                                     <TableHead>Status</TableHead>
-                                    <TableCell>
-                                        <Badge
-                                            className={
-                                                transactionStatusColor[
-                                                    transaction.trx_status
-                                                ]
-                                            }
-                                        >
-                                            {
-                                                transactionStatusMap[
-                                                    transaction.trx_status
-                                                ]
-                                            }
-                                        </Badge>
+                                    <TableCell
+                                        className={
+                                            transactionStatusColor[
+                                                transaction.trx_status
+                                            ]
+                                        }
+                                    >
+                                        {
+                                            transactionStatusMap[
+                                                transaction.trx_status
+                                            ]
+                                        }
                                     </TableCell>
                                 </TableRow>
 
@@ -209,10 +204,6 @@ export default function DetailTransaction() {
                         </Table>
                     </CardContent>
                 </Card>
-
-                {/* =======================
-                      Produk yang Dibeli
-                ======================= */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Produk yang Dibeli</CardTitle>
@@ -230,10 +221,17 @@ export default function DetailTransaction() {
                                 {transaction.products.map((item) => (
                                     <TableRow key={item.prd_id}>
                                         <TableCell>
-                                            <img
-                                                src={`/${item.prd_img_url}`}
-                                                className="h-14 w-14 rounded-lg border object-cover"
-                                            />
+                                            {item.prd_img_url && (
+                                                <img
+                                                    src={`/${item.prd_img_url}`}
+                                                    className="h-14 w-14 rounded-lg border object-cover"
+                                                />
+                                            )}
+                                            {!item.prd_img_url && (
+                                                <div className="flex h-14 w-14 flex-col items-center justify-center rounded-md border-2 border-dashed text-muted-foreground">
+                                                    <ImageIcon className="h-10 w-10" />
+                                                </div>
+                                            )}
                                         </TableCell>
                                         <TableCell>{item.prd_name}</TableCell>
                                         <TableCell>
@@ -245,10 +243,6 @@ export default function DetailTransaction() {
                         </Table>
                     </CardContent>
                 </Card>
-
-                {/* =======================
-                      Informasi Pembayaran
-                ======================= */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Informasi Pembayaran</CardTitle>
@@ -309,58 +303,62 @@ export default function DetailTransaction() {
                     </CardContent>
                 </Card>
 
-                {/* =======================
-                      Informasi Pengiriman
-                ======================= */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Informasi Pengiriman</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableBody>
-                                <TableRow>
-                                    <TableHead>Asal</TableHead>
-                                    <TableCell>
-                                        {
-                                            transaction.shipment
-                                                .shp_origin_city_name
-                                        }
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Tujuan</TableHead>
-                                    <TableCell>
-                                        {
-                                            transaction.shipment
-                                                .shp_destination_city_name
-                                        }
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Kurir</TableHead>
-                                    <TableCell>
-                                        {transaction.shipment.shp_courier}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Ongkos Kirim</TableHead>
-                                    <TableCell>
-                                        {formatRupiah(
-                                            transaction.shipment.shp_cost,
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Berat</TableHead>
-                                    <TableCell>
-                                        {transaction.shipment.shp_weight} gram
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                {transaction?.shipment && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Informasi Pengiriman</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableHead>Asal</TableHead>
+                                        <TableCell>
+                                            {
+                                                transaction?.shipment
+                                                    ?.shp_origin_city_name
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableHead>Tujuan</TableHead>
+                                        <TableCell>
+                                            {
+                                                transaction?.shipment
+                                                    ?.shp_destination_city_name
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableHead>Kurir</TableHead>
+                                        <TableCell>
+                                            {transaction?.shipment?.shp_courier}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableHead>Ongkos Kirim</TableHead>
+                                        <TableCell>
+                                            {transaction?.shipment?.shp_cost &&
+                                                formatRupiah(
+                                                    transaction?.shipment
+                                                        ?.shp_cost,
+                                                )}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableHead>Berat</TableHead>
+                                        <TableCell>
+                                            {transaction?.shipment
+                                                ?.shp_weight &&
+                                                transaction?.shipment
+                                                    ?.shp_weight + ' gram'}
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
         </AppLayout>
     );

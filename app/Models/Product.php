@@ -26,7 +26,8 @@ class Product extends Model
     {
         return [
             'prd_slug' => [
-                'source' => 'prd_name'
+                'source' => 'prd_name',
+                'includeTrashed' => true,
             ]
         ];
     }

@@ -37,7 +37,7 @@ class Transaction extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'transaction_item', 'trxi_transaction_id', 'trxi_product_id');
+        return $this->belongsToMany(Product::class, 'transaction_item', 'trxi_transaction_id', 'trxi_product_id')->withTrashed();
     }
 
     public function user(): BelongsTo

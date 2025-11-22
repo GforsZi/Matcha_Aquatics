@@ -39,6 +39,7 @@ type ProductType = {
     prd_img_url?: string | null;
     prd_description?: string | null;
     prd_price: number;
+    prd_weight: number;
     prd_status?: string;
     prd_selled_at?: Date;
     categories?: Category[];
@@ -205,7 +206,7 @@ export default function Product() {
 
                                 <Separator />
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-3 gap-4">
                                     <div>
                                         <h4 className="text-sm text-muted-foreground">
                                             Status
@@ -220,6 +221,16 @@ export default function Product() {
                                                     : product.prd_status === '4'
                                                       ? 'Dalam orderan'
                                                       : 'Tidak diketahui'}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm text-muted-foreground">
+                                            Berat
+                                        </h4>
+                                        <p className="mt-1 text-sm">
+                                            {product.prd_weight
+                                                ? product.prd_weight + ' gram'
+                                                : '-'}
                                         </p>
                                     </div>
                                     <div>

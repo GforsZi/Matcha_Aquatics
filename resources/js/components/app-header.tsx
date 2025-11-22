@@ -51,7 +51,7 @@ const rightNavItems: NavItem[] = [
         icon: ShoppingCart,
     },
     {
-        title: 'Pusat Bantuan',
+        title: 'Layanan Pelanggan',
         href: '/customer_service',
         icon: MessageCircleQuestion,
     },

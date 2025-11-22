@@ -51,6 +51,12 @@ class UserController extends Controller
     public function add_cart_system(Request $request)
     {
         try {
+            $user = User::select('usr_no_wa', 'usr_latitude', 'usr_longtitude', 'usr_provice_name', 'usr_city_name', 'usr_city_id')->findOrFail(Auth::id());
+
+            if (!$user->usr_no_wa || !$user->usr_latitude || !$user->usr_longtitude || !$user->usr_provice_name || !$user->usr_city_name || !$user->usr_city_id) {
+                throw new \Exception('Pastikan informasi pada akun sudah terisi dengan benar');
+            }
+
             $request->validate([
                 'product_id' => ['required', 'exists:products,prd_id']
             ]);
@@ -70,7 +76,7 @@ class UserController extends Controller
                 'success' => 'Produk berhasil dimasukan ke keranjang.',
             ])->setStatusCode(303);
         } catch (\Throwable $th) {
-            return redirect('/manage/product/add')->with([
+            return redirect('/settings/profile')->with([
                 'error' => $th->getMessage() . ' | produk gagal dimasukan ke keranjang.',
             ])->setStatusCode(303);
         }
@@ -104,5 +110,10 @@ class UserController extends Controller
     {
         $product = Product::with('categories')->where('prd_slug', $slug)->get()->first();
         return Inertia::render('home/product', compact('product'));
+    }
+
+    public function customer_service()
+    {
+        return Inertia::render('home/customer_service');
     }
 }

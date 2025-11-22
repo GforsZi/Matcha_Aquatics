@@ -78,7 +78,7 @@ class ManageTransactionController extends Controller
                 'trx_buyer_id' => ['nullable', 'integer', 'exists:users,usr_id'],
                 'trx_buyer_name' => ['nullable', 'string', 'min:3', 'max:255'],
                 'trx_payment_method' => ['required', 'in:1,2,3,4'],
-                'trx_total' => ['required', 'integer', 'min:0', 'max:99999999999'],
+                'trx_subtotal' => ['required', 'integer', 'min:0', 'max:99999999999'],
                 'trx_discount' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
                 'trx_payment' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
                 'trx_change' => ['nullable', 'integer', 'min:0', 'max:99999999999'],
@@ -92,10 +92,11 @@ class ManageTransactionController extends Controller
                 'product_id.*.exists' => 'Produk tidak ditemukan.',
             ]);
             $validateDataTrx['trx_seller_id'] = Auth::id();
-            $validateDataTrx['trx_subtotal'] = $request->trx_total + $request->trx_shipping_cost;
-            if ($request->trx_payment_method == '1') {
-                $validateDataTrx['trx_status'] = '2';
-            } elseif ($request->trx_payment_method == '3') {
+            $validateDataTrx['trx_total'] = $request->trx_subtotal + $request->trx_shipping_cost;
+            if ($request->trx_payment_method == '1' || $request->trx_payment_method == '3') {
+                if ($request->trx_payment < $validateDataTrx['trx_total']) {
+                    throw new \Exception('Uang yang dibayar harus mencukupi total harga seluruh produk yang dipesan');
+                }
                 $validateDataTrx['trx_status'] = '2';
             }
 

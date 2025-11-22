@@ -1,6 +1,5 @@
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -13,14 +12,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { usePage } from '@inertiajs/react';
-import { Plus, Search, X } from 'lucide-react';
+import { ImageIcon, Plus, Search, X } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import ShippingCostCalculator from './shipping-cost-calculator';
+import { InputGroup, InputGroupAddon, InputGroupInput } from './ui/input-group';
 
 type ProductType = {
     prd_id: number;
     prd_name: string;
     prd_price: number;
+    prd_weight: number;
     prd_img_url?: string | null;
 };
 
@@ -102,6 +103,12 @@ const ProductSelector: React.FC<Props> = ({
             0,
         );
     }, [selected]);
+    const totalWeight = useMemo(() => {
+        return Object.values(selected).reduce(
+            (sum, weight) => sum + weight.prd_weight,
+            0,
+        );
+    }, [selected]);
 
     const formatRupiah = (value: number) =>
         new Intl.NumberFormat('id-ID', {
@@ -132,7 +139,7 @@ const ProductSelector: React.FC<Props> = ({
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
                 {Object.values(selected).length === 0 ? (
                     <div className="flex h-24 items-center justify-center rounded-md border text-sm text-muted-foreground">
                         Belum ada produk dipilih
@@ -155,8 +162,11 @@ const ProductSelector: React.FC<Props> = ({
                                     className="h-56 w-full border object-contain"
                                 />
                             ) : (
-                                <div className="flex h-56 w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
-                                    Tidak ada gambar
+                                <div className="flex h-32 w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain text-muted-foreground shadow-md">
+                                    <ImageIcon className="mb-2 h-10 w-10" />
+                                    <span className="text-sm">
+                                        Belum ada gambar
+                                    </span>
                                 </div>
                             )}
                             <CardContent className="flex flex-col justify-end px-3">
@@ -166,6 +176,9 @@ const ProductSelector: React.FC<Props> = ({
                                 <p className="mt-1 text-sm font-bold text-emerald-600">
                                     {formatRupiah(prd.prd_price) + ',-'}
                                 </p>
+                                <h3 className="mt-1 text-sm font-medium">
+                                    {prd.prd_weight + ' gram'}
+                                </h3>
                             </CardContent>
                             <Button
                                 type="button"
@@ -198,8 +211,8 @@ const ProductSelector: React.FC<Props> = ({
                                     untuk memilih.
                                 </p>
 
-                                <div className="mb-4 flex items-center gap-2">
-                                    <Input
+                                <InputGroup className="mb-4 flex items-center gap-2">
+                                    <InputGroupInput
                                         placeholder="Ketik nama produk..."
                                         value={searchQuery}
                                         onChange={(e) =>
@@ -207,8 +220,10 @@ const ProductSelector: React.FC<Props> = ({
                                         }
                                         className="flex-1"
                                     />
-                                    <Search className="text-muted-foreground" />
-                                </div>
+                                    <InputGroupAddon>
+                                        <Search />
+                                    </InputGroupAddon>
+                                </InputGroup>
 
                                 <div className="grid h-[255px] w-full grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 md:grid-cols-3">
                                     {results.length === 0 ? (
@@ -242,15 +257,18 @@ const ProductSelector: React.FC<Props> = ({
                                                             className="h-32 w-full object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="flex h-32 w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
-                                                            Tidak ada gambar
+                                                        <div className="flex h-32 w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain text-muted-foreground shadow-md">
+                                                            <ImageIcon className="mb-2 h-10 w-10" />
+                                                            <span className="text-sm">
+                                                                Belum ada gambar
+                                                            </span>
                                                         </div>
                                                     )}
                                                     <CardContent className="px-3">
                                                         <h3 className="truncate text-sm font-medium">
                                                             {prd.prd_name}
                                                         </h3>
-                                                        <p className="text-xs text-muted-foreground">
+                                                        <p className="text-xs text-emerald-600">
                                                             {formatRupiah(
                                                                 prd.prd_price,
                                                             ) + ',-'}
@@ -266,7 +284,7 @@ const ProductSelector: React.FC<Props> = ({
                                                                         prd,
                                                                     )
                                                                 }
-                                                                className="h-4 w-4 accent-primary"
+                                                                className="w-4 accent-primary"
                                                             />
                                                         </div>
                                                     </CardContent>
@@ -280,10 +298,7 @@ const ProductSelector: React.FC<Props> = ({
                     </AlertDialogHeader>
 
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleContinue}>
-                            Tambahkan
-                        </AlertDialogAction>
+                        <AlertDialogCancel>Tutup</AlertDialogCancel>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -294,7 +309,7 @@ const ProductSelector: React.FC<Props> = ({
                     <Input
                         type="number"
                         name="trx_payment"
-                        value={paidAmount}
+                        value={paidAmount == 0 ? '' : paidAmount}
                         onChange={(e) =>
                             setPaidAmount(Number(e.target.value) || 0)
                         }
@@ -306,6 +321,7 @@ const ProductSelector: React.FC<Props> = ({
 
             {paymentMethod == '3' && (
                 <ShippingCostCalculator
+                    key={totalWeight}
                     defaultOriginProviceName={Origin_Provice_name}
                     defaultOriginCityName={Origin_City_name}
                     defaultOriginId={Origin_City_id}
@@ -316,6 +332,7 @@ const ProductSelector: React.FC<Props> = ({
                     defaultOriginLongitude={Origin_Longitude}
                     defaultDestinationLatitude={Destination_Latitude}
                     defaultDestinationLongitude={Destination_Longitude}
+                    defaultweight={totalWeight}
                     onChange={(code, name, cost, etd, service) => (
                         setCost({
                             code,
@@ -330,6 +347,7 @@ const ProductSelector: React.FC<Props> = ({
             )}
             {paymentMethod == '4' && (
                 <ShippingCostCalculator
+                    key={totalWeight}
                     defaultOriginProviceName={Origin_Provice_name}
                     defaultOriginCityName={Origin_City_name}
                     defaultOriginId={Origin_City_id}
@@ -340,6 +358,7 @@ const ProductSelector: React.FC<Props> = ({
                     defaultOriginLongitude={Origin_Longitude}
                     defaultDestinationLatitude={Destination_Latitude}
                     defaultDestinationLongitude={Destination_Longitude}
+                    defaultweight={totalWeight}
                     onChange={(code, name, cost, etd, service) => (
                         setCost({
                             code,
@@ -359,7 +378,7 @@ const ProductSelector: React.FC<Props> = ({
                 <span className="text-base font-semibold text-primary">
                     Total: {formatRupiah(totalPrice + costShp) + ',-'}
                 </span>
-                <Input name="trx_total" value={totalPrice} type="hidden" />
+                <Input name="trx_subtotal" value={totalPrice} type="hidden" />
                 <Input name="trx_shipping_cost" value={costShp} type="hidden" />
                 <Input name="shp_courier" value={cost.code} type="hidden" />
                 <Input name="shp_cost" value={cost.cost} type="hidden" />
@@ -386,9 +405,9 @@ const ProductSelector: React.FC<Props> = ({
                     <Input
                         type="number"
                         name="trx_payment"
-                        value={paidAmount}
+                        value={paidAmount == 0 ? '' : paidAmount}
                         onChange={(e) =>
-                            setPaidAmount(Number(e.target.value) || 0)
+                            setPaidAmount(Number(e.target.value || 0))
                         }
                         placeholder="Masukkan jumlah uang dibayar"
                         className="mt-1"

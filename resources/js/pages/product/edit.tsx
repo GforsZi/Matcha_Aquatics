@@ -71,6 +71,7 @@ export default function edit() {
             prd_img_url: string;
             prd_description: string;
             prd_status: string;
+            prd_weight: string;
             prd_price: number;
             categories: [{ cat_id: number; cat_name: string }];
         };
@@ -79,6 +80,7 @@ export default function edit() {
         prd_name: product.prd_name,
         prd_description: product.prd_description,
         prd_status: product.prd_status,
+        prd_weight: product.prd_weight,
         prd_price: product.prd_price,
     });
     const handleSubmit = (e: React.FormEvent) => {
@@ -259,6 +261,18 @@ export default function edit() {
                                     onChange={handleFileChange}
                                 />
                             </div>
+                            <div>
+                                <Label className="my-1">Berat (gram)</Label>
+                                <Input
+                                    type="number"
+                                    placeholder="Contoh: 1000"
+                                    name="prd_weight"
+                                    value={data.prd_weight?.toString() || ''}
+                                    onChange={(e) =>
+                                        setData('prd_weight', e.target.value)
+                                    }
+                                />
+                            </div>
 
                             <div>
                                 <Label htmlFor="description" className="my-1">
@@ -430,12 +444,6 @@ export default function edit() {
                                             </SelectLabel>
                                             <SelectItem value="1">
                                                 Aktif
-                                            </SelectItem>
-                                            <SelectItem value="4">
-                                                Diorder
-                                            </SelectItem>
-                                            <SelectItem value="2">
-                                                Terjual
                                             </SelectItem>
                                             <SelectItem value="3">
                                                 Diarsipkan

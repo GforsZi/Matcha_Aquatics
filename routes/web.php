@@ -48,6 +48,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
     Route::get('/search', [UserController::class, 'search']);
     Route::get('/cart', [UserController::class, 'cart']);
     Route::get('/product/{slug}', [UserController::class, 'product']);
+    Route::get('/customer_service', [UserController::class, 'customer_service']);
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {

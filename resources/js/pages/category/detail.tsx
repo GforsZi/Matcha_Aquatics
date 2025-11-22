@@ -1,3 +1,4 @@
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -48,64 +49,69 @@ export default function index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail kategori" />
             <div className="mx-5 mt-5">
-                <Table className="border p-4 shadow-md">
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Keterangan</TableHead>
-                            <TableHead>Isi</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableCell>{category.cat_id}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableCell>{category.cat_name}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Email</TableHead>
-                            <TableCell>{category.cat_slug}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Diubah pada</TableHead>
-                            <TableCell>
-                                {formatDate(category.cat_created_at)}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Diubah pada</TableHead>
-                            <TableCell>
-                                {formatDate(category.cat_updated_at)}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Dihapus pada</TableHead>
-                            <TableCell>
-                                {formatDate(category.cat_deleted_at)}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Dibuat oleh</TableHead>
-                            <TableCell>
-                                {category.created_by?.name || 'Matcha sistem'}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Diubah oleh</TableHead>
-                            <TableCell>
-                                {category.updated_by?.name || '-'}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableHead>Dihapus oleh</TableHead>
-                            <TableCell>
-                                {category.deleted_by?.name || '-'}
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
+                <Card>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Keterangan</TableHead>
+                                    <TableHead>Isi</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow>
+                                    <TableHead>ID</TableHead>
+                                    <TableCell>{category.cat_id}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableCell>{category.cat_name}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Email</TableHead>
+                                    <TableCell>{category.cat_slug}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Diubah pada</TableHead>
+                                    <TableCell>
+                                        {formatDate(category.cat_created_at)}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Diubah pada</TableHead>
+                                    <TableCell>
+                                        {formatDate(category.cat_updated_at)}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Dihapus pada</TableHead>
+                                    <TableCell>
+                                        {formatDate(category.cat_deleted_at)}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Dibuat oleh</TableHead>
+                                    <TableCell>
+                                        {category.created_by?.name ||
+                                            'Matcha sistem'}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Diubah oleh</TableHead>
+                                    <TableCell>
+                                        {category.updated_by?.name || '-'}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Dihapus oleh</TableHead>
+                                    <TableCell>
+                                        {category.deleted_by?.name || '-'}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

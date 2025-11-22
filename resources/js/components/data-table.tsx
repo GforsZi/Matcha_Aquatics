@@ -179,7 +179,7 @@ export function DataTable<TData, TValue>({
                                         size="sm"
                                         className={
                                             link.active
-                                                ? 'bg-emerald-600 hover:bg-emerald-700'
+                                                ? 'bg-emerald-600 text-stone-950 hover:bg-emerald-700'
                                                 : ''
                                         }
                                         variant={

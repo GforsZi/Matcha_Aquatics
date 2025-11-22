@@ -35,18 +35,18 @@ class ReportsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         // Map numeric enums to human readable strings (sesuaikan bila perlu)
         $paymentMethodMap = [
             '1' => 'Tunai',
-            '2' => 'Kartu',
-            '3' => 'E-Wallet',
-            '4' => 'Transfer',
+            '2' => 'Non-tunai',
+            '3' => 'Tunai + Pengiriman',
+            '4' => 'Non-tunai + Pengiriman',
         ];
 
         $statusMap = [
-            '1' => 'Pending',
-            '2' => 'Confirmed',
-            '3' => 'Processing',
-            '4' => 'Shipped',
-            '5' => 'Completed',
-            '6' => 'Cancelled',
+            '1' => 'Menunggu pembayaran',
+            '2' => 'Pembayaran berhasil',
+            '3' => 'Menunggu pengiriman',
+            '4' => 'Pengiriman berhasil',
+            '5' => 'Transaksi selesai',
+            '6' => 'Transaksi gagal',
         ];
 
         return [
@@ -68,16 +68,16 @@ class ReportsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
     {
         return [
             'Invoice',
-            'Buyer',
-            'Created At',
+            'Pembeli',
+            'Dibuat pada',
             'Subtotal',
-            'Discount',
+            'Diskon',
             'Total',
-            'Payment',
-            'Change',
-            'Payment Method',
+            'Pembayaran',
+            'Kembalian',
+            'Metode Transaksi',
             'Status',
-            'Items Count',
+            'Jumlah Produk',
         ];
     }
 }

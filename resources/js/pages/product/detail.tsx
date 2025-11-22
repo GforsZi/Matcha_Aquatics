@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -43,6 +44,7 @@ export default function index() {
             prd_description: string;
             prd_status: string;
             prd_price: number;
+            prd_weight: number;
             prd_selled_at: Date;
             prd_created_at: Date;
             prd_updated_at: Date;
@@ -108,89 +110,119 @@ export default function index() {
                         )}
                     </div>
                     <div className="mb-4 w-full md:w-2/3">
-                        <Table className="border p-4 shadow-md">
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Keterangan</TableHead>
-                                    <TableHead>Isi</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableHead>ID</TableHead>
-                                    <TableCell>{product.prd_id}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Nama</TableHead>
-                                    <TableCell>{product.prd_name}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Slug</TableHead>
-                                    <TableCell>{product.prd_slug}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Harga</TableHead>
-                                    <TableCell>{formatted + ',-'}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Status</TableHead>
-                                    <TableCell className={color}>
-                                        {label}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Dijual pada</TableHead>
-                                    <TableCell>
-                                        {formatDate(product.prd_selled_at)}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Diubah pada</TableHead>
-                                    <TableCell>
-                                        {formatDate(product.prd_created_at)}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Diubah pada</TableHead>
-                                    <TableCell>
-                                        {formatDate(product.prd_updated_at)}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Dihapus pada</TableHead>
-                                    <TableCell>
-                                        {formatDate(product.prd_deleted_at)}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Dibuat oleh</TableHead>
-                                    <TableCell>
-                                        {product.created_by?.name ||
-                                            'Matcha sistem'}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Diubah oleh</TableHead>
-                                    <TableCell>
-                                        {product.updated_by?.name || '-'}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>Dihapus oleh</TableHead>
-                                    <TableCell>
-                                        {product.deleted_by?.name || '-'}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                        <Card>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Keterangan</TableHead>
+                                            <TableHead>Isi</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableHead>ID</TableHead>
+                                            <TableCell>
+                                                {product.prd_id}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Nama</TableHead>
+                                            <TableCell>
+                                                {product.prd_name}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Slug</TableHead>
+                                            <TableCell>
+                                                {product.prd_slug}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Harga</TableHead>
+                                            <TableCell>
+                                                {formatted + ',-'}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Berat</TableHead>
+                                            <TableCell>
+                                                {product.prd_weight + ' gram'}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Status</TableHead>
+                                            <TableCell className={color}>
+                                                {label}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Dijual pada</TableHead>
+                                            <TableCell>
+                                                {formatDate(
+                                                    product.prd_selled_at,
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Diubah pada</TableHead>
+                                            <TableCell>
+                                                {formatDate(
+                                                    product.prd_created_at,
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Diubah pada</TableHead>
+                                            <TableCell>
+                                                {formatDate(
+                                                    product.prd_updated_at,
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Dihapus pada</TableHead>
+                                            <TableCell>
+                                                {formatDate(
+                                                    product.prd_deleted_at,
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Dibuat oleh</TableHead>
+                                            <TableCell>
+                                                {product.created_by?.name ||
+                                                    'Matcha sistem'}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Diubah oleh</TableHead>
+                                            <TableCell>
+                                                {product.updated_by?.name ||
+                                                    '-'}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHead>Dihapus oleh</TableHead>
+                                            <TableCell>
+                                                {product.deleted_by?.name ||
+                                                    '-'}
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
-                <div className="mb-5 min-h-80 border p-2">
-                    <h1 className="my-1 ml-5 font-medium">Deskripsi</h1>
-                    <p className="p-2 wrap-break-word whitespace-pre-line">
+                <Card className="mb-5 min-h-80 border p-2">
+                    <CardHeader className="my-1 mt-2 ml-2 font-medium">
+                        Deskripsi
+                    </CardHeader>
+                    <CardContent className="p-2 wrap-break-word whitespace-pre-line">
                         {product.prd_description}
-                    </p>
-                </div>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

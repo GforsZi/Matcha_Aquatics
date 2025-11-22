@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
+import { useEffect } from 'react';
+import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,11 +30,18 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage<SharedData>().props;
+    const { props } = usePage();
+    const flash = props.flash as { success?: string; error?: string };
+
+    useEffect(() => {
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
+    }, [flash]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pengaturan Profil" />
-
+            <Toaster position="top-center" richColors closeButton />
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
