@@ -142,7 +142,7 @@ export default function ReportIndex() {
                                             </TableCell>
                                             <TableCell>
                                                 <a
-                                                    href={`/${r.rpt_exel_url}`}
+                                                    href={`/media/${r.rpt_exel_url}`}
                                                     rel="noreferrer"
                                                     className="inline-block"
                                                 >

@@ -58,7 +58,7 @@ class ManageReportController extends Controller
         $timestamp = Carbon::now()->format('YmdHisv');
         $filename = 'report_transactions_' . Auth::id() . '_' . $timestamp . '.xlsx';
 
-        $destinationDir = public_path('reports/');
+        $destinationDir = public_path('/media/reports/');
         if (!File::exists($destinationDir)) {
             File::makeDirectory($destinationDir, 0777, true);
         }
