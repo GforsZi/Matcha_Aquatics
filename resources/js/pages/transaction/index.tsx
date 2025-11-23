@@ -100,12 +100,12 @@ export const columns: ColumnDef<transaction>[] = [
                     color = 'text-blue-600';
                     break;
                 case '3':
-                    label = 'Menunggu pengiriman';
+                    label = 'Pengajuan pengembalian';
                     color = 'text-yellow-600';
                     break;
                 case '4':
-                    label = 'Pengiriman berhasil';
-                    color = 'text-blue-600';
+                    label = 'Transaksi dibatalkan';
+                    color = 'text-red-600';
                     break;
                 case '5':
                     label = 'Transaksi selesai';
@@ -113,7 +113,7 @@ export const columns: ColumnDef<transaction>[] = [
                     break;
                 case '6':
                     label = 'Transaksi gagal';
-                    color = 'text-red-600';
+                    color = 'text-red-700';
                     break;
             }
 

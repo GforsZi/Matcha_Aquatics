@@ -103,9 +103,10 @@ const ProductSelector: React.FC<Props> = ({
             0,
         );
     }, [selected]);
+
     const totalWeight = useMemo(() => {
         return Object.values(selected).reduce(
-            (sum, weight) => sum + weight.prd_weight,
+            (sum, p) => sum + p.prd_weight,
             0,
         );
     }, [selected]);
@@ -117,28 +118,37 @@ const ProductSelector: React.FC<Props> = ({
             minimumFractionDigits: 0,
         }).format(value);
 
-    const [cost, setCost] = useState<{
-        code: string;
-        name: string;
-        cost: number;
-        etd: string;
-        service: string;
-    }>({
+    // --- SHIPPING STATE ---
+    const [cost, setCost] = useState({
         code: '',
         name: '',
         cost: 0,
         etd: '',
         service: '',
     });
+
     const [costShp, setCostShp] = useState(0);
+
+    // --- RESET SHIPPING ---
+    const clearShipping = () => {
+        setCost({
+            code: '',
+            name: '',
+            cost: 0,
+            etd: '',
+            service: '',
+        });
+        setCostShp(0);
+    };
 
     const change = useMemo(() => {
         const diff = paidAmount - totalPrice - costShp;
         return diff > 0 ? diff : 0;
-    }, [paidAmount, totalPrice]);
+    }, [paidAmount, totalPrice, costShp]);
 
     return (
         <div className="flex flex-col gap-4">
+            {/* PRODUK YANG DIPILIH */}
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
                 {Object.values(selected).length === 0 ? (
                     <div className="flex h-24 items-center justify-center rounded-md border text-sm text-muted-foreground">
@@ -155,6 +165,7 @@ const ProductSelector: React.FC<Props> = ({
                                 name={name}
                                 value={prd.prd_id}
                             />
+
                             {prd.prd_img_url ? (
                                 <img
                                     src={asset(prd.prd_img_url)}
@@ -162,13 +173,14 @@ const ProductSelector: React.FC<Props> = ({
                                     className="h-56 w-full border object-contain"
                                 />
                             ) : (
-                                <div className="flex h-32 w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain text-muted-foreground shadow-md">
+                                <div className="flex h-32 w-full flex-col items-center justify-center rounded-md border-2 border-dashed text-muted-foreground shadow-md">
                                     <ImageIcon className="mb-2 h-10 w-10" />
                                     <span className="text-sm">
                                         Belum ada gambar
                                     </span>
                                 </div>
                             )}
+
                             <CardContent className="flex flex-col justify-end px-3">
                                 <h3 className="text-sm font-medium">
                                     {prd.prd_name}
@@ -180,6 +192,7 @@ const ProductSelector: React.FC<Props> = ({
                                     {prd.prd_weight + ' gram'}
                                 </h3>
                             </CardContent>
+
                             <Button
                                 type="button"
                                 size="icon"
@@ -194,6 +207,7 @@ const ProductSelector: React.FC<Props> = ({
                 )}
             </div>
 
+            {/* MODAL PILIH PRODUK */}
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogTrigger asChild>
                     <Button variant="outline" className="w-fit gap-1">
@@ -225,7 +239,7 @@ const ProductSelector: React.FC<Props> = ({
                                     </InputGroupAddon>
                                 </InputGroup>
 
-                                <div className="grid h-[255px] w-full grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 md:grid-cols-3">
+                                <div className="grid h-[255px] grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 md:grid-cols-3">
                                     {results.length === 0 ? (
                                         <p className="col-span-full text-center text-sm text-muted-foreground">
                                             {searchQuery
@@ -257,13 +271,14 @@ const ProductSelector: React.FC<Props> = ({
                                                             className="h-32 w-full object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="flex h-32 w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain text-muted-foreground shadow-md">
+                                                        <div className="flex h-32 w-full flex-col items-center justify-center rounded-md border-2 border-dashed text-muted-foreground shadow-md">
                                                             <ImageIcon className="mb-2 h-10 w-10" />
                                                             <span className="text-sm">
                                                                 Belum ada gambar
                                                             </span>
                                                         </div>
                                                     )}
+
                                                     <CardContent className="px-3">
                                                         <h3 className="truncate text-sm font-medium">
                                                             {prd.prd_name}
@@ -303,6 +318,7 @@ const ProductSelector: React.FC<Props> = ({
                 </AlertDialogContent>
             </AlertDialog>
 
+            {/* PEMBAYARAN BIASA */}
             {paymentMethod == '1' && (
                 <div className="mt-3">
                     <label className="text-sm font-medium">Pembayaran</label>
@@ -319,7 +335,8 @@ const ProductSelector: React.FC<Props> = ({
                 </div>
             )}
 
-            {paymentMethod == '3' && (
+            {/* --- SHIPPING CALCULATOR --- */}
+            {(paymentMethod == '3' || paymentMethod == '4') && (
                 <ShippingCostCalculator
                     key={totalWeight}
                     defaultOriginProviceName={Origin_Provice_name}
@@ -333,51 +350,69 @@ const ProductSelector: React.FC<Props> = ({
                     defaultDestinationLatitude={Destination_Latitude}
                     defaultDestinationLongitude={Destination_Longitude}
                     defaultweight={totalWeight}
-                    onChange={(code, name, cost, etd, service) => (
+                    onChange={(code, name, costVal, etd, service) => {
                         setCost({
                             code,
                             name,
-                            cost,
+                            cost: costVal,
                             etd,
                             service,
-                        }),
-                        setCostShp(cost)
-                    )}
+                        });
+                        setCostShp(costVal);
+                    }}
                 />
             )}
-            {paymentMethod == '4' && (
-                <ShippingCostCalculator
-                    key={totalWeight}
-                    defaultOriginProviceName={Origin_Provice_name}
-                    defaultOriginCityName={Origin_City_name}
-                    defaultOriginId={Origin_City_id}
-                    defaultDestinationProviceName={Destination_Provice_name}
-                    defaultDestinationCityName={Destination_City_name}
-                    defaultDestinationId={Destination_City_id}
-                    defaultOriginLatitude={Origin_Latitude}
-                    defaultOriginLongitude={Origin_Longitude}
-                    defaultDestinationLatitude={Destination_Latitude}
-                    defaultDestinationLongitude={Destination_Longitude}
-                    defaultweight={totalWeight}
-                    onChange={(code, name, cost, etd, service) => (
-                        setCost({
-                            code,
-                            name,
-                            cost,
-                            etd,
-                            service,
-                        }),
-                        setCostShp(cost)
-                    )}
-                />
+
+            {/* --- SHIPPING SUMMARY CARD (BARU) --- */}
+            {cost.code && (
+                <Card className="relative mt-2 border p-4 shadow-sm">
+                    <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        onClick={clearShipping}
+                        className="absolute top-2 right-2 rounded-full"
+                    >
+                        <X size={14} />
+                    </Button>
+
+                    <CardContent className="mt-2 flex flex-col gap-1">
+                        <h3 className="text-sm font-semibold">
+                            Paket Pengiriman Dipilih
+                        </h3>
+                        <div className="text-sm text-muted-foreground">
+                            <p>
+                                <span className="font-medium">Kurir:</span>{' '}
+                                {cost.code} – {cost.name}
+                            </p>
+                            <p>
+                                <span className="font-medium">Layanan:</span>{' '}
+                                {cost.service}
+                            </p>
+                            <p>
+                                <span className="font-medium">Estimasi:</span>{' '}
+                                {cost.etd} hari
+                            </p>
+                            <p>
+                                <span className="font-medium">Harga:</span>{' '}
+                                {formatRupiah(cost.cost) + ',-'}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             )}
+
+            {/* SUMMARY TOTAL */}
             <div className="flex items-center justify-between rounded-md border bg-muted/40 px-4 py-2">
                 <span className="text-sm font-medium text-muted-foreground">
                     Total Produk: {Object.values(selected).length}
                 </span>
+
                 <span className="text-base font-semibold text-primary">
                     Total: {formatRupiah(totalPrice + costShp) + ',-'}
                 </span>
+
+                {/* Hidden Inputs */}
                 <Input name="trx_subtotal" value={totalPrice} type="hidden" />
                 <Input name="trx_shipping_cost" value={costShp} type="hidden" />
                 <Input name="shp_courier" value={cost.code} type="hidden" />
@@ -386,6 +421,7 @@ const ProductSelector: React.FC<Props> = ({
                 <Input name="shp_etd" value={cost.etd} type="hidden" />
             </div>
 
+            {/* KEMBALIAN */}
             {paidAmount > 0 && (
                 <div className="mt-3 flex items-center justify-between">
                     <span className="text-sm font-semibold">Kembalian:</span>
@@ -399,6 +435,8 @@ const ProductSelector: React.FC<Props> = ({
                     <Input name="trx_change" value={change} type="hidden" />
                 </div>
             )}
+
+            {/* PEMBAYARAN UNTUK PENGIRIMAN */}
             {paymentMethod == '3' && (
                 <div className="mt-3">
                     <label className="text-sm font-medium">Pembayaran</label>

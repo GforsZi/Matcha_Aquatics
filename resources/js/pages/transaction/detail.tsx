@@ -1,8 +1,19 @@
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -14,6 +25,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
+import { Button } from '@/components/ui/button';
 import { formatDate } from '@/utils/date';
 import { ImageIcon } from 'lucide-react';
 
@@ -104,26 +116,26 @@ export default function DetailTransaction() {
     const transactionStatusMap: { [key: string]: string } = {
         '1': 'Menunggu pembayaran',
         '2': 'Pembayaran berhasil',
-        '3': 'Menunggu pengiriman',
-        '4': 'Pengiriman berhasil',
+        '3': 'Pengajuan pengembalian',
+        '4': 'Transaksi dibatalkan',
         '5': 'Transaksi selesai',
         '6': 'Transaksi gagal',
     };
 
     const transactionStatusColor: { [key: string]: string } = {
-        '1': 'text-yellow-700',
-        '2': 'text-blue-700',
-        '3': 'text-yellow-700',
-        '4': 'text-blue-700',
-        '5': 'text-green-700',
+        '1': 'text-yellow-600',
+        '2': 'text-blue-600',
+        '3': 'text-yellow-600',
+        '4': 'text-red-600',
+        '5': 'text-green-600',
         '6': 'text-red-700',
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Transaksi" />
-
-            <div className="mx-5 mt-5 space-y-6">
+            <Toaster position="top-center" richColors closeButton />
+            <div className="mx-5 my-5 space-y-6">
                 <Card>
                     <CardHeader>
                         <CardTitle>Informasi Transaksi</CardTitle>
@@ -202,6 +214,52 @@ export default function DetailTransaction() {
                                 </TableRow>
                             </TableBody>
                         </Table>
+                        <div className="mt-4 flex justify-between">
+                            {!['4'].includes(transaction.trx_status) && (
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button className="bg-emerald-600 text-stone-950 hover:bg-emerald-700">
+                                            Batalkan Transaksi
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <Form
+                                            method="post"
+                                            action={`/system/transaction/${transaction.trx_id}/cancle`}
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_method"
+                                                value="PUT"
+                                            />
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                    Yakin ingin membatalkan
+                                                    transaksi?
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Aksi ini bersifat permanen.
+                                                    Transaksi akan dibatalkan
+                                                    dari sisi penjual dan
+                                                    pembeli.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>
+                                                    Batal
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    className="bg-red-600 text-white hover:bg-red-700"
+                                                    type="submit"
+                                                >
+                                                    Lanjutkan
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </Form>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -251,13 +309,6 @@ export default function DetailTransaction() {
                         <Table>
                             <TableBody>
                                 <TableRow>
-                                    <TableHead>Dibayar</TableHead>
-                                    <TableCell>
-                                        {formatRupiah(transaction.trx_payment)}
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
                                     <TableHead>Subtotal</TableHead>
                                     <TableCell>
                                         {formatRupiah(transaction.trx_subtotal)}
@@ -279,6 +330,13 @@ export default function DetailTransaction() {
                                 </TableRow>
 
                                 <TableRow>
+                                    <TableHead>Dibayar</TableHead>
+                                    <TableCell>
+                                        {formatRupiah(transaction.trx_payment)}
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow>
                                     <TableHead>Kembalian</TableHead>
                                     <TableCell>
                                         {formatRupiah(
@@ -290,14 +348,27 @@ export default function DetailTransaction() {
                         </Table>
 
                         {transaction.payment?.pay_qr_url && (
-                            <div className="mt-4">
-                                <a
-                                    className="text-blue-600 underline"
-                                    href={transaction.payment.pay_qr_url}
-                                    target="_blank"
-                                >
-                                    Lihat QR Pembayaran
-                                </a>
+                            <div className="mt-4 flex justify-between">
+                                {!['4'].includes(transaction.trx_status) && (
+                                    <a
+                                        className="text-blue-600 underline"
+                                        href={transaction.payment.pay_qr_url}
+                                        target="_blank"
+                                    >
+                                        Lihat QR Pembayaran
+                                    </a>
+                                )}
+                                {['2', '3'].includes(
+                                    transaction.trx_status,
+                                ) && (
+                                    <Link
+                                        href={`/manage/transaction/${transaction.trx_id}/refund`}
+                                    >
+                                        <Button className="bg-emerald-600 text-stone-950 hover:bg-emerald-700">
+                                            Lakukan Pengembalian
+                                        </Button>
+                                    </Link>
+                                )}
                             </div>
                         )}
                     </CardContent>

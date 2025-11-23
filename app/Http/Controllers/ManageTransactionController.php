@@ -9,6 +9,7 @@ use App\Models\Shipment;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
@@ -33,8 +34,8 @@ class ManageTransactionController extends Controller
 
     public function show($id)
     {
-
         $transaction = Transaction::with('products', 'payment', 'shipment', 'created_by', 'updated_by', 'deleted_by')->findOrFail($id);
+        // dd(json_decode($transaction->payment->pay_response, true));
         return Inertia::render('transaction/detail', compact('transaction'));
     }
 
@@ -189,7 +190,6 @@ class ManageTransactionController extends Controller
                 }
             }
         } catch (\Throwable $th) {
-
             return redirect('/manage/transaction/add')->with([
                 'error' => $th->getMessage() . ' | transaksi gagal dibuat.'
             ])->setStatusCode(303);
@@ -383,20 +383,106 @@ class ManageTransactionController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    public function delete_payment_link_system($orderId)
+    public function refund_page($trx_id)
     {
-        $url = $this->baseUrl . "/payment-links/{$orderId}";
+        $trx = Transaction::with('payment', 'items.product')->findOrFail($trx_id);
 
-        $response = Http::withBasicAuth($this->serverKey, '')
-            ->delete($url);
+        return Inertia::render('transaction/refund', [
+            'transaction' => $trx,
+        ]);
+    }
 
-        if ($response->failed()) {
-            return response()->json(['message' => 'Delete failed', 'detail' => $response->json()], $response->status());
+    public function refund_system(Request $request, $id)
+    {
+        try {
+
+
+            $request->validate([
+                'amount' => 'required|integer|min:1',
+            ]);
+
+            $refundAmount = $request->amount;
+            $trx = Transaction::with('payment')->findOrFail($id);
+
+            if (! $trx->payment) {
+                throw new \Exception('Data pembayaran tidak ditemukan untuk transaksi ini');
+            }
+
+            $midtransId = json_decode($trx->payment->pay_response, true);
+
+            $payload = [
+                "refund_key"     => "rf-" . $trx->payment->pay_transaction_id . "-" . Str::random(6),
+                "amount"         => $refundAmount,
+                "reason"         => "Refund by system",
+            ];
+
+            $url = 'https://api.sandbox.midtrans.com/v2/' . $midtransId['transaction_id'] . '/refund';
+
+            $response = Http::withBasicAuth($this->serverKey, '')
+                ->withHeaders([
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ])
+                ->post($url, $payload);
+
+            if ($response->failed()) {
+                throw new \Exception('Pengembalian dana gagal diproses');
+            }
+
+            $resp = $response->json();
+
+            $trx->payment->update([
+                'pay_refund_amount' => '5'
+            ]);
+            return redirect('/manage/transaction/' . $id . '/detail')->with([
+                'success' => 'Pengembalian dana berhasil.',
+            ])->setStatusCode(303);
+        } catch (\Throwable $th) {
+            return redirect('/manage/transaction/' . $id . '/refund')->with([
+                'error' => $th->getMessage() . ' | pengembalian dana gagal.',
+            ])->setStatusCode(303);
         }
+    }
 
-        $payment = Payment::where('pay_midtrans_id', $orderId)->first();
-        if ($payment) $payment->update(['pay_status' => 'deleted']);
 
-        return response()->json(['message' => 'Deleted']);
+    public function delete_payment_link_system(Request $request, $id)
+    {
+        try {
+
+            $trx = Transaction::with('payment')->findOrFail($id);
+
+            if (!$trx->payment || !$trx->payment->pay_midtrans_id) {
+                throw new \Exception('Transaksi tidak memiliki informasi payment Midtrans.');
+            }
+
+            $midtransId = $trx->payment->pay_midtrans_id;
+            $url = $this->baseUrl . "/payment-links/{$midtransId}";
+
+            $response = Http::withBasicAuth($this->serverKey, '')
+                ->delete($url);
+
+            if (!$response->successful()) {
+                $msg = $response->json()['message'] ?? 'Midtrans gagal menghapus payment link.';
+                throw new \Exception($msg);
+            }
+
+            DB::transaction(function () use ($trx) {
+                $trx->update(['trx_status' => '4']);
+                $trx->payment->update([
+                    'pay_status' => '4'
+                ]);
+            });
+
+            return redirect("/manage/transaction/{$trx->trx_id}/detail")
+                ->with([
+                    'success' => 'Payment Link berhasil dihapus dan status transaksi telah diperbarui.',
+                ])->setStatusCode(303);
+        } catch (\Throwable $th) {
+
+            return redirect("/manage/transaction/{$id}/detail")
+                ->with([
+                    'error' => $th->getMessage() . ' | Transaksi gagal dibatalkan.'
+                ])->setStatusCode(303);
+        }
     }
 }

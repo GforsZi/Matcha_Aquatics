@@ -39,6 +39,8 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::get('/manage/transaction/add', [ManageTransactionController::class, 'add']);
     Route::get('/manage/transaction/{id}/detail', [ManageTransactionController::class, 'show']);
     Route::get('/manage/transaction/{id}/payment_link', [ManageTransactionController::class, 'payment_link_page']);
+    Route::get('/manage/transaction/{id}/refund', [ManageTransactionController::class, 'refund_page'])
+        ->name('transactions.refund.page');
 
     Route::get('/manage/report', [ManageReportController::class, 'index']);
 });
@@ -68,6 +70,8 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
 
     Route::post('/system/transaction/add', [ManageTransactionController::class, 'add_system']);
     Route::put('/system/transaction/{id}/edit', [ManageTransactionController::class, 'edit_system']);
+    Route::put('/system/transaction/{id}/cancle', [ManageTransactionController::class, 'delete_payment_link_system']);
+    Route::post('/system/transactions/{id}/refund', [ManageTransactionController::class, 'refund_system']);
     Route::delete('/system/transaction/{id}/delete', [ManageTransactionController::class, 'delete_system']);
 
     Route::post('/system/payment/create/{trx_id}', [ManageTransactionController::class, 'payment_link_system']);

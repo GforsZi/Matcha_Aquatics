@@ -126,7 +126,6 @@ export default function ShippingCostCalculator({
     >(null);
 
     const ref = useRef<HTMLDivElement>(null);
-    console.log(weight);
 
     const getShipping = () => {
         fetch('/system/shipping/provinces')
@@ -152,6 +151,7 @@ export default function ShippingCostCalculator({
 
     const handleCalculate = async () => {
         if (!originCity || !destinationCity || !weight) return;
+
         setLoading(true);
 
         try {
@@ -169,7 +169,21 @@ export default function ShippingCostCalculator({
                 }),
             });
 
-            const data = await res.json();
+            // Jika response bukan JSON → jangan parsing
+            const text = await res.text();
+            if (!res.ok) {
+                console.warn('Shipping cost error:', text);
+                return; // hentikan tanpa melempar error
+            }
+
+            // Coba parse JSON aman
+            let data: any = {};
+            try {
+                data = JSON.parse(text);
+            } catch {
+                console.warn('Response bukan JSON valid:', text);
+                return;
+            }
 
             let parsed: Cost[] = [];
 
@@ -194,6 +208,7 @@ export default function ShippingCostCalculator({
     const handleSelectCost = (cost: Cost) => {
         onCostSelected?.(cost);
         onChange?.(cost.code, cost.name, cost.cost, cost.etd, cost.service);
+        console.log(cost.cost);
     };
 
     useEffect(() => {
