@@ -402,7 +402,6 @@ const ProductSelector: React.FC<Props> = ({
                 </Card>
             )}
 
-            {/* SUMMARY TOTAL */}
             <div className="flex items-center justify-between rounded-md border bg-muted/40 px-4 py-2">
                 <span className="text-sm font-medium text-muted-foreground">
                     Total Produk: {Object.values(selected).length}
@@ -412,7 +411,6 @@ const ProductSelector: React.FC<Props> = ({
                     Total: {formatRupiah(totalPrice + costShp) + ',-'}
                 </span>
 
-                {/* Hidden Inputs */}
                 <Input name="trx_subtotal" value={totalPrice} type="hidden" />
                 <Input name="trx_shipping_cost" value={costShp} type="hidden" />
                 <Input name="shp_courier" value={cost.code} type="hidden" />
@@ -436,7 +434,6 @@ const ProductSelector: React.FC<Props> = ({
                 </div>
             )}
 
-            {/* PEMBAYARAN UNTUK PENGIRIMAN */}
             {paymentMethod == '3' && (
                 <div className="mt-3">
                     <label className="text-sm font-medium">Pembayaran</label>

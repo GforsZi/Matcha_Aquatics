@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
                 $user = Auth::user();
                 return [
                     'user' => $user ? [
-                        'id' => $user->id,
+                        'id' => $user->usr_id,
                         'name' => $user->name,
                         'email' => $user->email,
                         'usr_latitude' => $user->usr_latitude,

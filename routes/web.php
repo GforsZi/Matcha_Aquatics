@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
     Route::get('/cart', [UserController::class, 'cart']);
     Route::get('/product/{slug}', [UserController::class, 'product']);
     Route::get('/customer_service', [UserController::class, 'customer_service']);
+    Route::get('/payment_link/{invoice}', [UserController::class, 'payment_link_page']);
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
@@ -73,20 +74,22 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
     Route::put('/system/transaction/{id}/cancle', [ManageTransactionController::class, 'delete_payment_link_system']);
     Route::post('/system/transactions/{id}/refund', [ManageTransactionController::class, 'refund_system']);
     Route::delete('/system/transaction/{id}/delete', [ManageTransactionController::class, 'delete_system']);
-
     Route::post('/system/payment/create/{trx_id}', [ManageTransactionController::class, 'payment_link_system']);
+
     Route::delete('/payment/{order_id}', [ManageTransactionController::class, 'delete_payment_link_system']);
 
-    Route::post('/system/shipping/cost', [ShippingController::class, 'cost']);
     Route::get('/system/report/export', [ManageReportController::class, 'export']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/system/shipping/cost', [ShippingController::class, 'cost']);
+    Route::post('/system/payment/{invoice}/create', [UserController::class, 'payment_link_system']);
     Route::get('/system/shipping/provinces', [ShippingController::class, 'provinces']);
     Route::get('/system/shipping/cities/{province}', [ShippingController::class, 'cities']);
     Route::get('/system/product/search', [ManageProductController::class, 'search_system']);
     Route::get('/system/categories/search', [ManageCategoryController::class, 'search_system']);
     Route::post('/system/cart/add', [UserController::class, 'add_cart_system']);
+    Route::post('/system/transaction', [UserController::class, 'transaction_system']);
     Route::delete('/system/cart/delete', [UserController::class, 'delete_cart_system']);
 });
 

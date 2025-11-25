@@ -15,14 +15,14 @@ return new class extends Migration
             $table->bigIncrements('trx_id');
             $table->string('trx_invoice')->unique();
             $table->unsignedBigInteger('trx_buyer_id')->unsigned()->nullable();
-            $table->unsignedBigInteger('trx_seller_id')->unsigned();
+            $table->unsignedBigInteger('trx_seller_id')->unsigned()->nullable();
             $table->string('trx_buyer_name')->nullable();
             $table->integer('trx_total');
             $table->integer('trx_subtotal');
             $table->integer('trx_discount')->default(0);
             $table->integer('trx_payment')->nullable();
             $table->integer('trx_change')->nullable();
-            $table->enum('trx_payment_method', ['1', '2', '3', '4']);
+            $table->enum('trx_payment_method', ['1', '2', '3', '4', '5']);
             $table->enum('trx_status', ['1', '2', '3', '4', '5', '6'])->default('1');
             $table->text('trx_notes')->nullable();
             $table->timestamps();

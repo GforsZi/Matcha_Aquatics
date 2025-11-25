@@ -93,7 +93,7 @@ export function LoginForm({
                                                 fill="currentColor"
                                             />
                                         </svg>
-                                        <span>Login dengan Google</span>
+                                        <span>Masuk dengan Google</span>
                                     </Button>
                                 </a>
                             </Field>

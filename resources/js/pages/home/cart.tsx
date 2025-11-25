@@ -15,6 +15,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
     SelectContent,
@@ -23,9 +24,9 @@ import {
 } from '@/components/ui/select';
 import UserLayout from '@/layouts/user-layout';
 import { BreadcrumbItem } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { Select, SelectValue } from '@radix-ui/react-select';
-import { ImageIcon, Package2, ShoppingCart, Trash2 } from 'lucide-react';
+import { ImageIcon, Package2, ShoppingCart, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
@@ -36,11 +37,21 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface Cost {
+    service: string;
+    description: string;
+    cost: number;
+    name: string;
+    etd: string;
+    code: string;
+}
+
 export interface Product {
     prd_id: number;
     prd_name: string;
     prd_slug: string;
     prd_img_url: string;
+    prd_weight: number;
     prd_description: string;
     prd_price: number;
     prd_status: string;
@@ -67,6 +78,17 @@ export interface CartItem {
     product: Product;
 }
 
+export function getCsrfToken(): string {
+    const token = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content');
+    if (!token) {
+        console.warn('CSRF token not found in <meta> tag');
+        return '';
+    }
+    return token;
+}
+
 const couriers = [
     { code: 'jne', name: 'JNE' },
     { code: 'pos', name: 'POS' },
@@ -77,9 +99,41 @@ const Cart = () => {
     const { carts } = usePage<{
         carts: CartItem[];
     }>().props;
+    const { auth } = usePage().props as any;
+    const usr_city_id: string = auth?.user?.usr_city_id ?? '';
+
+    const {
+        app_provice_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_id = { app_stg_title: '', app_stg_value: '' },
+        app_location_latitude = { app_stg_title: '', app_stg_value: '' },
+        app_location_longitude = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
+        app_provice_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_id: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_location_latitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_location_longitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+    }>().props;
     const { assetBaseUrl } = usePage().props;
     const asset = (path: string) => `${assetBaseUrl}${path}`;
     const [loadingAdd, setLoadingAdd] = useState(false);
+    const [costs, setCosts] = useState<Cost[]>([]);
 
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
@@ -128,6 +182,12 @@ const Cart = () => {
         }, 0);
     };
     const subtotal = calculateSubtotal(carts);
+    const calculateWeight = (carts: CartItem[]): number => {
+        return carts.reduce((total, item) => {
+            return total + Number(item.product.prd_weight);
+        }, 0);
+    };
+    const totalweight = calculateWeight(carts);
 
     const handleDeleteCart = async (productId: number) => {
         setLoadingAdd(true);
@@ -148,6 +208,91 @@ const Cart = () => {
             setLoadingAdd(false);
             toast.error('Terjadi kesalahan');
         }
+    };
+    const [loading, setLoading] = useState(false);
+    const [weight, setWeight] = useState(totalweight);
+
+    const handleCalculate = async () => {
+        if (!app_city_id.app_stg_value || !usr_city_id || !weight) return;
+
+        setLoading(true);
+
+        try {
+            const res = await fetch('/system/shipping/cost', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                },
+                body: JSON.stringify({
+                    origin: app_city_id.app_stg_value,
+                    destination: usr_city_id,
+                    weight: weight,
+                    courier: selectedCourier,
+                }),
+            });
+
+            // Jika response bukan JSON → jangan parsing
+            const text = await res.text();
+            if (!res.ok) {
+                console.warn('Shipping cost error:', text);
+                return; // hentikan tanpa melempar error
+            }
+
+            // Coba parse JSON aman
+            let data: any = {};
+            try {
+                data = JSON.parse(text);
+            } catch {
+                console.warn('Response bukan JSON valid:', text);
+                return;
+            }
+
+            let parsed: Cost[] = [];
+
+            if (data?.rajaongkir?.results?.length) {
+                parsed = data.rajaongkir.results.flatMap((r: any) => r.costs);
+            } else if (data?.data?.rajaongkir?.results?.length) {
+                parsed = data.data.rajaongkir.results.flatMap(
+                    (r: any) => r.costs,
+                );
+            } else if (Array.isArray(data)) {
+                parsed = data;
+            }
+
+            setCosts(parsed);
+        } catch (err) {
+            console.error('Error fetching cost:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const [costSelected, setCostSelected] = useState({
+        code: '',
+        name: '',
+        cost: 0,
+        etd: '',
+        service: '',
+    });
+
+    const handleSelectCost = (cost: Cost) => {
+        setCostSelected({
+            code: cost.code,
+            name: cost.name,
+            cost: cost.cost,
+            etd: cost.etd,
+            service: cost.service,
+        });
+    };
+
+    const clearShipping = () => {
+        setCostSelected({
+            code: '',
+            name: '',
+            cost: 0,
+            etd: '',
+            service: '',
+        });
     };
 
     const [selectedCourier, setSelectedCourier] = useState('jne');
@@ -232,7 +377,10 @@ const Cart = () => {
                                                 >
                                                     {item.product.prd_name}
                                                 </Link>
-                                                <p className="mb-2 text-sm text-muted-foreground"></p>
+                                                <p className="mb-2 text-sm text-muted-foreground">
+                                                    {item.product.prd_weight +
+                                                        ' gram'}
+                                                </p>
                                                 <p
                                                     className={`text-sm ${getStatusColor(item.product.prd_status)}`}
                                                 >
@@ -307,8 +455,85 @@ const Cart = () => {
                                                 <span className="text-muted-foreground">
                                                     Pengiriman
                                                 </span>
-                                                <span className="font-medium"></span>
+                                                <span className="font-medium">
+                                                    {new Intl.NumberFormat(
+                                                        'id-ID',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'IDR',
+                                                            minimumFractionDigits: 0,
+                                                        },
+                                                    ).format(
+                                                        costSelected.cost,
+                                                    ) + ',-'}
+                                                </span>
                                             </div>
+                                            {costSelected.code && (
+                                                <Card className="relative mt-2 border p-4 shadow-sm">
+                                                    <Button
+                                                        type="button"
+                                                        size="icon"
+                                                        variant="destructive"
+                                                        onClick={clearShipping}
+                                                        className="absolute top-2 right-2 rounded-full"
+                                                    >
+                                                        <X size={14} />
+                                                    </Button>
+
+                                                    <CardContent className="mt-2 flex flex-col gap-1">
+                                                        <h3 className="text-sm font-semibold">
+                                                            Paket Pengiriman
+                                                            Dipilih
+                                                        </h3>
+                                                        <div className="text-sm text-muted-foreground">
+                                                            <p>
+                                                                <span className="font-medium">
+                                                                    Kurir:
+                                                                </span>{' '}
+                                                                {
+                                                                    costSelected.code
+                                                                }{' '}
+                                                                –{' '}
+                                                                {
+                                                                    costSelected.name
+                                                                }
+                                                            </p>
+                                                            <p>
+                                                                <span className="font-medium">
+                                                                    Layanan:
+                                                                </span>{' '}
+                                                                {
+                                                                    costSelected.service
+                                                                }
+                                                            </p>
+                                                            <p>
+                                                                <span className="font-medium">
+                                                                    Estimasi:
+                                                                </span>{' '}
+                                                                {
+                                                                    costSelected.etd
+                                                                }
+                                                            </p>
+                                                            <p>
+                                                                <span className="font-medium">
+                                                                    Harga:
+                                                                </span>{' '}
+                                                                {new Intl.NumberFormat(
+                                                                    'id-ID',
+                                                                    {
+                                                                        style: 'currency',
+                                                                        currency:
+                                                                            'IDR',
+                                                                        minimumFractionDigits: 0,
+                                                                    },
+                                                                ).format(
+                                                                    costSelected.cost,
+                                                                ) + ',-'}
+                                                            </p>
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            )}
                                         </div>
 
                                         <div className="border-t pt-4">
@@ -316,89 +541,349 @@ const Cart = () => {
                                                 <span className="text-lg font-semibold">
                                                     Total
                                                 </span>
-                                                <span className="text-2xl font-bold"></span>
+                                                <span className="text-2xl font-bold">
+                                                    {new Intl.NumberFormat(
+                                                        'id-ID',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'IDR',
+                                                            minimumFractionDigits: 0,
+                                                        },
+                                                    ).format(
+                                                        subtotal +
+                                                            costSelected.cost,
+                                                    ) + ',-'}
+                                                </span>
                                             </div>
-                                            <Dialog>
-                                                <form>
-                                                    <DialogTrigger asChild>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700 hover:text-stone-950"
-                                                        >
-                                                            <Package2 className="mr-2 h-4 w-4" />
-                                                            Mulai Pemesanan
-                                                        </Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="sm:max-w-[425px]">
-                                                        <DialogHeader>
-                                                            <DialogTitle>
-                                                                Kurir Pengiriman
-                                                            </DialogTitle>
-                                                            <DialogDescription>
-                                                                Pilih kurir dan
-                                                                paket pengiriman
-                                                                untuk paket
-                                                                pesananmu.
-                                                            </DialogDescription>
-                                                        </DialogHeader>
-                                                        <div className="grid gap-4">
-                                                            <div className="grid gap-3">
-                                                                <Label>
-                                                                    Kurir
-                                                                </Label>
-                                                                <Select
-                                                                    onValueChange={(
-                                                                        value,
-                                                                    ) =>
-                                                                        setSelectedCourier(
-                                                                            value,
-                                                                        )
-                                                                    }
-                                                                    value={
-                                                                        selectedCourier
-                                                                    }
-                                                                >
-                                                                    <SelectTrigger>
-                                                                        <SelectValue placeholder="Pilih kurir" />
-                                                                    </SelectTrigger>
-
-                                                                    <SelectContent>
-                                                                        {couriers.map(
-                                                                            (
-                                                                                c,
-                                                                            ) => (
-                                                                                <SelectItem
-                                                                                    key={
-                                                                                        c.code
-                                                                                    }
-                                                                                    value={
-                                                                                        c.code
-                                                                                    }
-                                                                                >
-                                                                                    {
-                                                                                        c.name
-                                                                                    }
-                                                                                </SelectItem>
-                                                                            ),
-                                                                        )}
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <hr />
-                                                        </div>
-                                                        <DialogFooter>
+                                            {!costSelected.code && (
+                                                <Dialog>
+                                                    <form>
+                                                        <DialogTrigger asChild>
                                                             <Button
-                                                                type="submit"
+                                                                variant="outline"
                                                                 className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700 hover:text-stone-950"
                                                             >
-                                                                Hitung Ongkir
+                                                                <Package2 className="mr-2 h-4 w-4" />
+                                                                Pilih kurir dan
+                                                                paket ongkir
                                                             </Button>
-                                                        </DialogFooter>
-                                                    </DialogContent>
-                                                </form>
-                                            </Dialog>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="sm:max-w-[425px]">
+                                                            <DialogHeader>
+                                                                <DialogTitle>
+                                                                    Kurir
+                                                                    Pengiriman
+                                                                </DialogTitle>
+                                                                <DialogDescription>
+                                                                    Pilih kurir
+                                                                    dan paket
+                                                                    pengiriman
+                                                                    untuk paket
+                                                                    pesananmu.
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                            <div className="grid gap-4">
+                                                                <div className="grid gap-3">
+                                                                    <Label>
+                                                                        Kurir
+                                                                    </Label>
+                                                                    <Select
+                                                                        onValueChange={(
+                                                                            value,
+                                                                        ) =>
+                                                                            setSelectedCourier(
+                                                                                value,
+                                                                            )
+                                                                        }
+                                                                        value={
+                                                                            selectedCourier
+                                                                        }
+                                                                    >
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Pilih kurir" />
+                                                                        </SelectTrigger>
+
+                                                                        <SelectContent>
+                                                                            {couriers.map(
+                                                                                (
+                                                                                    c,
+                                                                                ) => (
+                                                                                    <SelectItem
+                                                                                        key={
+                                                                                            c.code
+                                                                                        }
+                                                                                        value={
+                                                                                            c.code
+                                                                                        }
+                                                                                    >
+                                                                                        {
+                                                                                            c.name
+                                                                                        }
+                                                                                    </SelectItem>
+                                                                                ),
+                                                                            )}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <hr />
+                                                                {costs.length >
+                                                                    0 && (
+                                                                    <div className="mt-4 border-t pt-3">
+                                                                        <p className="mb-2 text-sm font-semibold">
+                                                                            Hasil
+                                                                            Perhitungan:
+                                                                        </p>
+                                                                        {costs.map(
+                                                                            (
+                                                                                item,
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        item.service
+                                                                                    }
+                                                                                    className="mb-2 cursor-pointer rounded-lg border bg-muted/40 p-2 hover:bg-muted"
+                                                                                    onClick={() =>
+                                                                                        handleSelectCost(
+                                                                                            item,
+                                                                                        )
+                                                                                    }
+                                                                                >
+                                                                                    <p className="font-medium">
+                                                                                        {
+                                                                                            item.service
+                                                                                        }{' '}
+                                                                                        -{' '}
+                                                                                        {
+                                                                                            item.description
+                                                                                        }
+                                                                                    </p>
+                                                                                    {Array.isArray(
+                                                                                        item.cost,
+                                                                                    ) ? (
+                                                                                        item.cost.map(
+                                                                                            (
+                                                                                                c,
+                                                                                                i,
+                                                                                            ) => (
+                                                                                                <div
+                                                                                                    key={
+                                                                                                        i
+                                                                                                    }
+                                                                                                >
+                                                                                                    <p>
+                                                                                                        {c.value.toLocaleString(
+                                                                                                            'id-ID',
+                                                                                                        )}
+                                                                                                    </p>
+                                                                                                    <p>
+                                                                                                        {
+                                                                                                            c.etd
+                                                                                                        }{' '}
+                                                                                                        hari
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                            ),
+                                                                                        )
+                                                                                    ) : (
+                                                                                        <div>
+                                                                                            <p>
+                                                                                                {Number(
+                                                                                                    item.cost,
+                                                                                                ).toLocaleString(
+                                                                                                    'id-ID',
+                                                                                                )}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                            ),
+                                                                        )}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <DialogFooter>
+                                                                <Button
+                                                                    onClick={
+                                                                        handleCalculate
+                                                                    }
+                                                                    disabled={
+                                                                        loading
+                                                                    }
+                                                                    className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700"
+                                                                >
+                                                                    {loading
+                                                                        ? 'Menghitung...'
+                                                                        : 'Hitung Ongkir'}
+                                                                </Button>
+                                                            </DialogFooter>
+                                                        </DialogContent>
+                                                    </form>
+                                                </Dialog>
+                                            )}
+                                            {costSelected.code && (
+                                                <Form
+                                                    method="post"
+                                                    action={
+                                                        '/system/transaction'
+                                                    }
+                                                >
+                                                    {carts.map((item) => (
+                                                        <Input
+                                                            key={
+                                                                item.product
+                                                                    .prd_id
+                                                            }
+                                                            type="hidden"
+                                                            name="product_id[]"
+                                                            value={
+                                                                item.product
+                                                                    .prd_id
+                                                            }
+                                                        />
+                                                    ))}
+                                                    <Input
+                                                        type="hidden"
+                                                        name="trx_buyer_id"
+                                                        value={auth?.user?.id}
+                                                    />
+                                                    <Input
+                                                        type="hidden"
+                                                        name="trx_buyer_name"
+                                                        value={auth?.user?.name}
+                                                    />
+                                                    <Input
+                                                        name="trx_subtotal"
+                                                        value={subtotal}
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="trx_payment_method"
+                                                        value={'5'}
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="trx_shipping_cost"
+                                                        value={
+                                                            costSelected.cost
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_courier"
+                                                        value={
+                                                            costSelected.code
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_cost"
+                                                        value={
+                                                            costSelected.cost
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_service"
+                                                        value={
+                                                            costSelected.service
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_etd"
+                                                        value={costSelected.etd}
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_origin_city_id"
+                                                        value={
+                                                            app_city_id.app_stg_value
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_destination_city_id"
+                                                        value={usr_city_id}
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_origin_province_name"
+                                                        value={
+                                                            auth.user
+                                                                .usr_provice_name
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_origin_city_name"
+                                                        value={
+                                                            auth.user
+                                                                .usr_city_name
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_destination_province_name"
+                                                        value={
+                                                            app_provice_name.app_stg_value
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_destination_city_name"
+                                                        value={
+                                                            app_city_name.app_stg_value
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_origin_latitude"
+                                                        value={
+                                                            auth.user
+                                                                .usr_latitude
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_origin_longitude"
+                                                        value={
+                                                            auth.user
+                                                                .usr_longtitude
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_destination_latitude"
+                                                        value={
+                                                            app_location_latitude.app_stg_value
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_destination_longitude"
+                                                        value={
+                                                            app_location_longitude.app_stg_value
+                                                        }
+                                                        type="hidden"
+                                                    />
+                                                    <Input
+                                                        name="shp_weight"
+                                                        value={totalweight}
+                                                        type="hidden"
+                                                    />
+                                                    <Button
+                                                        disabled={loading}
+                                                        className="w-full bg-emerald-600 text-stone-950 hover:bg-emerald-700"
+                                                    >
+                                                        <Package2 className="mr-2 h-4 w-4" />
+                                                        {loading
+                                                            ? 'Menghitung...'
+                                                            : 'Mulai Pemesanan'}
+                                                    </Button>
+                                                </Form>
+                                            )}
                                         </div>
                                     </CardContent>
                                 </Card>

@@ -198,6 +198,7 @@ class ManageTransactionController extends Controller
     public function payment_link_system($trx_id)
     {
         $trx = Transaction::with('items.product', 'user')->findOrFail($trx_id);
+        $shp = Shipment::where('shp_transaction_id', $trx->trx_id)->first();
 
         $paymentLinkId = 'pl-' . ($trx->trx_invoice ?? $trx->trx_id) . '-' . Str::random(6);
 
@@ -216,12 +217,23 @@ class ManageTransactionController extends Controller
                 'merchant_name' => config('app.name', 'Merchant'),
             ];
         }
+        if ($shp) {
+            $itemDetails[] = [
+                'id' =>  $shp->shp_id,
+                'name' => $shp->shp_courier . ' ' . $shp->shp_service,
+                'price' => (int) $shp->shp_cost,
+                'quantity' => (int) (1),
+                'brand' => $shp->prd_sys_note ?? '',
+                'category' => 'General',
+                'merchant_name' => config('app.name', 'Merchant'),
+            ];
+        }
 
         $customer = [
             'first_name' => $trx->trx_buyer_name ?? 'Customer',
             'last_name' => ' ',
             'email' => $trx->user->email ?? null,
-            'phone' => null,
+            'phone' => $trx->user->usr_no_wa ?? null,
             'notes' => $trx->trx_notes ?? null,
         ];
 
@@ -257,16 +269,10 @@ class ManageTransactionController extends Controller
             ->post($url, $payload);
 
         if ($response->failed()) {
-            Log::error('Midtrans create payment link failed', [
-                'trx_id' => $trx->trx_id,
-                'payload' => $payload,
-                'response' => $response->json(),
-            ]);
-
             return response()->json([
                 'message' => 'Gagal membuat payment link',
                 'detail' => $response->json(),
-            ], 500);
+            ], 503);
         }
 
         $resp = $response->json();

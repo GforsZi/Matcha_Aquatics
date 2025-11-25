@@ -17,7 +17,9 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import L from 'leaflet';
 import { ImageIcon } from 'lucide-react';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -45,11 +47,54 @@ type ProductType = {
     categories?: Category[];
 };
 
+interface ShippingCostCalculatorProps {
+    Latitude?: string;
+    Longitude?: string;
+}
+
+import 'leaflet/dist/leaflet.css';
+
+// Konfigurasi icon agar tidak error
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl:
+        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
 export default function Product() {
     const { props } = usePage();
     const { assetBaseUrl } = usePage().props;
     const asset = (path: string) => `${assetBaseUrl}${path}`;
     const flash = (props as any).flash as { success?: string; error?: string };
+    const {
+        app_provice_name = { app_stg_title: '', app_stg_value: '' },
+        app_city_name = { app_stg_title: '', app_stg_value: '' },
+        app_location_latitude = { app_stg_title: '', app_stg_value: '' },
+        app_location_longitude = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
+        app_provice_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_city_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_location_latitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_location_longitude: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+    }>().props;
+    const position: [number, number] = [
+        Number(app_location_latitude?.app_stg_value),
+        Number(app_location_longitude?.app_stg_value),
+    ];
 
     // product datang dari controller: compact('product')
     const product = useMemo<ProductType>(
@@ -259,6 +304,38 @@ export default function Product() {
                                 </div>
 
                                 <Separator />
+                                <div>
+                                    <h3 className="text-sm font-medium text-muted-foreground">
+                                        Lokasi Toko
+                                    </h3>
+                                    <p className="mt-2 text-base whitespace-pre-line">
+                                        {app_provice_name?.app_stg_value +
+                                            ', ' +
+                                            app_city_name?.app_stg_value ||
+                                            'Toko belum menambahkan lokasi.'}
+                                    </p>
+                                    {app_location_latitude?.app_stg_value &&
+                                        app_location_longitude?.app_stg_value && (
+                                            <div className="mx-auto aspect-square max-h-[250px] w-full overflow-hidden rounded-xl border sm:max-h-[250px]">
+                                                <MapContainer
+                                                    center={position}
+                                                    zoom={13}
+                                                    scrollWheelZoom={true}
+                                                    className="z-0 h-full w-full"
+                                                >
+                                                    <TileLayer
+                                                        attribution="Matcha Aquatics"
+                                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                                    />
+                                                    <Marker position={position}>
+                                                        <Popup>
+                                                            Lokasi Toko
+                                                        </Popup>
+                                                    </Marker>
+                                                </MapContainer>
+                                            </div>
+                                        )}
+                                </div>
                             </div>
                         </div>
 

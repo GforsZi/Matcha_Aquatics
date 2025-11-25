@@ -208,7 +208,6 @@ export default function ShippingCostCalculator({
     const handleSelectCost = (cost: Cost) => {
         onCostSelected?.(cost);
         onChange?.(cost.code, cost.name, cost.cost, cost.etd, cost.service);
-        console.log(cost.cost);
     };
 
     useEffect(() => {

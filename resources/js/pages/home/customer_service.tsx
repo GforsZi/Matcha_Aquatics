@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import UserLayout from '@/layouts/user-layout';
 import { BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { MessageCircleQuestion } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
@@ -15,6 +15,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Search() {
+    const {
+        app_cs_name = { app_stg_title: '', app_stg_value: '' },
+        app_cs_nomor = { app_stg_title: '', app_stg_value: '' },
+    } = usePage<{
+        app_cs_name: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+        app_cs_nomor: {
+            app_stg_title: string;
+            app_stg_value: string;
+        };
+    }>().props;
     const { props } = usePage();
     const flash = props.flash as { success?: string; error?: string };
 
@@ -38,11 +51,21 @@ export default function Search() {
                         <p className="mb-6 text-muted-foreground">
                             Tambahkan produk ke keranjang untuk memesan!
                         </p>
-                        <Link href="/home" className="mt-2 block">
+                        <p>
+                            {app_cs_name.app_stg_value +
+                                ' | ' +
+                                app_cs_nomor.app_stg_value}
+                        </p>
+                        <a
+                            href={`https://wa.me/${app_cs_nomor.app_stg_value}`}
+                            className="mt-2 block"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
                             <Button variant="outline" className="w-full">
                                 Hunbungi CS
                             </Button>
-                        </Link>
+                        </a>
                     </CardContent>
                 </Card>
             </div>

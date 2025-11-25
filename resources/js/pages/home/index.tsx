@@ -64,7 +64,7 @@ export default function index() {
                 </div>
             )}
             {!banner && (
-                <div className="mx-5 flex h-48 w-full flex-col items-center justify-center rounded-md border-2 border-dashed text-muted-foreground md:mx-16">
+                <div className="flex h-48 w-full flex-col items-center justify-center rounded-md border-2 border-dashed text-muted-foreground">
                     <ImageIcon className="mb-2 h-10 w-10" />
                     <span className="text-sm">Belum ada gambar</span>
                 </div>
