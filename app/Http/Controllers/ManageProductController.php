@@ -10,9 +10,33 @@ class ManageProductController extends Controller
 {
     public function index()
     {
-        $products = Product::select('prd_id as id', 'prd_name', 'prd_price', 'prd_status', 'prd_created_at')->with('categories:cat_id,cat_name,cat_slug')->latest()->paginate(10);
-        return Inertia::render('product/index', compact('products'));
+        $products = Product::select(
+            'prd_id as id',
+            'prd_name',
+            'prd_price',
+            'prd_status',
+            'prd_created_at'
+        )
+            ->with('categories:cat_id,cat_name,cat_slug')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $payload = $products->toArray();
+
+        // Ubah link ke https
+        $payload['links'] = array_map(function ($l) {
+            if (!empty($l['url'])) {
+                $l['url'] = preg_replace('/^http:/i', 'https:', $l['url']);
+            }
+            return $l;
+        }, $payload['links']);
+
+        return Inertia::render('product/index', [
+            'products' => $payload
+        ]);
     }
+
 
     public function show($id)
     {

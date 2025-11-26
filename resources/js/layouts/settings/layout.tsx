@@ -6,10 +6,10 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
 
-const sidebarNavItems: NavItem[] = [
+const sidebarSelNavItems: NavItem[] = [
     {
         title: 'Profil',
         href: edit(),
@@ -27,11 +27,36 @@ const sidebarNavItems: NavItem[] = [
     },
 ];
 
+const sidebarBuyNavItems: NavItem[] = [
+    {
+        title: 'Profil',
+        href: edit(),
+        icon: null,
+    },
+    {
+        title: 'Tampilan',
+        href: editAppearance(),
+        icon: null,
+    },
+    {
+        title: 'Riwayat Transaksi',
+        href: '/settings/transaction_history',
+        icon: null,
+    },
+];
+
 export default function SettingsLayout({ children }: PropsWithChildren) {
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
     }
+
+    const { auth } = usePage().props as any;
+
+    const roles: string[] = auth?.user?.role ?? [];
+
+    const isSeller = roles.includes('seller');
+    const navLinkComponent = isSeller ? sidebarSelNavItems : sidebarBuyNavItems;
 
     const currentPath = window.location.pathname;
 
@@ -45,7 +70,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             <div className="flex flex-col lg:flex-row lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
                     <nav className="flex flex-col space-y-1 space-x-0">
-                        {sidebarNavItems.map((item, index) => (
+                        {navLinkComponent.map((item, index) => (
                             <Button
                                 key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`}
                                 size="sm"

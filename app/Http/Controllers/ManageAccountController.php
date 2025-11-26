@@ -12,9 +12,28 @@ class ManageAccountController extends Controller
 {
     public function index()
     {
-        $users = User::select(['usr_id as id', 'name', 'email', 'usr_created_at'])->latest()->paginate(10)->withQueryString();
-        return Inertia::render('user/index', compact('users'));
+        $users = User::select([
+            'usr_id as id',
+            'name',
+            'email',
+            'usr_created_at'
+        ])->latest()->paginate(10)->withQueryString();
+
+        $payload = $users->toArray();
+
+        // Paksa semua link menjadi https
+        $payload['links'] = array_map(function ($l) {
+            if (!empty($l['url'])) {
+                $l['url'] = preg_replace('/^http:/i', 'https:', $l['url']);
+            }
+            return $l;
+        }, $payload['links']);
+
+        return Inertia::render('user/index', [
+            'users' => $payload
+        ]);
     }
+
 
     public function show($id)
     {
@@ -42,7 +61,7 @@ class ManageAccountController extends Controller
             return response()->json([]);
         }
 
-        $users = User::where('email', 'like', "%{$query}%")
+        $users = User::role('buyer')->where('email', 'like', "%{$query}%")
             ->select('usr_id', 'name', 'email', 'usr_provice_name', 'usr_city_name', 'usr_city_id', 'usr_latitude', 'usr_longtitude')
             ->limit(10)
             ->get();

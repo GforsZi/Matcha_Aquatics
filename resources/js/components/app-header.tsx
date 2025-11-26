@@ -101,7 +101,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                 <Link
                                                     key={item.title}
                                                     href={item.href}
-                                                    className="flex items-center space-x-2 font-medium"
+                                                    className="flex items-center space-x-2 font-medium text-black dark:text-black"
                                                 >
                                                     {item.icon && (
                                                         <Icon
@@ -124,7 +124,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                             ? item.href
                                                             : item.href.url
                                                     }
-                                                    className="flex items-center space-x-2 font-medium"
+                                                    className="flex items-center space-x-2 font-medium text-black dark:text-black"
                                                 >
                                                     {item.icon && (
                                                         <Icon

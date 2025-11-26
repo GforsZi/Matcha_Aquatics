@@ -309,10 +309,22 @@ export default function Product() {
                                         Lokasi Toko
                                     </h3>
                                     <p className="mt-2 text-base whitespace-pre-line">
-                                        {app_provice_name?.app_stg_value +
-                                            ', ' +
-                                            app_city_name?.app_stg_value ||
-                                            'Toko belum menambahkan lokasi.'}
+                                        {app_provice_name?.app_stg_value &&
+                                            app_city_name?.app_stg_value && (
+                                                <>
+                                                    {app_provice_name?.app_stg_value +
+                                                        ', ' +
+                                                        app_city_name?.app_stg_value}
+                                                </>
+                                            )}
+                                        {!app_provice_name?.app_stg_value &&
+                                            !app_city_name?.app_stg_value && (
+                                                <>
+                                                    {
+                                                        'Toko belum menambahkan lokasi.'
+                                                    }
+                                                </>
+                                            )}
                                     </p>
                                     {app_location_latitude?.app_stg_value &&
                                         app_location_longitude?.app_stg_value && (

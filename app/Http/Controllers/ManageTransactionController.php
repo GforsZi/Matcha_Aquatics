@@ -28,9 +28,24 @@ class ManageTransactionController extends Controller
 
     public function index()
     {
-        $transactions = Transaction::select('trx_id as id', 'trx_buyer_name', 'trx_payment_method', 'trx_status', 'trx_created_at')->with('user')->latest()->paginate(10);
-        return Inertia::render('transaction/index', compact('transactions'));
+        $transactions = Transaction::select('trx_id as id', 'trx_buyer_name', 'trx_payment_method', 'trx_status', 'trx_created_at')
+            ->with('user')
+            ->latest()
+            ->paginate(10);
+
+        $payload = $transactions->toArray();
+        $payload['links'] = array_map(function ($l) {
+            if (!empty($l['url'])) {
+                $l['url'] = preg_replace('/^http:/i', 'https:', $l['url']);
+            }
+            return $l;
+        }, $payload['links']);
+
+        return Inertia::render('transaction/index', [
+            'transactions' => $payload,
+        ]);
     }
+
 
     public function show($id)
     {

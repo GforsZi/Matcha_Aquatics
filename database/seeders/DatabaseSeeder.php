@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
         $this->call([
             RoleSeeder::class,
+
         ]);
 
 
@@ -30,6 +31,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $admin->assignRole('seller');
-        $this->call(UserLoginSeeder::class);
+        $this->call([UserLoginSeeder::class, TransactionSeeder::class, ProductSeeder::class]);
     }
 }

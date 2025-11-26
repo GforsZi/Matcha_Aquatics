@@ -1,20 +1,22 @@
+import { Head, usePage } from '@inertiajs/react';
+
 import { DataTable } from '@/components/data-table';
-import DropdownTable from '@/components/dropdown-table';
+import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem } from '@/types';
 import { formatDate } from '@/utils/date';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { IconPlus } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 
+import AppLayout from '@/layouts/app-layout';
+import SettingsLayout from '@/layouts/settings/layout';
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Kelola Transaksi',
-        href: '/manage/transaction',
+        title: 'Riwayat Transaksi',
+        href: '/settings/transaction_history',
     },
 ];
 
@@ -47,43 +49,8 @@ export const columns: ColumnDef<transaction>[] = [
         ),
     },
     {
-        accessorKey: 'trx_buyer_name',
-        header: 'Nama',
-    },
-    {
-        accessorKey: 'trx_payment_method',
-        header: () => <div className="text-left">Metode pembayaran</div>,
-        cell: ({ row }) => {
-            const status = row.getValue('trx_payment_method') as string;
-
-            let label = '';
-            let color = '';
-
-            switch (status) {
-                case '1':
-                    label = 'Tunai';
-                    color = 'text-green-500';
-                    break;
-                case '2':
-                    label = 'Non-tunai';
-                    color = 'text-sky-600';
-                    break;
-                case '3':
-                    label = 'Tunai + Pengiriman';
-                    color = 'text-green-600';
-                    break;
-                case '4':
-                    label = 'Non-tunai + Pengiriman';
-                    color = 'text-sky-600';
-                    break;
-                case '5':
-                    label = 'Pesanan online';
-                    color = 'text-indigo-600';
-                    break;
-            }
-
-            return <div className={`font-medium ${color}`}>{label}</div>;
-        },
+        accessorKey: 'trx_invoice',
+        header: 'Invoice',
     },
     {
         accessorKey: 'trx_status',
@@ -143,25 +110,9 @@ export const columns: ColumnDef<transaction>[] = [
             <div className="lowercase">{row.getValue('trx_created_at')}</div>
         ),
     },
-    {
-        id: 'actions',
-        cell: ({ row }) => {
-            const transaction = row.original;
-
-            return (
-                <>
-                    <DropdownTable
-                        data={transaction}
-                        page={'transaction'}
-                        showDetail
-                        showDelete
-                    />
-                </>
-            );
-        },
-    },
 ];
-export default function index() {
+
+export default function TransactionHistory() {
     const { transactions } = usePage<{
         transactions: {
             data: transaction[];
@@ -194,31 +145,26 @@ export default function index() {
     const formattedData = manipulateData(transactions.data);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Kelola transaksi" />
-            <div className="mx-5 mt-5">
-                <div className="mb-5 flex items-center justify-end px-4 lg:px-6">
-                    <Button
-                        variant={'default'}
-                        asChild
-                        className="bg-emerald-600 text-stone-950 hover:bg-emerald-700"
-                    >
-                        <Link href={'/manage/transaction/add'}>
-                            <IconPlus />
-                            <span>Tambah transaksi </span>
-                        </Link>
-                    </Button>
+            <Head title="Riwayat Transaksi" />
+
+            <SettingsLayout>
+                <div className="space-y-6">
+                    <HeadingSmall
+                        title="Pengaturan Tampilan"
+                        description="Sesuaikan tampilan aplikasi sesuai."
+                    />
+                    <Toaster position="top-center" richColors closeButton />
+                    <DataTable
+                        search={{
+                            header: 'kode invoice',
+                            value: 'trx_invoice',
+                        }}
+                        columns={columns}
+                        data={formattedData}
+                        link={transactions.links}
+                    />
                 </div>
-                <Toaster position="top-center" richColors closeButton />
-                <DataTable
-                    search={{
-                        header: 'nama peminjam',
-                        value: 'trx_buyer_name',
-                    }}
-                    columns={columns}
-                    data={formattedData}
-                    link={transactions.links}
-                />
-            </div>
+            </SettingsLayout>
         </AppLayout>
     );
 }

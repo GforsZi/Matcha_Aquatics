@@ -10,9 +10,28 @@ class ManageCategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::select('cat_id as id', 'cat_name', 'cat_slug', 'cat_created_at')->latest()->paginate(10);
-        return Inertia::render('category/index', compact('categories'));
+        $categories = Category::select(
+            'cat_id as id',
+            'cat_name',
+            'cat_slug',
+            'cat_created_at'
+        )->latest()->paginate(10)->withQueryString();
+
+        $payload = $categories->toArray();
+
+        // Paksa https
+        $payload['links'] = array_map(function ($l) {
+            if (!empty($l['url'])) {
+                $l['url'] = preg_replace('/^http:/i', 'https:', $l['url']);
+            }
+            return $l;
+        }, $payload['links']);
+
+        return Inertia::render('category/index', [
+            'categories' => $payload
+        ]);
     }
+
 
     public function show($id)
     {

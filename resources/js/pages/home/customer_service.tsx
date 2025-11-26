@@ -49,23 +49,32 @@ export default function Search() {
                             Layanan Pelanggan
                         </h2>
                         <p className="mb-6 text-muted-foreground">
-                            Tambahkan produk ke keranjang untuk memesan!
+                            Hubungi kami jika anda menemukan kendala atau
+                            masalah pada saat berbelanja di Matcha Aquatics
                         </p>
-                        <p>
-                            {app_cs_name.app_stg_value +
-                                ' | ' +
-                                app_cs_nomor.app_stg_value}
-                        </p>
-                        <a
-                            href={`https://wa.me/${app_cs_nomor.app_stg_value}`}
-                            className="mt-2 block"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Button variant="outline" className="w-full">
-                                Hunbungi CS
-                            </Button>
-                        </a>
+                        {app_cs_name?.app_stg_value &&
+                            app_cs_nomor?.app_stg_value && (
+                                <>
+                                    <p>
+                                        {app_cs_name?.app_stg_value +
+                                            ' | ' +
+                                            app_cs_nomor?.app_stg_value}
+                                    </p>
+                                    <a
+                                        href={`https://wa.me/${app_cs_nomor?.app_stg_value}`}
+                                        className="mt-2 block"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            className="w-full"
+                                        >
+                                            Hunbungi CS
+                                        </Button>
+                                    </a>
+                                </>
+                            )}
                     </CardContent>
                 </Card>
             </div>

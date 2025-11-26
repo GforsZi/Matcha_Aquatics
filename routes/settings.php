@@ -3,6 +3,7 @@
 use App\Http\Controllers\Settings\Apps\BannerController;
 use App\Http\Controllers\Settings\Apps\MapController;
 use App\Http\Controllers\Settings\Apps\SellerController;
+use App\Http\Controllers\Settings\HistoryTransactionController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
@@ -16,11 +17,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
-
-    Route::put('settings/password', [PasswordController::class, 'update'])
-        ->middleware('throttle:6,1')
-        ->name('password.update');
+    Route::get('settings/transaction_history', [HistoryTransactionController::class, 'index'])->middleware('role:buyer');
 
     Route::get('settings/appearance', function () {
         return Inertia::render('settings/appearance');
@@ -32,6 +29,11 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::redirect('/app/setting', '/app/setting/location');
+    Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
+
+    Route::put('settings/password', [PasswordController::class, 'update'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
 
     Route::get('/app/setting/location', [MapController::class, 'index']);
     Route::post('/app/setting/location', [MapController::class, 'edit_system']);
