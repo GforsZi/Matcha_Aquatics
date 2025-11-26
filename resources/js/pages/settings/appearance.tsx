@@ -24,7 +24,7 @@ export default function Appearance() {
                 <div className="space-y-6">
                     <HeadingSmall
                         title="Pengaturan Tampilan"
-                        description="Sesuaikan tampilan aplikasi sesuai."
+                        description="Sesuaikan tampilan aplikasi sesuai seleramu."
                     />
                     <AppearanceTabs />
                 </div>

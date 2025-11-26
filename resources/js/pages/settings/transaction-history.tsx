@@ -150,8 +150,8 @@ export default function TransactionHistory() {
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="Pengaturan Tampilan"
-                        description="Sesuaikan tampilan aplikasi sesuai."
+                        title="Riwayat Transaksi"
+                        description="Lihat transaksi apa saja yang pernah kamu buat."
                     />
                     <Toaster position="top-center" richColors closeButton />
                     <DataTable
