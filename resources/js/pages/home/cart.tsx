@@ -178,13 +178,13 @@ const Cart = () => {
     }
     const calculateSubtotal = (carts: CartItem[]): number => {
         return carts.reduce((total, item) => {
-            return total + Number(item.product.prd_price);
+            return total + Number(item.product?.prd_price);
         }, 0);
     };
     const subtotal = calculateSubtotal(carts);
     const calculateWeight = (carts: CartItem[]): number => {
         return carts.reduce((total, item) => {
-            return total + Number(item.product.prd_weight);
+            return total + Number(item.product?.prd_weight);
         }, 0);
     };
     const totalweight = calculateWeight(carts);
@@ -346,24 +346,24 @@ const Cart = () => {
                                 <CardContent className="space-y-4">
                                     {carts.map((item) => (
                                         <div
-                                            key={item.product.prd_id}
+                                            key={item.product?.prd_id}
                                             className="flex gap-4 rounded-lg border p-4 transition-colors hover:bg-accent/50"
                                         >
                                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md bg-secondary/20">
-                                                {item.product.prd_img_url && (
+                                                {item.product?.prd_img_url && (
                                                     <img
                                                         src={asset(
                                                             item.product
-                                                                .prd_img_url,
+                                                                ?.prd_img_url,
                                                         )}
                                                         alt={
                                                             item.product
-                                                                .prd_slug
+                                                                ?.prd_slug
                                                         }
                                                         className="h-full w-full object-cover"
                                                     />
                                                 )}
-                                                {!item.product.prd_img_url && (
+                                                {!item.product?.prd_img_url && (
                                                     <div className="flex h-full w-full shrink-0 flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed object-contain text-muted-foreground shadow-md">
                                                         <ImageIcon className="mb-2 h-10 w-10" />
                                                     </div>
@@ -372,20 +372,21 @@ const Cart = () => {
 
                                             <div className="min-w-0 flex-1">
                                                 <Link
-                                                    href={`/product/${item.product.prd_slug}`}
+                                                    href={`/product/${item.product?.prd_slug}`}
                                                     className="mb-1 text-lg font-semibold"
                                                 >
-                                                    {item.product.prd_name}
+                                                    {item.product?.prd_name}
                                                 </Link>
                                                 <p className="mb-2 text-sm text-muted-foreground">
-                                                    {item.product.prd_weight +
+                                                    {item.product?.prd_weight +
                                                         ' gram'}
                                                 </p>
                                                 <p
-                                                    className={`text-sm ${getStatusColor(item.product.prd_status)}`}
+                                                    className={`text-sm ${getStatusColor(item.product?.prd_status)}`}
                                                 >
                                                     {getStatusText(
-                                                        item.product.prd_status,
+                                                        item.product
+                                                            ?.prd_status,
                                                     )}
                                                 </p>
                                             </div>
@@ -394,7 +395,8 @@ const Cart = () => {
                                                 <Button
                                                     onClick={() =>
                                                         handleDeleteCart(
-                                                            item.product.prd_id,
+                                                            item.product
+                                                                ?.prd_id,
                                                         )
                                                     }
                                                     variant="ghost"
@@ -415,7 +417,7 @@ const Cart = () => {
                                                             },
                                                         ).format(
                                                             item.product
-                                                                .prd_price,
+                                                                ?.prd_price,
                                                         ) + ',-'}
                                                     </span>
                                                 </div>

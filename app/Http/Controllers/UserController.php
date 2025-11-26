@@ -62,7 +62,12 @@ class UserController extends Controller
         $app_location_longitude = AppSetting::select('app_stg_title', 'app_stg_value')->where('app_stg_title', 'app_location_longitude')->first();
         $carts = Cart::with('product')
             ->where('crt_user_id', Auth::id())
+            ->whereHas('product', function ($q) {
+                $q->whereNull('prd_deleted_at');
+            })
+            ->latest()
             ->get();
+
         // dd($carts->toArray());
         return Inertia::render('home/cart', compact('carts', 'app_city_id', 'app_city_name', 'app_location_latitude', 'app_location_longitude', 'app_provice_name'));
     }
