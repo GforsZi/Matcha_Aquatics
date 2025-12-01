@@ -193,7 +193,6 @@ class UserController extends Controller
             ]);
             $validateDataTrx['trx_total'] = $request->trx_subtotal + $request->trx_shipping_cost;
 
-            $transaction = Transaction::create($validateDataTrx);
 
             if ($request->has('product_id')) {
                 foreach ($request->product_id as $prd_id) {
@@ -211,6 +210,7 @@ class UserController extends Controller
                     }
                     $copy->update(['prd_status' => '4']);
                 }
+                $transaction = Transaction::create($validateDataTrx);
                 $transaction->products()->sync($validateDataProduct['product_id']);
                 $validateDataShp = $request->validate([
                     'trx_shipping_cost' => ['required', 'integer', 'min:0', 'max:99999999999'],
@@ -315,7 +315,7 @@ class UserController extends Controller
 
         $url = $this->baseUrl . '/payment-links';
 
-        $response = Http::withBasicAuth($this->serverKey, '')
+        $response = Http::withBasicAuth($this->serverKey, '')->withOptions(['verify' => false])
             ->withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',

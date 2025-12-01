@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import api from '@/lib/api';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import MapTransaction from './map-transaction';
@@ -155,36 +156,14 @@ export default function ShippingCostCalculator({
         setLoading(true);
 
         try {
-            const res = await fetch('/system/shipping/cost', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': getCsrfToken(),
-                },
-                body: JSON.stringify({
-                    origin: originCity,
-                    destination: destinationCity,
-                    weight: parseInt(weight),
-                    courier: selectedCourier,
-                }),
+            const res = await api.post('/system/shipping/cost', {
+                origin: originCity,
+                destination: destinationCity,
+                weight: parseInt(weight),
+                courier: selectedCourier,
             });
 
-            // Jika response bukan JSON → jangan parsing
-            const text = await res.text();
-            if (!res.ok) {
-                console.warn('Shipping cost error:', text);
-                return; // hentikan tanpa melempar error
-            }
-
-            // Coba parse JSON aman
-            let data: any = {};
-            try {
-                data = JSON.parse(text);
-            } catch {
-                console.warn('Response bukan JSON valid:', text);
-                return;
-            }
-
+            const data = res.data;
             let parsed: Cost[] = [];
 
             if (data?.rajaongkir?.results?.length) {
@@ -198,8 +177,8 @@ export default function ShippingCostCalculator({
             }
 
             setCosts(parsed);
-        } catch (err) {
-            console.error('Error fetching cost:', err);
+        } catch (err: any) {
+            console.error('Error fetching cost:', err?.response?.data || err);
         } finally {
             setLoading(false);
         }

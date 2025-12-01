@@ -23,6 +23,7 @@ import {
     SelectTrigger,
 } from '@/components/ui/select';
 import UserLayout from '@/layouts/user-layout';
+import api from '@/lib/api';
 import { BreadcrumbItem } from '@/types';
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { Select, SelectValue } from '@radix-ui/react-select';
@@ -218,36 +219,14 @@ const Cart = () => {
         setLoading(true);
 
         try {
-            const res = await fetch('/system/shipping/cost', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': getCsrfToken(),
-                },
-                body: JSON.stringify({
-                    origin: app_city_id.app_stg_value,
-                    destination: usr_city_id,
-                    weight: weight,
-                    courier: selectedCourier,
-                }),
+            const res = await api.post('/system/shipping/cost', {
+                origin: app_city_id.app_stg_value,
+                destination: usr_city_id,
+                weight: weight,
+                courier: selectedCourier,
             });
 
-            // Jika response bukan JSON → jangan parsing
-            const text = await res.text();
-            if (!res.ok) {
-                console.warn('Shipping cost error:', text);
-                return; // hentikan tanpa melempar error
-            }
-
-            // Coba parse JSON aman
-            let data: any = {};
-            try {
-                data = JSON.parse(text);
-            } catch {
-                console.warn('Response bukan JSON valid:', text);
-                return;
-            }
-
+            const data = res.data;
             let parsed: Cost[] = [];
 
             if (data?.rajaongkir?.results?.length) {
@@ -261,8 +240,8 @@ const Cart = () => {
             }
 
             setCosts(parsed);
-        } catch (err) {
-            console.error('Error fetching cost:', err);
+        } catch (err: any) {
+            console.error('Error fetching cost:', err?.response?.data || err);
         } finally {
             setLoading(false);
         }

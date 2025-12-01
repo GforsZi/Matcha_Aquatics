@@ -276,7 +276,7 @@ class ManageTransactionController extends Controller
 
         $url = $this->baseUrl . '/payment-links';
 
-        $response = Http::withBasicAuth($this->serverKey, '')
+        $response = Http::withBasicAuth($this->serverKey, '')->withOptions(['verify' => false])
             ->withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
@@ -439,7 +439,7 @@ class ManageTransactionController extends Controller
 
             $url = 'https://api.sandbox.midtrans.com/v2/' . $midtransId['transaction_id'] . '/refund';
 
-            $response = Http::withBasicAuth($this->serverKey, '')
+            $response = Http::withBasicAuth($this->serverKey, '')->withOptions(['verify' => false])
                 ->withHeaders([
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
@@ -479,7 +479,7 @@ class ManageTransactionController extends Controller
             $midtransId = $trx->payment->pay_midtrans_id;
             $url = $this->baseUrl . "/payment-links/{$midtransId}";
 
-            $response = Http::withBasicAuth($this->serverKey, '')
+            $response = Http::withBasicAuth($this->serverKey, '')->withOptions(['verify' => false])
                 ->delete($url);
 
             if (!$response->successful()) {
